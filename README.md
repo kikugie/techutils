@@ -4,9 +4,9 @@ Tech Utils is a mod providing client-side tweaks for [Litematica](https://www.cu
 
 ## Features
 
-- Sync WorldEdit selection
+- Sync WorldEdit selection  
   ![](https://github.com/Kikugie/techutils/blob/main/files/wesync.gif)
-- Litematics preview
+- Litematics preview  
   ![](https://github.com/Kikugie/techutils/blob/main/files/preview.gif)
 - Compact scoreboard (ported from my old mod)  
     Using short number format:
