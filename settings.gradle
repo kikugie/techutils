@@ -1,0 +1,15 @@
+pluginManagement {
+    repositories {
+        maven {
+            name = 'Fabric'
+            url = 'https://maven.fabricmc.net/'
+        }
+        mavenCentral()
+        gradlePluginPortal()
+    }
+
+    plugins {
+        id 'fabric-loom' version loom_version
+        id "org.jetbrains.kotlin.jvm" version kotlin_version
+    }
+}

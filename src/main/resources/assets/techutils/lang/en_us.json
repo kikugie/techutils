@@ -1,0 +1,11 @@
+{
+  "techutils.gui.config.title": "Technical Utils",
+  "techutils.gui.config.tab.litematica": "Litematica",
+  "techutils.gui.config.tab.worldedit": "WorldEdit",
+  "techutils.gui.config.tab.misc": "Miscellaneous",
+  "techutils.hotkeys.category": "TechUtils Hotkeys",
+  "techutils.feedback.wesync.success": "§oWorldEdit synced!",
+  "techutils.feedback.givebox.notcreative": "§cNot in creative mode!",
+
+  "litematica.info.schematic_manager.preview.right_click_to_cancel": "- Right click the button to cancel a pending preview operation;\n- Ctrl + click to select a preview image."
+}
