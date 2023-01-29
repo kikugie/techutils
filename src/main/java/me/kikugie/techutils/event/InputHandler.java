@@ -17,17 +17,15 @@ public class InputHandler implements IKeybindProvider, IKeyboardInputHandler, IM
 
     @Override
     public void addKeysToMap(IKeybindManager manager) {
-        for (IKeybind keybind : Configs.LITEMATIC_CONFIGS.getKeybinds()) {
-            manager.addKeybindToMap(keybind);
-        }
-        for (IKeybind keybind : Configs.WORLDEDIT_CONFIGS.getKeybinds()) {
-            manager.addKeybindToMap(keybind);
-        }
+        Configs.LITEMATIC_CONFIGS.getKeybinds().forEach(manager::addKeybindToMap);
+        Configs.WORLDEDIT_CONFIGS.getKeybinds().forEach(manager::addKeybindToMap);
+        Configs.MISC_CONFIGS.getKeybinds().forEach(manager::addKeybindToMap);
     }
 
     @Override
     public void addHotkeys(IKeybindManager manager) {
         manager.addHotkeysForCategory(Reference.MOD_NAME, "techutils.hotkeys.category", Configs.LITEMATIC_CONFIGS.getHotkeys());
         manager.addHotkeysForCategory(Reference.MOD_NAME, "techutils.hotkeys.category", Configs.WORLDEDIT_CONFIGS.getHotkeys());
+        manager.addHotkeysForCategory(Reference.MOD_NAME, "techutils.hotkeys.category", Configs.MISC_CONFIGS.getHotkeys());
     }
 }
