@@ -55,10 +55,14 @@ public class LitematicRenderManager {
         this.renderX = x;
         this.renderY = y;
         this.viewportSize = viewportSize;
-        if (Configs.LitematicConfigs.RENDER_ROTATION_MODE.getStringValue().equals(RotationMode.FREE_SPIN.mode)) {
-            var mouseX = MinecraftClient.getInstance().mouse.getX();
-            var windowWidth = MinecraftClient.getInstance().getWindow().getFramebufferWidth();
-            currentRenderer.angle = (int) (mouseX / windowWidth * 360);
+
+        if (Configs.LitematicConfigs.RENDER_ROTATION_MODE.getStringValue().equals(RotationMode.MOUSE_POS.mode)) {
+            double mouseX = MinecraftClient.getInstance().mouse.getX();
+            int windowWidth = MinecraftClient.getInstance().getWindow().getFramebufferWidth();
+            currentRenderer.angle = (int) (mouseX / windowWidth * Configs.LitematicConfigs.ROTATION_FACTOR.getDoubleValue() * 360);
+        } else if (Configs.LitematicConfigs.RENDER_ROTATION_MODE.getStringValue().equals(RotationMode.FREE_SPIN.mode)) {
+            long tick = MinecraftClient.getInstance().world.getTime();
+            currentRenderer.angle = (int) (tick * Configs.LitematicConfigs.ROTATION_FACTOR.getDoubleValue() * 2 % 360);
         }
         this.currentRenderer.render(RenderSystem.getModelViewStack(), x, y, viewportSize);
 
@@ -67,13 +71,13 @@ public class LitematicRenderManager {
     public void mouseScrolled(double mouseX, double mouseY, double amount) {
         if (!Configs.LitematicConfigs.RENDER_ROTATION_MODE.getStringValue().equals(RotationMode.SCROLL.mode) || !isInViewPort(mouseX, mouseY))
             return;
-        currentRenderer.angle += amount * 10;
+        currentRenderer.angle += amount * Configs.LitematicConfigs.ROTATION_FACTOR.getDoubleValue() * 10;
     }
 
     public void mouseDragged(double deltaX) {
         if (!Configs.LitematicConfigs.RENDER_ROTATION_MODE.getStringValue().equals(RotationMode.DRAG.mode) || !validDragging)
             return;
-        currentRenderer.angle += deltaX * 2;
+        currentRenderer.angle += deltaX * Configs.LitematicConfigs.ROTATION_FACTOR.getDoubleValue();
     }
 
     public void mouseReleased() {
@@ -91,9 +95,10 @@ public class LitematicRenderManager {
     }
 
     public enum RotationMode implements IConfigOptionListEntry {
-        FREE_SPIN("Free Spin"),
+        MOUSE_POS("Mouse position"),
         DRAG("Drag"),
-        SCROLL("Scroll");
+        SCROLL("Scroll"),
+        FREE_SPIN("Free spin");
 
         private final String mode;
 

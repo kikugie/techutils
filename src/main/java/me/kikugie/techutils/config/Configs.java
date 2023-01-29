@@ -99,6 +99,7 @@ public class Configs implements IConfigHandler {
         public static final ConfigBoolean RENDER_PREVIEW = new ConfigBoolean("renderPreview", true, "Show 3D render of schematic");
         public static final ConfigBoolean OVERRIDE_PREVIEW = new ConfigBoolean("overridePreview", false, "Show render even if schematic has its own preview");
         public static final ConfigOptionList RENDER_ROTATION_MODE = new ConfigOptionList("rotationMode", LitematicRenderManager.RotationMode.DRAG, "- Free Spin: rotation follows mouse position;\n- Drag: drag mouse in viewport;\nScroll: scroll mouse view in viewport");
+        public static final ConfigDouble ROTATION_FACTOR = new ConfigDouble("rotationFactor", 1, 0.1, 10, "Rotation speed modifier");
         public static final ConfigInteger RENDER_SLANT = new ConfigInteger("renderSlant", 30, 0, 60, "Slant of the render");
         public static final ConfigHotkey ROTATE_PLACEMENT = new ConfigHotkey("rotatePlacement", "", "Rotates selected placement clockwise");
         public static final ConfigHotkey MIRROR_PLACEMENT = new ConfigHotkey("mirrorPlacement", "", "Cycles through selected placement's mirroring options");
@@ -108,6 +109,7 @@ public class Configs implements IConfigHandler {
                     RENDER_PREVIEW,
                     OVERRIDE_PREVIEW,
                     RENDER_ROTATION_MODE,
+                    ROTATION_FACTOR,
                     RENDER_SLANT,
                     ROTATE_PLACEMENT,
                     MIRROR_PLACEMENT
