@@ -43,7 +43,7 @@ public abstract class LitematicaGuiSchematicBrowserBaseMixin extends GuiListBase
 
     @Override
     public void initGui() {
-        LitematicRenderManager.Companion.init((GuiSchematicBrowserBase) (Object) this);
+        LitematicRenderManager.init((GuiSchematicBrowserBase) (Object) this);
         super.initGui();
     }
 }

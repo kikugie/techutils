@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class FAPIClientPlayNetworkAddonMixin {
     @Inject(method = "handle", at = @At(value = "INVOKE", target = "Lnet/fabricmc/fabric/impl/networking/client/ClientPlayNetworkAddon;handle(Lnet/minecraft/util/Identifier;Lnet/minecraft/network/PacketByteBuf;)Z"))
     private void yoinkWorldEditPacket(CustomPayloadS2CPacket packet, CallbackInfoReturnable<Boolean> cir) {
-        if (!packet.getChannel().equals(WorldEditNetworkHandler.getCHANNEL())) return;
+        if (!packet.getChannel().equals(WorldEditNetworkHandler.CHANNEL)) return;
         var handlerInstance = WorldEditNetworkHandler.getInstance();
         if (handlerInstance != null) {
             handlerInstance.onYoinkedPacket(packet);

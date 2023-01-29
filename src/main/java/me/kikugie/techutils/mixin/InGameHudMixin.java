@@ -28,7 +28,7 @@ public class InGameHudMixin {
                     target = "Ljava/lang/Integer;toString(I)Ljava/lang/String;")
     )
     private int getCompactNum(int value) {
-        if (!Configs.MiscConfigs.getCOMPACT_SCOREBOARD().getBooleanValue()) return value;
+        if (!Configs.MiscConfigs.COMPACT_SCOREBOARD.getBooleanValue()) return value;
         return IntMath.pow(10, formatter.format(value).length() - 1);
     }
 
@@ -40,7 +40,7 @@ public class InGameHudMixin {
             index = 22
     )
     private String modifyScore(String score) {
-        if (!Configs.MiscConfigs.getCOMPACT_SCOREBOARD().getBooleanValue()) return score;
+        if (!Configs.MiscConfigs.COMPACT_SCOREBOARD.getBooleanValue()) return score;
         try {
             return Formatting.RED + formatter.format(Integer.parseInt(Formatting.strip(score)));
         } catch (NumberFormatException e) {

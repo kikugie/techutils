@@ -12,8 +12,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class MessageHandlerMixin {
     @Inject(method = "onGameMessage", at = @At("HEAD"), cancellable = true)
     private void interceptMessage(Text message, boolean overlay, CallbackInfo ci) {
-        if (ResponseMuffler.INSTANCE.matches(message.getString())) {
-            ResponseMuffler.INSTANCE.pop();
+        if (ResponseMuffler.matches(message.getString())) {
+            ResponseMuffler.pop();
             ci.cancel();
         }
     }

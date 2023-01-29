@@ -1,0 +1,11 @@
+{
+  "techutils.gui.config.title": "Technical Utils",
+  "techutils.gui.config.tab.litematica": "Litematica",
+  "techutils.gui.config.tab.worldedit": "WorldEdit",
+  "techutils.gui.config.tab.misc": "Прочее",
+  "techutils.hotkeys.category": "Горячие клавиши TechUtils",
+  "techutils.feedback.wesync.success": "§oWorldEdit синхронизирован!",
+  "techutils.feedback.givebox.notcreative": "§cИгрок не в креативе!",
+
+  "litematica.info.schematic_manager.preview.right_click_to_cancel": "- Нажмите ПКМ по кнопке, чтобы прервать операцию создания миниатюры;\n- Удерживайте Ctrl при нажатии, чтобы выбрать картинку для миниатюры."
+}

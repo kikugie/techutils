@@ -11,13 +11,10 @@
   },
   "license": "MIT",
   "icon": "assets/techutils/icon.png",
-  "environment": "*",
+  "environment": "client",
   "entrypoints": {
     "main": [
-      {
-        "adapter": "kotlin",
-        "value": "me.kikugie.techutils.TechUtilsMod"
-      }
+      "me.kikugie.techutils.TechUtilsMod"
     ],
     "modmenu": [
       "me.kikugie.techutils.config.ModMenuIntegration"
@@ -29,7 +26,6 @@
   "depends": {
     "fabricloader": ">=0.13",
     "fabric-api": "*",
-    "fabric-language-kotlin": ">=1.9.0+kotlin.1.8.0",
     "minecraft": "1.19.3",
     "java": ">=17"
   },

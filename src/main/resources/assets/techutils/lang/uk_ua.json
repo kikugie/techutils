@@ -1,0 +1,9 @@
+{
+  "techutils.gui.config.title": "Technical Utils",
+  "techutils.gui.config.tab.litematica": "Litematica",
+  "techutils.gui.config.tab.worldedit": "WorldEdit",
+  "techutils.gui.config.tab.misc": "Miscellaneous",
+  "techutils.hotkeys.category": "Гарячі клавіші TechUtils",
+  "techutils.feedback.wesync.success": "§oWorldEdit синхронізовано!",
+  "techutils.feedback.givebox.notcreative": "§cГравець не у креативі!"
+}
