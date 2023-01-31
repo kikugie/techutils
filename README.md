@@ -15,6 +15,7 @@ Tech Utils is a mod providing client-side tweaks for [Litematica](https://www.cu
   - 1000000000 -> 1B
 - Disable WorldEdit neighbor updates on log-in
 - Hotkeys for litematic placement rotation & mirror
+- `/isorender selection` shortcut for rendering current Litematica selection in [Isometric Renders](https://modrinth.com/mod/isometric-renders)
 - *And more to come!*
 
 ## Dependencies
