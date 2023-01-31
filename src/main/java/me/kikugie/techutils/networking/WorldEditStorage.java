@@ -3,8 +3,8 @@ package me.kikugie.techutils.networking;
 import net.minecraft.util.math.BlockPos;
 
 public class WorldEditStorage {
-    private boolean isCuboidMode;
     private final BlockPos[] region = new BlockPos[2];
+    private boolean isCuboidMode;
 
     public void setPos(int n, BlockPos pos) {
         region[n] = pos;

@@ -1,6 +1,9 @@
 package me.kikugie.techutils.event;
 
-import fi.dy.masa.malilib.hotkeys.*;
+import fi.dy.masa.malilib.hotkeys.IKeybindManager;
+import fi.dy.masa.malilib.hotkeys.IKeybindProvider;
+import fi.dy.masa.malilib.hotkeys.IKeyboardInputHandler;
+import fi.dy.masa.malilib.hotkeys.IMouseInputHandler;
 import me.kikugie.techutils.Reference;
 import me.kikugie.techutils.config.Configs;
 

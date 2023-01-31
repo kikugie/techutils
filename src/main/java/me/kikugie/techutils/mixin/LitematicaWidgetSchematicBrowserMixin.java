@@ -28,7 +28,8 @@ class LitematicaWidgetSchematicBrowserMixin {
     @Inject(method = "drawSelectedSchematicInfo", at = @At(value = "INVOKE", target = "Ljava/util/Map;get(Ljava/lang/Object;)Ljava/lang/Object;"), cancellable = true, locals = LocalCapture.CAPTURE_FAILSOFT)
     private void drawPreview(WidgetFileBrowserBase.DirectoryEntry entry, MatrixStack matrixStack, CallbackInfo ci, int x, int y, int height) {
         if (!Configs.LitematicConfigs.RENDER_PREVIEW.getBooleanValue()) return;
-        if (!Configs.LitematicConfigs.OVERRIDE_PREVIEW.getBooleanValue() && cachedPreviewImages.containsKey(entry.getFullPath())) return;
+        if (!Configs.LitematicConfigs.OVERRIDE_PREVIEW.getBooleanValue() && cachedPreviewImages.containsKey(entry.getFullPath()))
+            return;
 
         LitematicRenderManager.getInstance().setCurrentRenderer(entry);
         LitematicRenderManager.getInstance().renderCurrent(x + 4, y + 14, height - y - 2);

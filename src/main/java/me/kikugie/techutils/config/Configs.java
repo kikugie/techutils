@@ -98,11 +98,12 @@ public class Configs implements IConfigHandler {
     public static class LitematicConfigs extends BaseConfigs {
         public static final ConfigBoolean RENDER_PREVIEW = new ConfigBoolean("renderPreview", true, "Show 3D render of schematic");
         public static final ConfigBoolean OVERRIDE_PREVIEW = new ConfigBoolean("overridePreview", false, "Show render even if schematic has its own preview");
-        public static final ConfigOptionList RENDER_ROTATION_MODE = new ConfigOptionList("rotationMode", LitematicRenderManager.RotationMode.DRAG, "- Free Spin: rotation follows mouse position;\n- Drag: drag mouse in viewport;\nScroll: scroll mouse view in viewport");
+        public static final ConfigOptionList RENDER_ROTATION_MODE = new ConfigOptionList("rotationMode", LitematicRenderManager.RotationMode.DRAG,
+                "- Mouse position: rotation follows mouse position;\n- Free spin: rotate at constant speed;\n- Drag: drag mouse in viewport;\n- Scroll: scroll mouse in viewport");
         public static final ConfigDouble ROTATION_FACTOR = new ConfigDouble("rotationFactor", 1, 0.1, 10, "Rotation speed modifier");
         public static final ConfigInteger RENDER_SLANT = new ConfigInteger("renderSlant", 30, 0, 60, "Slant of the render");
-        public static final ConfigHotkey ROTATE_PLACEMENT = new ConfigHotkey("rotatePlacement", "", "Rotates selected placement clockwise");
-        public static final ConfigHotkey MIRROR_PLACEMENT = new ConfigHotkey("mirrorPlacement", "", "Cycles through selected placement's mirroring options");
+        public static final ConfigHotkey ROTATE_PLACEMENT = new ConfigHotkey("rotatePlacement", "R", "Rotate selected placement clockwise");
+        public static final ConfigHotkey MIRROR_PLACEMENT = new ConfigHotkey("mirrorPlacement", "Y", "Cycle through selected placement's mirroring options");
 
         public LitematicConfigs() {
             super(ImmutableList.of(
@@ -118,9 +119,9 @@ public class Configs implements IConfigHandler {
     }
 
     public static class WorldEditConfigs extends BaseConfigs {
-        public static final ConfigBooleanHotkeyed AUTO_WE_SYNC = new ConfigBooleanHotkeyed("autoWeSync", false, "", "Synchronises WorldEdit selection n ticks after configured value");
+        public static final ConfigBooleanHotkeyed AUTO_WE_SYNC = new ConfigBooleanHotkeyed("autoWeSync", false, "", "Synchronise WorldEdit selection n ticks after configured value");
         public static final ConfigInteger AUTO_WE_SYNC_TICKS = new ConfigInteger("autoWeSyncTicks", 10, 1, 1000, false, "Ticks to wait before synchronising WorldEdit selection");
-        public static final ConfigBoolean AUTO_DISABLE_UPDATES = new ConfigBoolean("autoDisableUpdates", true, "Automatically disables WorldEdit neighbour updates on log in");
+        public static final ConfigBoolean AUTO_DISABLE_UPDATES = new ConfigBoolean("autoDisableUpdates", true, "Automatically disable WorldEdit neighbour updates on log in");
 
         public WorldEditConfigs() {
             super(ImmutableList.of(
