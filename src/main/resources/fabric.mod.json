@@ -26,9 +26,12 @@
   "depends": {
     "fabricloader": ">=0.13",
     "fabric-api": "*",
+    "malilib": "~0.14",
+    "litematica": "~0.13",
     "minecraft": "1.19.3",
     "java": ">=17"
   },
   "suggests": {
+    "isometric-renders": "*"
   }
 }
