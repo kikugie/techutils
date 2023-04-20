@@ -78,6 +78,6 @@ public class LitematicRegionBlockView implements BlockRenderView {
     }
 
     public Vec3i getRegionOffset() {
-        return new Vec3i(box.minX, box.minY, box.minZ);
+        return new Vec3i((int) box.minX, (int) box.minY, (int) box.minZ);
     }
 }

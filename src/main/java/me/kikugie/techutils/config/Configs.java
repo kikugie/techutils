@@ -104,6 +104,13 @@ public class Configs implements IConfigHandler {
         public static final ConfigInteger RENDER_SLANT = new ConfigInteger("renderSlant", 30, 0, 60, "Slant of the render");
         public static final ConfigHotkey ROTATE_PLACEMENT = new ConfigHotkey("rotatePlacement", "R", "Rotate selected placement clockwise");
         public static final ConfigHotkey MIRROR_PLACEMENT = new ConfigHotkey("mirrorPlacement", "Y", "Cycle through selected placement's mirroring options");
+        public static final ConfigBooleanHotkeyed INVENTORY_SCREEN_OVERLAY = new ConfigBooleanHotkeyed("inventoryScreenOverlay", true, "I, O", "Show schematic overlay in inventory screen");
+        public static final ConfigHotkey VALIDATE_NBT = new ConfigHotkey("validateNbt", "", "");
+        public static final ConfigHotkey CLEAR_OVERLAY = new ConfigHotkey("clearOverlay", "", "");
+        public static final ConfigBoolean VALIDATE_NBT_ONLY_SAME = new ConfigBoolean("validateNbtOnlySameBlock", true, "Nbt validator will process a block if its placed as in schematic");
+        public static final ConfigDouble PACKET_RATE = new ConfigDouble("packetRate", 16, 0.01, 256, false, "Number of packets sent per tick.\nWhen less than 1 approximates packet rate.\nGenerally these values shouldn't be needed unless server has strict packet restrictions (looking at you, Paper)");
+        public static final ConfigInteger PACKET_TIMEOUT = new ConfigInteger("packetTimeout", 500, 1, 5000, false, "Time in milliseconds before attempting to sending packet again");
+        public static final ConfigInteger QUERY_TIMEOUT = new ConfigInteger("queryTimeout", 15, 1, 600, false, "Time in seconds before query is considered failed");
 
         public LitematicConfigs() {
             super(ImmutableList.of(
@@ -113,7 +120,15 @@ public class Configs implements IConfigHandler {
                     ROTATION_FACTOR,
                     RENDER_SLANT,
                     ROTATE_PLACEMENT,
-                    MIRROR_PLACEMENT
+                    MIRROR_PLACEMENT,
+                    INVENTORY_SCREEN_OVERLAY
+
+//                    VALIDATE_NBT,
+//                    CLEAR_OVERLAY,
+//                    VALIDATE_NBT_ONLY_SAME,
+//                    PACKET_RATE,
+//                    PACKET_TIMEOUT,
+//                    QUERY_TIMEOUT
             ));
         }
     }

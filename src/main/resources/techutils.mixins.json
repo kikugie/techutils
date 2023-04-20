@@ -7,12 +7,16 @@
   ],
   "client": [
     "BlockEntityAccessor",
+    "ClientPlayerInteractionManagerMixin",
+    "ClientPlayNetworkHandlerMixin",
     "FAPIClientPlayNetworkAddonMixin",
+    "HandledScreenMixin",
     "InGameHudMixin",
     "LitematicaGuiSchematicBrowserBaseMixin",
     "LitematicaGuiSchematicManagerMixin",
     "LitematicaWidgetSchematicBrowserMixin",
-    "MessageHandlerMixin"
+    "MessageHandlerMixin",
+    "MinecraftClientMixin"
   ],
   "injectors": {
     "defaultRequire": 1

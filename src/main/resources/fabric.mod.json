@@ -13,7 +13,7 @@
   "icon": "assets/techutils/icon.png",
   "environment": "client",
   "entrypoints": {
-    "main": [
+    "client": [
       "me.kikugie.techutils.TechUtilsMod"
     ],
     "modmenu": [
@@ -26,9 +26,9 @@
   "depends": {
     "fabricloader": ">=0.13",
     "fabric-api": "*",
-    "malilib": "~0.14",
-    "litematica": "~0.13",
-    "minecraft": "1.19.3",
+    "malilib": "~0.15",
+    "litematica": "~0.14",
+    "minecraft": "1.19.4",
     "java": ">=17"
   },
   "suggests": {

@@ -4,6 +4,10 @@ plugins {
 	id 'maven-publish'
 }
 
+loom {
+	accessWidenerPath = accessWidenerPath = file("src/main/resources/techutils.accesswidener")
+}
+
 sourceCompatibility = JavaVersion.VERSION_17
 targetCompatibility = JavaVersion.VERSION_17
 
@@ -37,6 +41,9 @@ dependencies {
 	modImplementation "curse.maven:litematica-308892:${project.litematica_file}"
 	modImplementation "io.wispforest:worldmesher:${project.worldmesher_version}"
 	include "io.wispforest:worldmesher:${project.worldmesher_version}"
+
+	implementation("com.github.LlamaLad7:MixinExtras:0.1.1")
+	annotationProcessor("com.github.LlamaLad7:MixinExtras:0.1.1")
 }
 
 processResources {

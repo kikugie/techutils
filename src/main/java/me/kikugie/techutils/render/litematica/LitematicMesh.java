@@ -74,8 +74,8 @@ public class LitematicMesh {
         for (String region : space.boxes.keySet()) {
             Box box = space.boxes.get(region);
             LitematicRegionBlockView blockView = space.regionBlockViewMap.get(region);
-            BlockPos origin = new BlockPos(box.minX, box.minY, box.minZ);
-            BlockPos end = new BlockPos(box.maxX, box.maxY, box.maxZ);
+            BlockPos origin = new BlockPos((int) box.minX, (int) box.minY, (int) box.minZ);
+            BlockPos end = new BlockPos((int) box.maxX, (int) box.maxY, (int) box.maxZ);
 
             for (BlockPos pos : BlockPos.iterate(origin, end)) {
                 BlockState state = blockView.getBlockState(pos);

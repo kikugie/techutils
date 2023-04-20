@@ -18,20 +18,13 @@ public class LitematicSpace {
         this.regionBlockViewMap = getRegionBlockViewMap(schematic);
     }
 
-    private Map<String, LitematicRegionBlockView> getRegionBlockViewMap(LitematicaSchematic schematic) {
-        Collection<String> areas = schematic.getAreas().keySet();
-        HashMap<String, LitematicRegionBlockView> containers = new HashMap<>(areas.size());
-        areas.forEach(name -> containers.put(name, new LitematicRegionBlockView(schematic.getSubRegionContainer(name), boxes.get(name))));
-        return containers;
-    }
-
-    private Map<String, Box> getConvertedBoxes(Map<String, fi.dy.masa.litematica.selection.Box> areas) {
+    public static Map<String, Box> getConvertedBoxes(Map<String, fi.dy.masa.litematica.selection.Box> areas) {
         HashMap<String, Box> boxes = new HashMap<>(areas.size());
         areas.forEach((name, region) -> boxes.put(name, new Box(region.getPos1(), region.getPos2())));
         return boxes;
     }
 
-    private Box getFullBox(Map<String, Box> boxes) {
+    public static Box getFullBox(Map<String, Box> boxes) {
         int[] dims = {0, 0, 0, 0, 0, 0};
         boxes.forEach((name, box) -> {
             dims[0] = Math.min(dims[0], (int) box.minX);
@@ -42,5 +35,12 @@ public class LitematicSpace {
             dims[5] = Math.max(dims[5], (int) box.maxZ);
         });
         return new Box(dims[0], dims[1], dims[2], dims[3], dims[4], dims[5]);
+    }
+
+    private Map<String, LitematicRegionBlockView> getRegionBlockViewMap(LitematicaSchematic schematic) {
+        Collection<String> areas = schematic.getAreas().keySet();
+        HashMap<String, LitematicRegionBlockView> containers = new HashMap<>(areas.size());
+        areas.forEach(name -> containers.put(name, new LitematicRegionBlockView(schematic.getSubRegionContainer(name), boxes.get(name))));
+        return containers;
     }
 }
