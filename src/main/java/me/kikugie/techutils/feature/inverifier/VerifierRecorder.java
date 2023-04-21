@@ -32,7 +32,7 @@ public class VerifierRecorder {
     }
 
     public static void onInventoryPacket(int syncId, List<ItemStack> contents) {
-        if (expectedSyncId == null || syncId != expectedSyncId) {
+        if (expectedSyncId == null || syncId != expectedSyncId || cachedPos == null) {
             close();
             return;
         }
