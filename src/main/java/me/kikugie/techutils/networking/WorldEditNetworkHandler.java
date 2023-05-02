@@ -3,7 +3,7 @@ package me.kikugie.techutils.networking;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import me.kikugie.techutils.TechUtilsMod;
-import me.kikugie.techutils.feature.WorldEditActionManager;
+import me.kikugie.techutils.feature.worldedit.WorldEditActionManager;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.client.MinecraftClient;

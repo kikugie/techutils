@@ -9,6 +9,7 @@
     "BlockEntityAccessor",
     "ClientPlayerInteractionManagerMixin",
     "ClientPlayNetworkHandlerMixin",
+    "DrawableHelperMixin",
     "FAPIClientPlayNetworkAddonMixin",
     "HandledScreenMixin",
     "InGameHudMixin",

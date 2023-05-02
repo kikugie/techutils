@@ -1,4 +1,4 @@
-package me.kikugie.techutils.feature;
+package me.kikugie.techutils.feature.worldedit;
 
 import fi.dy.masa.litematica.data.DataManager;
 import me.kikugie.techutils.TechUtilsMod;

@@ -2,6 +2,7 @@ package me.kikugie.techutils.render.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import fi.dy.masa.litematica.config.Configs;
+import me.kikugie.techutils.access.DrawableHelperAccessor;
 import me.kikugie.techutils.render.TransparencyBuffer;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.util.math.MatrixStack;
@@ -11,7 +12,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
 
-public class LitematicInventoryRenderer {
+public class LitematicInventoryRenderer extends DrawableHelper {
     private final int MISSING_COLOR = Configs.Colors.SCHEMATIC_OVERLAY_COLOR_MISSING.getIntegerValue();
     private final int WRONG_COLOR = Configs.Colors.SCHEMATIC_OVERLAY_COLOR_WRONG_BLOCK.getIntegerValue();
     private final int MISMATCHED_COLOR = Configs.Colors.SCHEMATIC_OVERLAY_COLOR_WRONG_STATE.getIntegerValue();
@@ -66,7 +67,7 @@ public class LitematicInventoryRenderer {
 
         RenderSystem.disableDepthTest();
         RenderSystem.colorMask(true, true, true, false);
-        DrawableHelper.fillGradient(matrices, x, y, x + 16, y + 16, color, color, 0);
+        ((DrawableHelperAccessor) this).fillGradientSafe(matrices, x, y, x + 16, y + 16, color, color);
         RenderSystem.colorMask(true, true, true, true);
         RenderSystem.enableDepthTest();
 
