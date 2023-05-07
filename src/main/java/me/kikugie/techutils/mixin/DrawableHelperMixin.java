@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(DrawableHelper.class)
 public abstract class DrawableHelperMixin implements DrawableHelperAccessor {
     @Shadow
-    protected static void fillGradient(MatrixStack matrices, int startX, int startY, int endX, int endY, int colorStart, int colorEnd) {
+    protected void fillGradient(MatrixStack matrices, int startX, int startY, int endX, int endY, int colorStart, int colorEnd) {
     }
 
     @Override

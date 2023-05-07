@@ -56,15 +56,13 @@ public class LitematicInventoryRenderer extends DrawableHelper {
     }
 
     public void drawBackground(MatrixStack matrices, int x, int y, Slot slot, int color) {
-        x += slot.x;
-        y += slot.y;
 
         matrices.push();
         matrices.loadIdentity();
 
         RenderSystem.disableDepthTest();
         RenderSystem.colorMask(true, true, true, false);
-        ((DrawableHelperAccessor) this).fillGradientSafe(matrices, x, y, x + 16, y + 16, color, color);
+        ((DrawableHelperAccessor) this).fillGradientSafe(matrices, slot.x, slot.y, slot.x + 16, slot.y + 16, color, color);
         RenderSystem.colorMask(true, true, true, true);
         RenderSystem.enableDepthTest();
 
