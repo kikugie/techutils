@@ -4,11 +4,13 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.LootableContainerBlockEntity;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -38,10 +40,16 @@ public class VerifierRecorder {
         }
         int[] hashes = new int[contents.size()];
         for (int i = 0; i < contents.size(); i++) {
-            hashes[i] = contents.get(i).hashCode();
+            ItemStack stack = contents.get(i);
+            hashes[i] = stack != null ? contents.hashCode() : ItemStack.EMPTY.hashCode();
         }
+        if (activeEntry != null) {
+            activeEntry.updateHashes(hashes);
+        }
+
         BlockState state = Objects.requireNonNull(MinecraftClient.getInstance().world).getBlockState(cachedPos);
-        activeEntry = new Entry(cachedPos, state, hashes);
+        SimpleInventory schematicInventory = ContainerStorage.getSchematicInventory(cachedPos, state);
+        activeEntry = new Entry(cachedPos, state, hashes, schematicInventory);
     }
 
     @Nullable
@@ -54,6 +62,36 @@ public class VerifierRecorder {
         expectedSyncId = null;
     }
 
-    public record Entry(BlockPos pos, BlockState state, int[] hashes) {
+    public static final class Entry {
+        public final BlockPos pos;
+        public final BlockState state;
+        @Nullable
+        public final SimpleInventory schematicInv;
+        public int[] hashes;
+        private boolean matching = false;
+
+        public Entry(BlockPos pos, BlockState state, int[] hashes, @Nullable SimpleInventory schematicInv) {
+            this.pos = pos;
+            this.state = state;
+            this.schematicInv = schematicInv;
+            updateHashes(hashes);
+        }
+
+        public void updateHashes(int[] hashes) {
+            this.hashes = hashes;
+            if (schematicInv == null)
+                return;
+
+            int[] schemHashes = new int[schematicInv.size()];
+            for (int i = 0; i < schematicInv.size(); i++) {
+                ItemStack stack = schematicInv.getStack(i);
+                schemHashes[i] = stack != null ? stack.hashCode() : ItemStack.EMPTY.hashCode();
+            }
+            this.matching = Arrays.equals(hashes, schemHashes);
+        }
+
+        public boolean matching() {
+            return matching;
+        }
     }
 }

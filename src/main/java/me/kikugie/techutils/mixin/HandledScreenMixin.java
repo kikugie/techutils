@@ -1,24 +1,16 @@
 package me.kikugie.techutils.mixin;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import me.kikugie.techutils.feature.inverifier.ContainerStorage;
 import me.kikugie.techutils.feature.inverifier.VerifierRecorder;
-import me.kikugie.techutils.render.TransparencyBuffer;
 import me.kikugie.techutils.render.gui.LitematicInventoryRenderer;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
-import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -46,11 +38,8 @@ public abstract class HandledScreenMixin extends Screen {
         if (!me.kikugie.techutils.config.Configs.LitematicConfigs.INVENTORY_SCREEN_OVERLAY.getBooleanValue()) return;
 
         VerifierRecorder.Entry entry = VerifierRecorder.getActive();
-        if (entry != null) {
-            SimpleInventory schematicInventory = ContainerStorage.getSchematicInventory(entry.pos(), entry.state());
-            if (schematicInventory != null) {
-                litematicItemRenderer = new LitematicInventoryRenderer(handler, schematicInventory);
-            }
+        if (entry != null && entry.schematicInv != null) {
+            litematicItemRenderer = new LitematicInventoryRenderer(entry.schematicInv);
         }
     }
 

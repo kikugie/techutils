@@ -96,15 +96,26 @@ public class Configs implements IConfigHandler {
     }
 
     public static class LitematicConfigs extends BaseConfigs {
-        public static final ConfigBoolean RENDER_PREVIEW = new ConfigBoolean("renderPreview", true, "Show 3D render of schematic");
-        public static final ConfigBoolean OVERRIDE_PREVIEW = new ConfigBoolean("overridePreview", false, "Show render even if schematic has its own preview");
+        public static final ConfigBoolean RENDER_PREVIEW = new ConfigBoolean("renderPreview", true, "Show 3D render of selected litematic in Load Schematics menu\n(Works only for .litematic files)");
+        public static final ConfigBoolean OVERRIDE_PREVIEW = new ConfigBoolean("overridePreview", false, "Show 3D render even if litematic has its own preview");
         public static final ConfigOptionList RENDER_ROTATION_MODE = new ConfigOptionList("rotationMode", LitematicRenderManager.RotationMode.DRAG,
-                "- Mouse position: rotation follows mouse position;\n- Free spin: rotate at constant speed;\n- Drag: drag mouse in viewport;\n- Scroll: scroll mouse in viewport");
-        public static final ConfigDouble ROTATION_FACTOR = new ConfigDouble("rotationFactor", 1, 0.1, 10, "Rotation speed modifier");
-        public static final ConfigInteger RENDER_SLANT = new ConfigInteger("renderSlant", 30, 0, 60, "Slant of the render");
+                """
+                        Configure model rotation mode:
+                        - Mouse position: rotation follows horizontal mouse position on the screen;
+                        - Free spin: rotate model at constant speed;
+                        - Drag: left-click and drag mouse in the viewport viewport;
+                        - Scroll: scroll mouse wheel in the viewport.""");
+        public static final ConfigDouble ROTATION_FACTOR = new ConfigDouble("rotationFactor", 1, 0.1, 10, "Set model rotation sensitivity");
+        public static final ConfigInteger RENDER_SLANT = new ConfigInteger("renderSlant", 30, 0, 60, "Set model vertical slant");
         public static final ConfigHotkey ROTATE_PLACEMENT = new ConfigHotkey("rotatePlacement", "R", "Rotate selected placement clockwise");
         public static final ConfigHotkey MIRROR_PLACEMENT = new ConfigHotkey("mirrorPlacement", "Y", "Cycle through selected placement's mirroring options");
-        public static final ConfigBooleanHotkeyed INVENTORY_SCREEN_OVERLAY = new ConfigBooleanHotkeyed("inventoryScreenOverlay", true, "I, O", "Show schematic overlay in inventory screen");
+        public static final ConfigBooleanHotkeyed INVENTORY_SCREEN_OVERLAY = new ConfigBooleanHotkeyed("inventoryScreenOverlay", true, "I, O", """
+                Show layout of the container according to the litematic placement.
+                Item colors match your placement block colors. By default its:
+                - Light blue: missing item;
+                - Orange: mismatched amount or nbt data;
+                - Magenta: extra item that shouldn't be present;
+                - Red: wrong item type.""");
         public static final ConfigHotkey VALIDATE_NBT = new ConfigHotkey("validateNbt", "", "");
         public static final ConfigHotkey CLEAR_OVERLAY = new ConfigHotkey("clearOverlay", "", "");
         public static final ConfigBoolean VALIDATE_NBT_ONLY_SAME = new ConfigBoolean("validateNbtOnlySameBlock", true, "Nbt validator will process a block if its placed as in schematic");
@@ -134,9 +145,11 @@ public class Configs implements IConfigHandler {
     }
 
     public static class WorldEditConfigs extends BaseConfigs {
-        public static final ConfigBooleanHotkeyed AUTO_WE_SYNC = new ConfigBooleanHotkeyed("autoWeSync", false, "", "Synchronise WorldEdit selection n ticks after configured value");
-        public static final ConfigInteger AUTO_WE_SYNC_TICKS = new ConfigInteger("autoWeSyncTicks", 10, 1, 1000, false, "Ticks to wait before synchronising WorldEdit selection");
-        public static final ConfigBoolean AUTO_DISABLE_UPDATES = new ConfigBoolean("autoDisableUpdates", true, "Automatically disable WorldEdit neighbour updates on log in");
+        public static final ConfigBooleanHotkeyed AUTO_WE_SYNC = new ConfigBooleanHotkeyed("autoWeSync", true, "", "Synchronise WorldEdit region to active Litematica selection");
+        public static final ConfigInteger AUTO_WE_SYNC_TICKS = new ConfigInteger("autoWeSyncTicks", 10, 1, 1000, false, "Ticks to wait before synchronising WorldEdit selection\n" +
+                "(Increase in case of poor connection or if you get kicked because of spam)");
+        public static final ConfigBoolean AUTO_DISABLE_UPDATES = new ConfigBoolean("autoDisableUpdates", true, "Automatically disable WorldEdit neighbour updates on server join\n" +
+                "(Has the same effect as running //perf neighbors off)");
 
         public WorldEditConfigs() {
             super(ImmutableList.of(
@@ -148,11 +161,13 @@ public class Configs implements IConfigHandler {
     }
 
     public static class MiscConfigs extends BaseConfigs {
-        public static final ConfigBoolean MOJANK = new ConfigBoolean("mojank", true, "No description provided");
-        public static final ConfigBooleanHotkeyed COMPACT_SCOREBOARD = new ConfigBooleanHotkeyed("compactScoreboard", false, "F6", "Show scoreboard values in compact notation.\nFor example: 123456 -> 123.4K");
+        public static final ConfigHotkey OPEN_CONFIG = new ConfigHotkey("openConfig", "U, C", "Opens this screen if none other is open");
+        public static final ConfigBooleanHotkeyed COMPACT_SCOREBOARD = new ConfigBooleanHotkeyed("compactScoreboard", false, "F6", "Show scoreboard values in compact notation.\n" +
+                "For example: 123456 -> 123.4K");
 
         public MiscConfigs() {
             super(ImmutableList.of(
+                    OPEN_CONFIG,
                     COMPACT_SCOREBOARD
             ));
         }

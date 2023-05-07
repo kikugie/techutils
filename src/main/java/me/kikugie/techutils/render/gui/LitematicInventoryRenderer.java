@@ -9,7 +9,6 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
 
 public class LitematicInventoryRenderer extends DrawableHelper {
@@ -17,12 +16,10 @@ public class LitematicInventoryRenderer extends DrawableHelper {
     private final int WRONG_COLOR = Configs.Colors.SCHEMATIC_OVERLAY_COLOR_WRONG_BLOCK.getIntegerValue();
     private final int MISMATCHED_COLOR = Configs.Colors.SCHEMATIC_OVERLAY_COLOR_WRONG_STATE.getIntegerValue();
     private final int EXTRA_COLOR = Configs.Colors.SCHEMATIC_OVERLAY_COLOR_EXTRA.getIntegerValue();
-    private final ScreenHandler handler;
     private final Inventory inventory;
     private boolean renderCurrentItemTransparent = false;
 
-    public LitematicInventoryRenderer(ScreenHandler handler, Inventory inventory) {
-        this.handler = handler;
+    public LitematicInventoryRenderer(Inventory inventory) {
         this.inventory = inventory;
     }
 
