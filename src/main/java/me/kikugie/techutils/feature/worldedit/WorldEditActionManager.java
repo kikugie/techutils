@@ -72,7 +72,7 @@ public class WorldEditActionManager {
         syncTimer = -1;
         updateRegion(box);
         TechUtilsMod.LOGGER.debug("WorldEdit synced!");
-        if (AUTO_WE_SYNC_FEEDBACK.getBooleanValue() = true) {
+        if (AUTO_WE_SYNC_FEEDBACK.getBooleanValue() == true) {
         client.player.sendMessage(Text.translatable("techutils.feedback.wesync.success"), true);
         }
     }
