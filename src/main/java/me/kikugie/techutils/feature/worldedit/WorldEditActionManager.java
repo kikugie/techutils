@@ -71,8 +71,10 @@ public class WorldEditActionManager {
 
         syncTimer = -1;
         updateRegion(box);
+        if (AUTO_WE_SYNC_FEEDBACK.getBooleanValue() = true) {
         TechUtilsMod.LOGGER.debug("WorldEdit synced!");
         client.player.sendMessage(Text.translatable("techutils.feedback.wesync.success"), true);
+        }
     }
 
     public void updateRegion(fi.dy.masa.litematica.selection.Box box) {
