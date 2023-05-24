@@ -148,7 +148,7 @@ public class Configs implements IConfigHandler {
         public static final ConfigBooleanHotkeyed AUTO_WE_SYNC = new ConfigBooleanHotkeyed("autoWeSync", true, "", "Synchronise WorldEdit region to active Litematica selection");
         public static final ConfigInteger AUTO_WE_SYNC_TICKS = new ConfigInteger("autoWeSyncTicks", 10, 1, 1000, false, "Ticks to wait before synchronising WorldEdit selection\n" +
                 "(Increase in case of poor connection or if you get kicked because of spam)");
-                public static final ConfigBoolean AUTO_WE_SYNC_FEEDBACK = new ConfigBoolean("autoWeSyncFeedback", true, "Shows an actionbar message when WorldEdit region is syncronised")
+                public static final ConfigBoolean AUTO_WE_SYNC_FEEDBACK = new ConfigBoolean("autoWeSyncFeedback", true, "Shows an actionbar message when WorldEdit region is syncronised");
         public static final ConfigBoolean AUTO_DISABLE_UPDATES = new ConfigBoolean("autoDisableUpdates", true, "Automatically disable WorldEdit neighbour updates on server join\n" +
                 "(Has the same effect as running //perf neighbors off)");
 
