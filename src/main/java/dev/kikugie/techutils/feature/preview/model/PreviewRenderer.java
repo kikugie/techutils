@@ -80,10 +80,10 @@ public class PreviewRenderer {
         RenderSystem.setProjectionMatrix(projectionMatrix, VertexSorter.BY_Z);
         matrices.push();
         matrices.loadIdentity();
-//        context.enableScissor(x + 1, y + 1, x + size - 2, y + size - 2);
+        context.enableScissor(x + 1, y + 1, x + size - 2, y + size - 2);
 
         // Position
-        translateToCoords(matrices, (int) (x + this.profile.dx() + size / 2), (int) (y + +this.profile.dy() + size / 2));
+        translateToCoords(matrices, (int) (x + this.profile.dx() + size / 2), (int) (y + this.profile.dy() + size / 2));
 
         // Rotation
         matrices.multiply(RotationAxis.POSITIVE_X.rotation((float) this.profile.slant()));
@@ -96,7 +96,7 @@ public class PreviewRenderer {
         RenderSystem.applyModelViewMatrix();
         RenderSystem.runAsFancy(this::drawEntities);
         drawModel(matrices);
-//        context.disableScissor();
+        context.disableScissor();
         matrices.pop();
 
         RenderSystem.applyModelViewMatrix();
