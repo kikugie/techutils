@@ -31,5 +31,6 @@
     "minecraft": "${minecraft_dependency}",
     "malilib": "${malilib_dependency}",
     "litematica": "${litematica_dependency}"
-  }
+  },
+  "accessWidener": "techutils.accesswidener"
 }
