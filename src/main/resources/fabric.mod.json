@@ -1,38 +1,35 @@
 {
   "schemaVersion": 1,
-  "id": "techutils",
+  "id": "${id}",
   "version": "${version}",
-  "name": "Technical Utils",
+  "name": "${name}",
   "description": "",
   "authors": [
     "KikuGie"
   ],
   "contact": {
   },
-  "license": "MIT",
+  "license": "LGPL-3.0",
   "icon": "assets/techutils/icon.png",
   "environment": "client",
   "entrypoints": {
     "client": [
-      "me.kikugie.techutils.TechUtilsMod"
+      "dev.kikugie.techutils.TechUtilsMod"
     ],
     "modmenu": [
-      "me.kikugie.techutils.config.ModMenuIntegration"
+      "dev.kikugie.techutils.config.modmenu.ModMenuIntegration"
+    ],
+    "preLaunch": [
+      "com.llamalad7.mixinextras.MixinExtrasBootstrap::init"
     ]
   },
   "mixins": [
     "techutils.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">=0.13",
-    "fabric-api": "*",
-    "malilib": "~0.15",
-    "litematica": "~0.14",
-    "minecraft": "1.19.4",
-    "java": ">=17"
-  },
-  "accessWidener": "techutils.accesswidener",
-  "suggests": {
-    "isometric-renders": "*"
+    "fabricloader": ">=0.11.4",
+    "minecraft": "${minecraft_dependency}",
+    "malilib": "${malilib_dependency}",
+    "litematica": "${litematica_dependency}"
   }
 }

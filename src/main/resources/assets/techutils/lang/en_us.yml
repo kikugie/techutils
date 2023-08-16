@@ -1,0 +1,32 @@
+techutils:
+  config:
+    .: "Tecnnical Utilities"
+    category:
+      litematica: "Litematica"
+      tweakeroo: "Tweakeroo"
+      worldedit: "WorldEdit"
+      misc: "Miscellaneous"
+    preview:
+      profile:
+        drag:
+          .: "DRAG"
+          description: "TODO"
+        pos:
+          .: "POSITION"
+          description: "TODO"
+        spin:
+          .: "SPIN"
+          description: "TODO"
+  feature:
+    worldeditsync:
+      success: "Synced WorldEdit region"
+    givefullinv:
+      nested_stack: "Cannot nest non-empty container!"
+      nested_box: "Cannot nest shulker boxes!"
+      no_item: "Main hand is empty, nothing to insert!"
+      not_creative_enough: "Must be in creative mode!"
+litematica:
+  info:
+    schematic_manager:
+      preview:
+        right_click_to_cancel: "- Right click the button to cancel a pending preview operation;\n- Ctrl + click to select a preview image."

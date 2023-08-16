@@ -1,23 +1,25 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "me.kikugie.techutils.mixin",
-  "compatibilityLevel": "JAVA_17",
+  "package": "dev.kikugie.techutils.mixin",
+  "compatibilityLevel": "JAVA_8",
   "mixins": [
   ],
   "client": [
-    "BlockEntityAccessor",
-    "ClientPlayerInteractionManagerMixin",
-    "ClientPlayNetworkHandlerMixin",
-    "DrawableHelperMixin",
-    "FAPIClientPlayNetworkAddonMixin",
-    "HandledScreenMixin",
-    "InGameHudMixin",
-    "LitematicaGuiSchematicBrowserBaseMixin",
-    "LitematicaGuiSchematicManagerMixin",
-    "LitematicaWidgetSchematicBrowserMixin",
-    "MessageHandlerMixin",
-    "MinecraftClientMixin"
+    "containerscan.ClientPlayerInteractionManagerMixin",
+    "containerscan.HandledScreenMixin",
+    "containerscan.MinecraftClientMixin",
+    "containerscan.ScreenHandlerAccessor",
+    "containerscan.WorldRendererAccessor",
+    "containerscan.WorldRendererMixin",
+    "mod.fapi.ClientPlayNetworkAddonMixin",
+    "mod.litematica.GuiSchematicBrowserBaseMixin",
+    "mod.litematica.GuiSchematicManagerMixin",
+    "mod.litematica.WidgetSchematicBrowserMixin",
+    "preview.BlockEntityAccessor",
+    "preview.PostFluidRendererMixin",
+    "preview.PreFluidRendererMixin",
+    "worldeditsync.ClientPlayNetworkHandlerMixin"
   ],
   "injectors": {
     "defaultRequire": 1
