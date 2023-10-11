@@ -2,6 +2,7 @@ package dev.kikugie.techutils.mixin.mod.litematica;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;
+import dev.kikugie.techutils.client.feature.preview.PreviewConfig;
 import dev.kikugie.techutils.client.feature.preview.render.PreviewInvoker;
 import fi.dy.masa.litematica.gui.GuiSchematicBrowserBase;
 import fi.dy.masa.litematica.gui.widgets.WidgetSchematicBrowser;
@@ -29,6 +30,10 @@ public class WidgetSchematicBrowserMixin {
             @Local(ordinal = 1) int y,
             @Local(ordinal = 2) int height
     ) {
+        if (!PreviewConfig.renderPreview.getBooleanValue())
+            return original;
+        if (!PreviewConfig.overridePreview.getBooleanValue() && original != null)
+            return original;
         ((PreviewInvoker) this.parent).drawPreview(entry, drawContext, x + 4, y + 14, height - y - 2);
         return null;
     }

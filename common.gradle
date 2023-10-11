@@ -163,6 +163,10 @@ tasks.withType(JavaCompile).configureEach {
     options.compilerArgs << "-Xlint:deprecation" << "-Xlint:unchecked"
 }
 
+test {
+    useJUnitPlatform()
+}
+
 java {
     withSourcesJar()
 }
