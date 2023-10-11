@@ -31,11 +31,4 @@ bin/
 # fabric
 
 run/
-
-# java
-
-hs_err_*.log
-replay_*.log
-*.hprof
-*.jfr
-/server/
+.env

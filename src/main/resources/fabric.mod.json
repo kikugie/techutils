@@ -14,13 +14,10 @@
   "environment": "client",
   "entrypoints": {
     "client": [
-      "dev.kikugie.techutils.TechUtilsMod"
-    ],
-    "modmenu": [
-      "dev.kikugie.techutils.config.modmenu.ModMenuIntegration"
-    ],
-    "preLaunch": [
-      "com.llamalad7.mixinextras.MixinExtrasBootstrap::init"
+      {
+        "adapter": "kotlin",
+        "value": "dev.kikugie.techutils.client.TechUtilsClient"
+      }
     ]
   },
   "mixins": [
@@ -31,6 +28,5 @@
     "minecraft": "${minecraft_dependency}",
     "malilib": "${malilib_dependency}",
     "litematica": "${litematica_dependency}"
-  },
-  "accessWidener": "techutils.accesswidener"
+  }
 }
