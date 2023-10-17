@@ -82,6 +82,8 @@ dependencies {
 
     modImplementation "io.wispforest:worldmesher:${project.worldmesher_version}"
     modImplementation "maven.modrinth:isometric-renders:${project.isometric_renders_version}"
+    modCompileOnly "maven.modrinth:axiom:IMAETzr8"
+    modCompileOnly "com.github.moulberry:AxiomClientAPI:1.0.5.3"
     modImplementation "io.wispforest:owo-lib:${project.owo_version}"
 
     modRuntimeOnly "com.sk89q.worldedit:worldedit-fabric-mc${project.worldedit_version}"

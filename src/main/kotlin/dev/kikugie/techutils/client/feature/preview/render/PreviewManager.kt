@@ -1,7 +1,7 @@
 package dev.kikugie.techutils.client.feature.preview.render
 
-import dev.kikugie.techutils.client.TechUtilsClient
 import dev.kikugie.techutils.client.feature.preview.PreviewConfig
+import dev.kikugie.techutils.client.util.render.ScissorStack
 import fi.dy.masa.malilib.gui.widgets.WidgetFileBrowserBase.DirectoryEntry
 import fi.dy.masa.malilib.render.RenderUtils
 import fi.dy.masa.malilib.util.Color4f
@@ -12,19 +12,19 @@ import kotlin.math.ln
 import kotlin.math.min
 import kotlin.math.pow
 
-open class PreviewManager : PreviewInvoker {
+open class PreviewManager {
     private val bgColor = Color4f(0F, 0F, 0F, 0.627451F)
     private val borderColor = Color4f(0.6F, 0.6F, 0.6F, 1F)
     private val loadingText = Text.of("Loading...")
-    private val cache: MutableMap<DirectoryEntry, LitematicRenderable?> = mutableMapOf()
-    private var active: LitematicRenderable? = null
+    private val cache: MutableMap<DirectoryEntry, StructureRenderable?> = mutableMapOf()
+    private var active: StructureRenderable? = null
 
     private var x = 0
     private var y = 0
     private var size = 0
     private var drag = false
 
-    override fun drawPreview(entry: DirectoryEntry?, context: DrawContext, x: Int, y: Int, size: Int) {
+    fun drawPreview(entry: DirectoryEntry?, scissors: ScissorStack, x: Int, y: Int, size: Int) {
         if (entry == null) return
         active = cache[entry]
 
@@ -33,18 +33,6 @@ open class PreviewManager : PreviewInvoker {
         this.size = size
 
         RenderUtils.drawOutlinedBox(x, y, size, size, bgColor.intValue, borderColor.intValue)
-        if (cache.containsKey(entry)) {
-            cache[entry]?.drawModel(x, y, size) ?: drawLoading(context, x, y, size)
-            return
-        }
-
-        val renderableFuture = LitematicRenderable.from(entry)
-        if (renderableFuture == null) {
-            cache[entry] = null
-            TechUtilsClient.LOGGER.warn("Failed to create model for $entry")
-            return
-        }
-        renderableFuture.thenAccept { cache[entry] = it }
     }
 
     fun onScroll(x: Double, y: Double, amount: Double) {
@@ -100,5 +88,9 @@ open class PreviewManager : PreviewInvoker {
             textWidth,
             borderColor.intValue
         )
+    }
+
+    interface Accessor {
+        val previewManager: PreviewManager
     }
 }

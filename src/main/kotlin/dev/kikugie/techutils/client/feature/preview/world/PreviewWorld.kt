@@ -6,6 +6,7 @@ import fi.dy.masa.litematica.world.ChunkSchematic
 import net.minecraft.block.Block
 import net.minecraft.block.BlockState
 import net.minecraft.client.MinecraftClient
+import net.minecraft.client.world.ClientWorld
 import net.minecraft.entity.Entity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.fluid.Fluid
@@ -20,40 +21,37 @@ import net.minecraft.scoreboard.Scoreboard
 import net.minecraft.sound.SoundCategory
 import net.minecraft.sound.SoundEvent
 import net.minecraft.util.math.*
-import net.minecraft.util.profiler.Profiler
+import net.minecraft.world.Difficulty
 import net.minecraft.world.LightType
-import net.minecraft.world.MutableWorldProperties
 import net.minecraft.world.World
 import net.minecraft.world.biome.Biome
 import net.minecraft.world.biome.BiomeKeys
 import net.minecraft.world.chunk.ChunkManager
-import net.minecraft.world.dimension.DimensionType
 import net.minecraft.world.entity.EntityLookup
 import net.minecraft.world.event.GameEvent
 import net.minecraft.world.tick.QueryableTickScheduler
 import java.util.function.Consumer
 import java.util.function.Predicate
-import java.util.function.Supplier
 
-class LitematicRenderWorld(
-    properties: MutableWorldProperties,
-    dimension: RegistryEntry<DimensionType>,
-    supplier: Supplier<Profiler>,
-) : World(
-    properties,
+/**
+ * A world with minimal functionality for rendering schematics.
+ */
+class PreviewWorld(private val client: MinecraftClient) : World(
+    PROPERTIES,
     REGISTRY_KEY,
-    MinecraftClient.getInstance().networkHandler!!.registryManager,
-    dimension,
-    supplier,
+    client.networkHandler!!.registryManager,
+    client.world!!.dimensionEntry,
+    { client.profiler },
     true,
     false,
     0L,
     0
 ) {
-    private val client = MinecraftClient.getInstance()
     private val biome: RegistryEntry<Biome>
-    private val chunkManager: LitematicChunkManager = LitematicChunkManager(this)
+    private val chunkManager: PreviewChunkManager = PreviewChunkManager(this)
     private var nextEntityId = 0
+    var blocks = 0
+        private set
 
     init {
         biome = client.world!!.registryManager.get(RegistryKeys.BIOME).entryOf(BiomeKeys.PLAINS)
@@ -71,7 +69,9 @@ class LitematicRenderWorld(
     }
 
     override fun setBlockState(pos: BlockPos, state: BlockState, flags: Int): Boolean {
-        return this.getChunk(pos.x shr 4, pos.z shr 4).setBlockState(pos, state, false) != null
+        if (!state.isAir) blocks++
+        chunkManager.loadChunk(pos.x shr 4, pos.z shr 4)
+        return getChunk(pos.x shr 4, pos.z shr 4).setBlockState(pos, state, false) != null
     }
 
     override fun spawnEntity(entity: Entity): Boolean {
@@ -215,5 +215,6 @@ class LitematicRenderWorld(
 
     companion object {
         val REGISTRY_KEY: RegistryKey<World> = RegistryKey.of(RegistryKeys.WORLD, Reference.id("render_world"))
+        val PROPERTIES = ClientWorld.Properties(Difficulty.PEACEFUL, false, true)
     }
 }

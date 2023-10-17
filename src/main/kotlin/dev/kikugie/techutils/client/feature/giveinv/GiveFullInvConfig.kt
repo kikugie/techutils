@@ -30,9 +30,6 @@ object GiveFullInvConfig : ConfigGroup {
             Here be cats and scratches!
             """.trimIndent()
     )
-    override fun include(): Boolean {
-        return true
-    }
 
     override fun getConfigs(): Collection<IConfigBase> {
         return listOf(giveInvHotkey, bundleFill, fillSafety)

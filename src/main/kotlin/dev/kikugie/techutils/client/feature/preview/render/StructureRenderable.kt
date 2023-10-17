@@ -5,30 +5,24 @@ import com.glisco.isometricrenders.render.Renderable
 import com.glisco.isometricrenders.render.RenderableDispatcher
 import com.mojang.blaze3d.systems.RenderSystem
 import dev.kikugie.techutils.client.feature.preview.PreviewConfig
-import dev.kikugie.techutils.client.feature.preview.world.LitematicRenderWorld
-import fi.dy.masa.litematica.schematic.LitematicaSchematic
-import fi.dy.masa.litematica.schematic.placement.SchematicPlacement
-import fi.dy.masa.litematica.util.FileType
-import fi.dy.masa.malilib.gui.widgets.WidgetFileBrowserBase.DirectoryEntry
+import dev.kikugie.techutils.client.feature.preview.Structure
+import dev.kikugie.techutils.client.feature.preview.world.PreviewWorld
+import dev.kikugie.techutils.client.util.render.ScissorStack
 import io.wispforest.owo.ui.container.FlowLayout
 import io.wispforest.worldmesher.WorldMesh
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.util.math.MatrixStack
-import net.minecraft.client.world.ClientWorld
-import net.minecraft.util.Util
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.MathHelper
 import net.minecraft.util.math.Vec3i
-import net.minecraft.world.Difficulty
-import java.util.concurrent.CompletableFuture
 import kotlin.math.cos
 import kotlin.math.max
 import kotlin.math.tan
 
-data class LitematicRenderable(
+data class StructureRenderable(
     val mesh: WorldMesh,
-    val litematic: LitematicaSchematic,
-    val world: LitematicRenderWorld
+    val world: PreviewWorld,
+    val scissors: ScissorStack
 ) : AreaRenderable(mesh) {
     private val properties = LitematicPropertyBundle()
     private val client = MinecraftClient.getInstance()
@@ -76,22 +70,14 @@ data class LitematicRenderable(
     }
 
     override fun prepare() {
-        scissor(x + 1, y + 1, size - 2)
+        scissors.pushDirect(x, y, size, size)
+        scissors.enable()
         super.prepare()
     }
 
     fun shift(dx: Double, dy: Double) {
         this.dx += dx
         this.dy += dy
-    }
-
-    private fun scissor(x: Int, y: Int, size: Int) {
-        val window = client.window
-        val d = window.scaleFactor
-        val e = (x * d).toInt()
-        val f = (window.framebufferHeight - (y + size) * d).toInt()
-        val g = (size * d).toInt()
-        RenderSystem.enableScissor(e, f, max(0, g), max(0, g))
     }
 
     private fun translate(matrices: MatrixStack, x: Int, y: Int) {
@@ -102,7 +88,8 @@ data class LitematicRenderable(
     }
 
     override fun cleanUp() {
-        RenderSystem.disableScissor()
+        scissors.disable()
+        scissors.pop()
         super.cleanUp()
     }
 
@@ -111,45 +98,14 @@ data class LitematicRenderable(
     }
 
     companion object {
-        fun from(entry: DirectoryEntry): CompletableFuture<LitematicRenderable>? {
-            val litematic =
-                LitematicaSchematic.createFromFile(entry.directory, entry.name, FileType.LITEMATICA_SCHEMATIC)
-            return if (litematic != null) {
-                of(litematic)
-            } else {
-                null
-            }
-        }
-
-        fun of(litematic: LitematicaSchematic): CompletableFuture<LitematicRenderable> {
-            val executor = Util.getMainWorkerExecutor()
-            return CompletableFuture.supplyAsync({
-                createWorld(litematic)
-            }, executor).thenApplyAsync({
-                createRenderable(litematic, it)
-            }, executor)
-        }
-
-        private fun createWorld(litematic: LitematicaSchematic): LitematicRenderWorld {
-            val client = MinecraftClient.getInstance()
-            val placement = SchematicPlacement.createForSchematicConversion(litematic, BlockPos.ORIGIN)
-            val world = LitematicRenderWorld(
-                ClientWorld.Properties(Difficulty.PEACEFUL, false, true),
-                client.world!!.dimensionEntry
-            ) { client.profiler }
-            world.loadChunks(placement.origin, litematic.metadata.enclosingSize)
-            litematic.placeToWorld(world, placement, false, false)
-            return world
-        }
-
-        private fun createRenderable(litematic: LitematicaSchematic, world: LitematicRenderWorld): LitematicRenderable {
-            val size = BlockPos(litematic.metadata.enclosingSize).subtract(Vec3i(1, 1, 1))
+        fun from(structure: Structure, scissors: ScissorStack): StructureRenderable {
+            val size = BlockPos(structure.metadata.size).subtract(Vec3i(1, 1, 1))
             val mesh = WorldMesh.Builder(
-                world,
+                structure.world,
                 BlockPos.ORIGIN,
                 size
-            ) { _, _, _ -> world.allEntities }.build()
-            return LitematicRenderable(mesh, litematic, world)
+            ) { _, _, _ -> structure.world.allEntities }
+            return StructureRenderable(mesh.build(), structure.world, scissors)
         }
     }
 

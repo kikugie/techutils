@@ -1,25 +1,28 @@
 package dev.kikugie.techutils.mixin.mod.litematica;
 
-import dev.kikugie.techutils.client.feature.preview.render.PreviewInvoker;
+import dev.kikugie.techutils.client.feature.preview.PreviewConfig;
 import dev.kikugie.techutils.client.feature.preview.render.PreviewManager;
+import dev.kikugie.techutils.client.feature.litegui.browser.StructureBrowserWidget;
 import fi.dy.masa.litematica.gui.GuiSchematicBrowserBase;
 import fi.dy.masa.litematica.gui.widgets.WidgetSchematicBrowser;
 import fi.dy.masa.malilib.gui.GuiListBase;
+import fi.dy.masa.malilib.gui.interfaces.ISelectionListener;
 import fi.dy.masa.malilib.gui.widgets.WidgetDirectoryEntry;
 import fi.dy.masa.malilib.gui.widgets.WidgetFileBrowserBase;
 import me.fallenbreath.conditionalmixin.api.annotation.Condition;
 import me.fallenbreath.conditionalmixin.api.annotation.Restriction;
-import net.minecraft.client.gui.DrawContext;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Redirect;
 
 /**
  * Stores the preview render manager in the schematic browser. Previews are reset when the browser is closed.
  */
 @Restriction(require = @Condition("isometric-renders"))
 @Mixin(value = GuiSchematicBrowserBase.class, remap = false)
-public abstract class GuiSchematicBrowserBaseMixin extends GuiListBase<WidgetFileBrowserBase.DirectoryEntry, WidgetDirectoryEntry, WidgetSchematicBrowser> implements PreviewInvoker {
+public abstract class GuiSchematicBrowserBaseMixin extends GuiListBase<WidgetFileBrowserBase.DirectoryEntry, WidgetDirectoryEntry, WidgetSchematicBrowser> implements PreviewManager.Accessor {
     @Unique
     private final PreviewManager previewManager = new PreviewManager();
 
@@ -27,9 +30,17 @@ public abstract class GuiSchematicBrowserBaseMixin extends GuiListBase<WidgetFil
         super(listX, listY);
     }
 
-    @Unique
-    public void drawPreview(WidgetFileBrowserBase.DirectoryEntry entry, @NotNull DrawContext context, int x, int y, int size) {
-        this.previewManager.drawPreview(entry, context, x, y, size);
+    @Redirect(method = "createListWidget(II)Lfi/dy/masa/litematica/gui/widgets/WidgetSchematicBrowser;", at = @At(value = "NEW", target = "(IIIILfi/dy/masa/litematica/gui/GuiSchematicBrowserBase;Lfi/dy/masa/malilib/gui/interfaces/ISelectionListener;)Lfi/dy/masa/litematica/gui/widgets/WidgetSchematicBrowser;"))
+    private WidgetSchematicBrowser useCustomWidget(int x, int y, int width, int height, GuiSchematicBrowserBase parent, ISelectionListener<WidgetFileBrowserBase.DirectoryEntry> selectionListener) {
+        return (PreviewConfig.customMetadata.getBooleanValue()) ?
+                new StructureBrowserWidget(x, y, width, height, parent, selectionListener) :
+                new WidgetSchematicBrowser(x, y, width, height, parent, selectionListener);
+    }
+
+    @NotNull
+    @Override
+    public PreviewManager getPreviewManager() {
+        return this.previewManager;
     }
 
     @Override
@@ -53,6 +64,9 @@ public abstract class GuiSchematicBrowserBaseMixin extends GuiListBase<WidgetFil
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
         this.previewManager.onDrag(mouseX, mouseY, deltaX, deltaY, button);
+        if (getListWidget() instanceof StructureBrowserWidget browserWidget) {
+            browserWidget.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
+        }
         return super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
     }
 }

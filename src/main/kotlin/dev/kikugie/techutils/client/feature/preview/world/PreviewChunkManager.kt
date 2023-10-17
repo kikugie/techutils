@@ -12,7 +12,7 @@ import net.minecraft.world.chunk.ChunkStatus
 import net.minecraft.world.chunk.light.LightingProvider
 import java.util.function.BooleanSupplier
 
-class LitematicChunkManager(private val world: LitematicRenderWorld) : ChunkManager() {
+class PreviewChunkManager(private val world: PreviewWorld) : ChunkManager() {
     private val emptyChunk: ChunkSchematic = ChunkSchematic(world, ChunkPos(0, 0))
     private val lightingProvider: LightingProvider
     @JvmField
@@ -23,6 +23,7 @@ class LitematicChunkManager(private val world: LitematicRenderWorld) : ChunkMana
     }
 
     fun loadChunk(chunkX: Int, chunkZ: Int) {
+        if (loadedChunks.contains(ChunkPos.toLong(chunkX, chunkZ))) return
         val chunk = ChunkSchematic(world, ChunkPos(chunkX, chunkZ))
         loadedChunks.put(ChunkPos.toLong(chunkX, chunkZ), chunk)
     }
@@ -35,8 +36,8 @@ class LitematicChunkManager(private val world: LitematicRenderWorld) : ChunkMana
         return loadedChunks.getOrDefault(ChunkPos.toLong(x, z), if (create) emptyChunk else null)
     }
 
-    fun getChunkIfExists(chunkX: Int, chunkZ: Int): ChunkSchematic {
-        return loadedChunks[ChunkPos.toLong(chunkX, chunkZ)] as ChunkSchematic
+    fun getChunkIfExists(chunkX: Int, chunkZ: Int): ChunkSchematic? {
+        return loadedChunks[ChunkPos.toLong(chunkX, chunkZ)]
     }
 
     override fun tick(shouldKeepTicking: BooleanSupplier, tickChunks: Boolean) {}

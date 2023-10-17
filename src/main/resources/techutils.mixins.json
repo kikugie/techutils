@@ -9,7 +9,8 @@
   "client": [
     "mod.litematica.GuiSchematicBrowserBaseMixin",
     "mod.litematica.GuiSchematicManagerMixin",
-    "mod.litematica.WidgetSchematicBrowserMixin"
+    "mod.litematica.widget.PreviewWidgetSchematicBrowserMixin",
+    "mod.litematica.widget.WidgetFileBrowserBaseAccessor"
   ],
   "injectors": {
     "defaultRequire": 1
