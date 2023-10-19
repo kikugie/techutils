@@ -1,11 +1,11 @@
-package dev.kikugie.techutils.client.feature.litegui.browser.icon
+package dev.kikugie.techutils.client.feature.browser.icon
 
 import dev.kikugie.techutils.Reference
 import fi.dy.masa.malilib.gui.interfaces.IGuiIcon
 import fi.dy.masa.malilib.render.RenderUtils
 import net.minecraft.util.Identifier
 
-data class GuiIcon (
+data class GuiIcon(
     @JvmField val texture: Identifier,
     @JvmField val u: Int,
     @JvmField val v: Int,
@@ -37,9 +37,9 @@ data class GuiIcon (
     }
 
     companion object {
-        val blueprintFile = GuiIcon (Reference.id("textures/gui/widgets.png"), 24, 0, 12, 12)
-        val errorFile = GuiIcon (Reference.id("textures/gui/widgets.png"), 12, 0, 12, 12)
-        val unknownFile = GuiIcon (Reference.id("textures/gui/widgets.png"), 0, 0, 12, 12)
-        val linkedDirectory = GuiIcon (Reference.id("textures/gui/widgets.png"), 0, 12, 12, 12)
+        val blueprintFile = GuiIcon(Reference.id("textures/gui/widgets.png"), 24, 0, 12, 12)
+        val errorFile = GuiIcon(Reference.id("textures/gui/widgets.png"), 12, 0, 12, 12)
+        val unknownFile = GuiIcon(Reference.id("textures/gui/widgets.png"), 0, 0, 12, 12)
+        val linkedDirectory = GuiIcon(Reference.id("textures/gui/widgets.png"), 0, 12, 12, 12)
     }
 }

@@ -1,16 +1,14 @@
-package dev.kikugie.techutils.client.feature.litegui.browser
+package dev.kikugie.techutils.client.feature.browser.widget
 
+import dev.kikugie.techutils.client.feature.browser.metadata.Structure
 import dev.kikugie.techutils.client.feature.preview.PreviewConfig
-import dev.kikugie.techutils.client.feature.preview.Structure
 import dev.kikugie.techutils.client.feature.preview.render.StructureRenderable
 import dev.kikugie.techutils.client.util.render.Colors
 import dev.kikugie.techutils.client.util.render.ScissorStack
 import fi.dy.masa.malilib.gui.widgets.WidgetBase
 import fi.dy.masa.malilib.gui.widgets.WidgetContainer
-import fi.dy.masa.malilib.gui.widgets.WidgetFileBrowserBase.DirectoryEntry
 import fi.dy.masa.malilib.render.RenderUtils
 import net.minecraft.client.gui.DrawContext
-import net.minecraft.client.gui.Element
 import net.minecraft.util.math.MathHelper
 import kotlin.math.ln
 import kotlin.math.pow

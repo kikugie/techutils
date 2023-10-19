@@ -1,8 +1,7 @@
-package dev.kikugie.techutils.mixin.mod.litematica;
+package dev.kikugie.techutils.mixin.mod.litematica.gui;
 
+import dev.kikugie.techutils.client.feature.browser.widget.StructureBrowserWidget;
 import dev.kikugie.techutils.client.feature.preview.PreviewConfig;
-import dev.kikugie.techutils.client.feature.preview.render.PreviewManager;
-import dev.kikugie.techutils.client.feature.litegui.browser.StructureBrowserWidget;
 import fi.dy.masa.litematica.gui.GuiSchematicBrowserBase;
 import fi.dy.masa.litematica.gui.widgets.WidgetSchematicBrowser;
 import fi.dy.masa.malilib.gui.GuiListBase;
@@ -11,9 +10,7 @@ import fi.dy.masa.malilib.gui.widgets.WidgetDirectoryEntry;
 import fi.dy.masa.malilib.gui.widgets.WidgetFileBrowserBase;
 import me.fallenbreath.conditionalmixin.api.annotation.Condition;
 import me.fallenbreath.conditionalmixin.api.annotation.Restriction;
-import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
@@ -22,9 +19,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
  */
 @Restriction(require = @Condition("isometric-renders"))
 @Mixin(value = GuiSchematicBrowserBase.class, remap = false)
-public abstract class GuiSchematicBrowserBaseMixin extends GuiListBase<WidgetFileBrowserBase.DirectoryEntry, WidgetDirectoryEntry, WidgetSchematicBrowser> implements PreviewManager.Accessor {
-    @Unique
-    private final PreviewManager previewManager = new PreviewManager();
+public abstract class GuiSchematicBrowserBaseMixin extends GuiListBase<WidgetFileBrowserBase.DirectoryEntry, WidgetDirectoryEntry, WidgetSchematicBrowser> {
 
     protected GuiSchematicBrowserBaseMixin(int listX, int listY) {
         super(listX, listY);
@@ -36,34 +31,8 @@ public abstract class GuiSchematicBrowserBaseMixin extends GuiListBase<WidgetFil
                 new StructureBrowserWidget(x, y, width, height, parent, selectionListener) :
                 new WidgetSchematicBrowser(x, y, width, height, parent, selectionListener);
     }
-
-    @NotNull
-    @Override
-    public PreviewManager getPreviewManager() {
-        return this.previewManager;
-    }
-
-    @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
-        this.previewManager.onScroll(mouseX, mouseY, verticalAmount);
-        return super.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount);
-    }
-
-    @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
-        this.previewManager.onClick(mouseX, mouseY, mouseButton);
-        return super.mouseClicked(mouseX, mouseY, mouseButton);
-    }
-
-    @Override
-    public boolean mouseReleased(double mouseX, double mouseY, int mouseButton) {
-        this.previewManager.onRelease(mouseX, mouseY, mouseButton);
-        return super.mouseReleased(mouseX, mouseY, mouseButton);
-    }
-
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
-        this.previewManager.onDrag(mouseX, mouseY, deltaX, deltaY, button);
         if (getListWidget() instanceof StructureBrowserWidget browserWidget) {
             browserWidget.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
         }

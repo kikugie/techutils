@@ -2,13 +2,14 @@ package dev.kikugie.techutils.client.compat.axiom
 
 import com.moulberry.axiom.blueprint.Blueprint
 import com.moulberry.axiom.blueprint.BlueprintIo
-import dev.kikugie.techutils.client.feature.preview.Structure
-import dev.kikugie.techutils.client.feature.preview.StructureMetadata
+import dev.kikugie.techutils.client.feature.browser.metadata.Structure
+import dev.kikugie.techutils.client.feature.browser.metadata.StructureMetadata
 import dev.kikugie.techutils.client.feature.preview.world.PreviewWorld
 import fi.dy.masa.litematica.schematic.LitematicaSchematic
 import fi.dy.masa.litematica.schematic.LitematicaSchematic.SchematicSaveInfo
 import fi.dy.masa.litematica.selection.AreaSelection
 import fi.dy.masa.litematica.selection.Box
+import fi.dy.masa.malilib.gui.widgets.WidgetFileBrowserBase.DirectoryEntry
 import fi.dy.masa.malilib.interfaces.IStringConsumer
 import net.minecraft.client.MinecraftClient
 import net.minecraft.util.math.BlockPos
@@ -50,6 +51,7 @@ object BlueprintLoader {
         return Structure(metadata, { createAxiomWorld(blueprint) }, preview)
     }
 
+    @JvmStatic
     fun toLitematic(file: File, feedback: IStringConsumer): LitematicaSchematic? {
         val blueprint: Blueprint
         try {
@@ -72,7 +74,14 @@ object BlueprintLoader {
         selection.addSubRegionBox(Box(BlockPos.ORIGIN, size, header.name), false)
         val info = SchematicSaveInfo(false, false)
 
-        return LitematicaSchematic.createFromWorld(world, selection, info, header.author, feedback)
+        val litematic = LitematicaSchematic.createFromWorld(world, selection, info, header.author, feedback)
+        litematic?.metadata?.name = header.name
+        return litematic
+    }
+
+    @JvmStatic
+    fun isBlueprint(entry: DirectoryEntry): Boolean {
+        return entry.fullPath.extension == "bp"
     }
 
     private fun createAxiomWorld(blueprint: Blueprint): PreviewWorld {

@@ -15,6 +15,7 @@ import java.util.function.BooleanSupplier
 class PreviewChunkManager(private val world: PreviewWorld) : ChunkManager() {
     private val emptyChunk: ChunkSchematic = ChunkSchematic(world, ChunkPos(0, 0))
     private val lightingProvider: LightingProvider
+
     @JvmField
     var loadedChunks: Long2ObjectMap<ChunkSchematic> = Long2ObjectOpenHashMap(16)
 
@@ -42,7 +43,7 @@ class PreviewChunkManager(private val world: PreviewWorld) : ChunkManager() {
 
     override fun tick(shouldKeepTicking: BooleanSupplier, tickChunks: Boolean) {}
     override fun getDebugString(): String {
-        return "null"
+        return "PreviewChunkManager: ${loadedChunks.size} chunks"
     }
 
     override fun getLoadedChunkCount(): Int {

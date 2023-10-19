@@ -1,9 +1,8 @@
-package dev.kikugie.techutils.client.feature.litegui.browser
+package dev.kikugie.techutils.client.feature.browser.widget
 
 import dev.kikugie.techutils.Reference
-import dev.kikugie.techutils.client.feature.litegui.browser.icon.IconProvider
-import dev.kikugie.techutils.client.feature.preview.Structure
-import dev.kikugie.techutils.client.feature.preview.Structure.LoadResult.SUCCESS
+import dev.kikugie.techutils.client.feature.browser.icon.IconProvider
+import dev.kikugie.techutils.client.feature.browser.metadata.Structure
 import dev.kikugie.techutils.mixin.mod.litematica.widget.WidgetFileBrowserBaseAccessor
 import fi.dy.masa.litematica.data.DataManager
 import fi.dy.masa.litematica.gui.GuiSchematicBrowserBase
@@ -103,7 +102,7 @@ class StructureBrowserWidget(
         if (!metadataCache.containsKey(file))
             Structure.from(entry, false).let {
                 when (it.second) {
-                    SUCCESS -> metadataCache[file] = MetadataWidget(it.first!!)
+                    Structure.LoadResult.SUCCESS -> metadataCache[file] = MetadataWidget(it.first!!)
                     else -> metadataCache[file] = null
                 }
             }

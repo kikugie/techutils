@@ -1,8 +1,8 @@
-package dev.kikugie.techutils.client.feature.preview
+package dev.kikugie.techutils.client.feature.browser.metadata
 
 import net.minecraft.util.math.Vec3i
 
-data class StructureMetadata (
+data class StructureMetadata(
     val name: String,
     val author: String,
     val size: Vec3i,

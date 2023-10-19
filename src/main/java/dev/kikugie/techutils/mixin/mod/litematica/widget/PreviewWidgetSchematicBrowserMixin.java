@@ -3,8 +3,6 @@ package dev.kikugie.techutils.mixin.mod.litematica.widget;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import dev.kikugie.techutils.client.feature.preview.PreviewConfig;
-import dev.kikugie.techutils.client.feature.preview.render.PreviewManager;
-import dev.kikugie.techutils.client.util.render.ScissorStack;
 import fi.dy.masa.litematica.gui.GuiSchematicBrowserBase;
 import fi.dy.masa.litematica.gui.widgets.WidgetSchematicBrowser;
 import fi.dy.masa.malilib.gui.widgets.WidgetFileBrowserBase;
@@ -35,7 +33,7 @@ public class PreviewWidgetSchematicBrowserMixin {
             return original;
         if (!PreviewConfig.overridePreview.getBooleanValue() && original != null)
             return original;
-        ((PreviewManager.Accessor) this.parent).getPreviewManager().drawPreview(entry, ((ScissorStack.Provider) this).getScissorStack(), x + 4, y + 14, height - y - 2);
+//        ((PreviewManager.Accessor) this.parent).getPreviewManager().drawPreview(entry, ((ScissorStack.Provider) this).getScissorStack(), x + 4, y + 14, height - y - 2);
         return null;
     }
 }

@@ -3,9 +3,8 @@ package dev.kikugie.techutils.client.feature.preview.render
 import com.glisco.isometricrenders.render.AreaRenderable
 import com.glisco.isometricrenders.render.Renderable
 import com.glisco.isometricrenders.render.RenderableDispatcher
-import com.mojang.blaze3d.systems.RenderSystem
+import dev.kikugie.techutils.client.feature.browser.metadata.Structure
 import dev.kikugie.techutils.client.feature.preview.PreviewConfig
-import dev.kikugie.techutils.client.feature.preview.Structure
 import dev.kikugie.techutils.client.feature.preview.world.PreviewWorld
 import dev.kikugie.techutils.client.util.render.ScissorStack
 import io.wispforest.owo.ui.container.FlowLayout
@@ -16,7 +15,6 @@ import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.MathHelper
 import net.minecraft.util.math.Vec3i
 import kotlin.math.cos
-import kotlin.math.max
 import kotlin.math.tan
 
 data class StructureRenderable(
@@ -39,6 +37,7 @@ data class StructureRenderable(
         val angleRad = properties.rotation.get().toDouble() * MathHelper.RADIANS_PER_DEGREE
         val slantRad = properties.slant.get().toDouble() * MathHelper.RADIANS_PER_DEGREE
 
+        // TODO: Calculate model scalar
         val width = dims.lengthX * cos(angleRad) + dims.lengthZ * cos(angleRad)
         val height = dims.lengthY + dims.lengthX * tan(slantRad) + dims.lengthZ * tan(slantRad)
     }
@@ -75,6 +74,16 @@ data class StructureRenderable(
         super.prepare()
     }
 
+    override fun cleanUp() {
+        scissors.disable()
+        scissors.pop()
+        super.cleanUp()
+    }
+
+    override fun properties(): LitematicPropertyBundle {
+        return properties
+    }
+
     fun shift(dx: Double, dy: Double) {
         this.dx += dx
         this.dy += dy
@@ -85,16 +94,6 @@ data class StructureRenderable(
         val w = screen.width
         val h = screen.height
         matrices.translate((2F * x - w) / h, -(2F * y - h) / h, 0F)
-    }
-
-    override fun cleanUp() {
-        scissors.disable()
-        scissors.pop()
-        super.cleanUp()
-    }
-
-    override fun properties(): LitematicPropertyBundle {
-        return properties
     }
 
     companion object {

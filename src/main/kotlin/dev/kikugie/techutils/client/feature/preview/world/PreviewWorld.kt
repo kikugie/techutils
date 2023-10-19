@@ -154,7 +154,7 @@ class PreviewWorld(private val client: MinecraftClient) : World(
     }
 
     override fun asString(): String {
-        return "null"
+        return "Chunks[C] W: ${chunkManager.debugString} E: ${this.allEntities.size}"
     }
 
     override fun getEntityById(id: Int): Entity? {
