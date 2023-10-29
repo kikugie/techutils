@@ -1,4 +1,4 @@
-package dev.kikugie.techutils.client.feature.browser.icon
+package dev.kikugie.techutils.client.gui.icon
 
 import dev.kikugie.techutils.Reference
 import fi.dy.masa.malilib.gui.interfaces.IGuiIcon

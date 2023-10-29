@@ -1,5 +1,8 @@
-package dev.kikugie.techutils.client.feature.giveinv
+package dev.kikugie.techutils.client.feature.misc.impl
 
+import dev.kikugie.techutils.client.feature.misc.MiscConfig
+import dev.kikugie.techutils.client.util.litematica.InGameNotifier
+import fi.dy.masa.malilib.gui.Message
 import net.minecraft.block.BlockEntityProvider
 import net.minecraft.block.Blocks
 import net.minecraft.block.ShulkerBoxBlock
@@ -20,8 +23,8 @@ import java.util.function.Function
  * Inserts a full container of given item into player's hand. Works **only** in creative mode.
  */
 object GiveFullIInv {
-    private val safety = { GiveFullInvConfig.fillSafety.booleanValue }
-    private val bundleFill = { GiveFullInvConfig.bundleFill.integerValue }
+    private val safety = { MiscConfig.fillSafety.booleanValue }
+    private val bundleFill = { MiscConfig.bundleFill.integerValue }
     fun onKeybind(): Boolean {
         val client = MinecraftClient.getInstance()
         val player = client.player!!
@@ -160,5 +163,6 @@ object GiveFullIInv {
     }
 
     private fun sendError(error: String) {
+        InGameNotifier.addMessage(Message.MessageType.ERROR, "techutils.misc.give_full_inv.$error")
     }
 }

@@ -1,7 +1,7 @@
 package dev.kikugie.techutils.mixin.mod.litematica.gui;
 
+import dev.kikugie.techutils.client.feature.browser.BrowserConfig;
 import dev.kikugie.techutils.client.feature.browser.widget.StructureBrowserWidget;
-import dev.kikugie.techutils.client.feature.preview.PreviewConfig;
 import fi.dy.masa.litematica.gui.GuiSchematicBrowserBase;
 import fi.dy.masa.litematica.gui.widgets.WidgetSchematicBrowser;
 import fi.dy.masa.malilib.gui.GuiListBase;
@@ -27,7 +27,7 @@ public abstract class GuiSchematicBrowserBaseMixin extends GuiListBase<WidgetFil
 
     @Redirect(method = "createListWidget(II)Lfi/dy/masa/litematica/gui/widgets/WidgetSchematicBrowser;", at = @At(value = "NEW", target = "(IIIILfi/dy/masa/litematica/gui/GuiSchematicBrowserBase;Lfi/dy/masa/malilib/gui/interfaces/ISelectionListener;)Lfi/dy/masa/litematica/gui/widgets/WidgetSchematicBrowser;"))
     private WidgetSchematicBrowser useCustomWidget(int x, int y, int width, int height, GuiSchematicBrowserBase parent, ISelectionListener<WidgetFileBrowserBase.DirectoryEntry> selectionListener) {
-        return (PreviewConfig.customMetadata.getBooleanValue()) ?
+        return (BrowserConfig.INSTANCE.getImprovedBrowser().getBooleanValue()) ?
                 new StructureBrowserWidget(x, y, width, height, parent, selectionListener) :
                 new WidgetSchematicBrowser(x, y, width, height, parent, selectionListener);
     }

@@ -1,1 +1,25 @@
-template: "Hello Mod!"
+techutils:
+  title: "Technical Utilities"
+  category:
+    litematica:
+      .: "Litematica"
+  option:
+    giveFullInv: """
+      Give full inventory of an item with following rules:
+            - Main hand: item; Off hand: none; Result: shulker box of item.
+            - Main hand: item; Off hand: container; Result: container of item.
+            - Main hand: item; Off hand: bundle; Result: bundle of item * config.
+            - Main hand: empty shulker box; Off hand: none: Result: chest of stacked boxes.
+            - Main hand: empty shulker box; Off hand: container; Result: container of stacked boxes.
+            - Main hand: shulker box; Off hand: none: Result: chest of full boxes.
+            - Main hand: shulker box; Off hand: container; Result: container of full boxes.
+      """
+    bundleFill: "Amount of stacks to put in a bundle when using giveFullInv feature"
+    fillSafety: """
+      Restrict nested containers to prevent crashing yourself.
+      Here be cats and scratches!
+      """
+    renderPreview: "Show 3D render of selected litematic in Load Schematics menu"
+    previewAngle: "Default preview rotation angle"
+    previewSlant: "Default preview slant"
+    scrollSensivity: "Sensitivity of the scroll wheel"

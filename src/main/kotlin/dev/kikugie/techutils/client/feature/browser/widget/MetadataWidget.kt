@@ -5,9 +5,11 @@ import dev.kikugie.techutils.client.feature.preview.PreviewConfig
 import dev.kikugie.techutils.client.feature.preview.render.StructureRenderable
 import dev.kikugie.techutils.client.util.render.Colors
 import dev.kikugie.techutils.client.util.render.ScissorStack
+import dev.kikugie.techutils.client.util.render.TextUtils
 import fi.dy.masa.malilib.gui.widgets.WidgetBase
 import fi.dy.masa.malilib.gui.widgets.WidgetContainer
 import fi.dy.masa.malilib.render.RenderUtils
+import fi.dy.masa.malilib.util.StringUtils
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.util.math.MathHelper
 import kotlin.math.ln
@@ -32,7 +34,7 @@ class MetadataWidget(
         horizontalAmount: Double,
         verticalAmount: Double
     ): Boolean {
-        scroll = MathHelper.clamp(scroll + sign(verticalAmount).toInt(), 0, structure.metadata.array.size - 1)
+        scroll = MathHelper.clamp(scroll + sign(verticalAmount).toInt(), 0, structure.metadata.map.size - 1)
         return true
     }
 
@@ -59,7 +61,20 @@ class MetadataWidget(
         model.width = width - 8
         model.height = height - 8
 
+        val lines = arrayListOf<String>()
+        structure.metadata.map.forEach { (k, v) -> run { lines.addAll(formatLine(k, v, model.width)) } }
+
         model.render(mouseX, mouseY, selected, context)
+    }
+
+    private fun formatLine(key: String, value: String, width: Int): List<String> {
+        val combined = "$key: $value"
+        return if (TextUtils.isWithin(combined, width))
+            listOf(StringUtils.translate(combined))
+        else listOf(
+            StringUtils.translate("$key:"),
+            StringUtils.translate(TextUtils.trimFancy("  $value", width))
+        )
     }
 
     class ModelWidget(
@@ -87,7 +102,7 @@ class MetadataWidget(
             if (!ready) return false
             val amount = horizontalAmount + verticalAmount
             val property = renderable.properties().scale
-            val modifier = PreviewConfig.scaleSensitivity.doubleValue * 0.1
+            val modifier = PreviewConfig.scrollSensitivity.doubleValue * 0.1
             val scale = property.get()
             val linear = ln(scale.toDouble() / 100)
             val newScale = Math.E.pow(linear + amount * modifier) * 100
@@ -104,7 +119,7 @@ class MetadataWidget(
         ): Boolean {
             if (!ready || !dragging)
                 return false
-            val modifier = PreviewConfig.rotationSensitivity.doubleValue * 5
+            val modifier = PreviewConfig.scrollSensitivity.doubleValue * 5
             when (button) {
                 0 -> {
                     renderable.properties().rotation.modify((deltaX * modifier).toInt())

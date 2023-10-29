@@ -1,8 +1,8 @@
 package dev.kikugie.techutils.client.feature.browser.widget
 
-import dev.kikugie.techutils.Reference
-import dev.kikugie.techutils.client.feature.browser.icon.IconProvider
+import dev.kikugie.techutils.client.gui.icon.IconProvider
 import dev.kikugie.techutils.client.feature.browser.metadata.Structure
+import dev.kikugie.techutils.client.util.FabricUtils
 import dev.kikugie.techutils.mixin.mod.litematica.widget.WidgetFileBrowserBaseAccessor
 import fi.dy.masa.litematica.data.DataManager
 import fi.dy.masa.litematica.gui.GuiSchematicBrowserBase
@@ -48,7 +48,7 @@ class StructureBrowserWidget(
     private var prevMetaStatus = false
 
     init {
-        if (Reference.available("axiom"))
+        if (FabricUtils.isLoaded("axiom"))
             supportedFormats.add("bp")
         title = "${StringUtils.translate("litematica.gui.title.schematic_browser", *arrayOfNulls(0))} (TechUtils)"
         @Suppress("CAST_NEVER_SUCCEEDS")

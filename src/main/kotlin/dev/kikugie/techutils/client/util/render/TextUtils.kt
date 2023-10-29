@@ -8,12 +8,15 @@ object TextUtils {
         get() = MinecraftClient.getInstance().textRenderer
 
     fun trimFancy(text: String, width: Int): String {
-        val textWidth = textRenderer.getWidth(text)
-        if (textWidth <= width) return text
+        if (isWithin(text, width)) return text
 
         val dotWidth = textRenderer.getWidth("...")
         if (dotWidth > width) return ""
 
         return "${textRenderer.trimToWidth(text, width - dotWidth)}..."
+    }
+
+    fun isWithin(text: String, width: Int): Boolean {
+        return textRenderer.getWidth(text) <= width
     }
 }

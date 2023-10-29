@@ -4,6 +4,7 @@ import dev.kikugie.techutils.Reference
 import dev.kikugie.techutils.client.TechUtilsClient
 import dev.kikugie.techutils.client.compat.axiom.BlueprintLoader
 import dev.kikugie.techutils.client.feature.preview.world.PreviewWorld
+import dev.kikugie.techutils.client.util.FabricUtils
 import fi.dy.masa.litematica.schematic.LitematicaSchematic
 import fi.dy.masa.litematica.schematic.SchematicaSchematic
 import fi.dy.masa.litematica.schematic.placement.SchematicPlacement
@@ -48,7 +49,7 @@ class Structure(
                 "schem" -> fromSponge(file)
                 "schematic" -> fromSchematic(file)
                 "litematic" -> fromLitematic(file, loadPreview)
-                "bp" -> if (Reference.available("axiom")) BlueprintLoader.fromBlueprint(file, loadPreview) else null
+                "bp" -> if (FabricUtils.isLoaded("axiom")) BlueprintLoader.fromBlueprint(file, loadPreview) else null
                 else -> return null to LoadResult.NOT_SUPPORTED
             }.let {
                 return if (it == null) null to LoadResult.FAILURE else it to LoadResult.SUCCESS

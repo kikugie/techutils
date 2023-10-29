@@ -59,6 +59,10 @@ repositories {
         name = "Wisp Forest"
         url = "https://maven.wispforest.io/"
     }
+    maven {
+        name = "KikuGie Maven"
+        url = "https://maven.kikugie.dev/third-party"
+    }
 }
 
 // https://github.com/FabricMC/fabric-loader/issues/783
@@ -71,14 +75,16 @@ dependencies {
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
     mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-    modImplementation"net.fabricmc.fabric-api:fabric-api:${fabric_api_version}"
-    modImplementation"net.fabricmc:fabric-language-kotlin:${fabric_kotlin_version}"
-
-    modApi "com.terraformersmc:modmenu:${project.modmenu_version}"
-    modImplementation "fi.dy.masa.malilib:malilib-fabric-${project.malilib_version}"
-    modImplementation "curse.maven:litematica-308892:${project.litematica_file}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_api_version}"
+    modImplementation "net.fabricmc:fabric-language-kotlin:${fabric_kotlin_version}"
     include api(annotationProcessor("com.github.LlamaLad7.mixinextras:mixinextras-fabric:${project.mixin_extras_version}"))
     include modImplementation("com.github.Fallen-Breath:conditional-mixin:v${project.conditional_mixin_version}")
+
+    modApi "com.terraformersmc:modmenu:${project.modmenu_version}"
+    modImplementation "fi.dy.masa.malilib:malilib-fabric-${project.title_version}:${project.malilib_version}"
+    modImplementation "fi.dy.masa:litematica:${project.litematica_version}+${project.title_version}"
+    modImplementation "fi.dy.masa:itemscroller:${project.itemscroller_version}+${project.title_version}"
+    modImplementation "fi.dy.masa:tweakeroo:${project.tweakeroo_version}+${project.title_version}"
 
     modImplementation "io.wispforest:worldmesher:${project.worldmesher_version}"
     modImplementation "maven.modrinth:isometric-renders:${project.isometric_renders_version}"
@@ -129,17 +135,21 @@ processResources {
     inputs.property "id", project.mod_id
     inputs.property "name", project.mod_name
     inputs.property "minecraft_dependency", project.minecraft_dependency
-    inputs.property "malilib_dependency", project.malilib_dependency
-    inputs.property "litematica_dependency", project.litematica_dependency
+    inputs.property "malilib_dependency", project.malilib_version
+    inputs.property "litematica_dependency", project.litematica_version
+    inputs.property "itemscroller_dependency", project.litematica_version
+    inputs.property "tweakeroo_dependency", project.litematica_version
 
     filesMatching("fabric.mod.json") {
         def valueMap = [
-                "id"                  : project.mod_id,
-                "name"                : project.mod_name,
-                "version"             : project.mod_version,
-                "minecraft_dependency": project.minecraft_dependency,
-                "malilib_dependency"   : project.malilib_dependency,
-                "litematica_dependency": project.litematica_dependency
+                "id"                     : project.mod_id,
+                "name"                   : project.mod_name,
+                "version"                : project.mod_version,
+                "minecraft_dependency"   : project.minecraft_dependency,
+                "malilib_dependency"     : project.malilib_version,
+                "litematica_dependency"  : project.litematica_version,
+                "itemscroller_dependency": project.litematica_version,
+                "tweakeroo_dependency"   : project.litematica_version
         ]
         expand valueMap
     }

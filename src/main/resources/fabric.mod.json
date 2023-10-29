@@ -18,6 +18,9 @@
         "adapter": "kotlin",
         "value": "dev.kikugie.techutils.client.TechUtilsClient"
       }
+    ],
+    "modmenu": [
+      "dev.kikugie.techutils.client.config.compat.ModMenuIntegration"
     ]
   },
   "mixins": [
@@ -26,7 +29,9 @@
   "depends": {
     "fabricloader": ">=0.11.4",
     "minecraft": "${minecraft_dependency}",
-    "malilib": "${malilib_dependency}",
-    "litematica": "${litematica_dependency}"
+    "malilib": "~${malilib_dependency}",
+    "litematica": "~${litematica_dependency}",
+    "itemscroller": "~${itemscroller_dependency}",
+    "tweakeroo": "~${tweakeroo_dependency}"
   }
 }
