@@ -10,24 +10,15 @@ pluginManagement {
             name = 'Jitpack'
             url = "https://jitpack.io"
         }
+        maven { url = "https://maven.kikugie.dev/third-party" }
         mavenCentral()
         gradlePluginPortal()
-    }
-    resolutionStrategy {
-        eachPlugin {
-            switch (requested.id.id) {
-                case "com.replaymod.preprocess": {
-                    useModule("com.github.Fallen-Breath:preprocessor:${requested.version}")
-                    break
-                }
-            }
-        }
     }
 }
 
 def settings = new JsonSlurper().parseText(file('settings.json').text)
 for (String version : settings.versions) {
-	include(":$version")
+    include(":$version")
 
     def proj = project(":$version")
     proj.projectDir = file("versions/$version")

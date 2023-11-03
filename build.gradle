@@ -4,8 +4,8 @@ plugins {
     id "org.jetbrains.kotlin.jvm" version "${kotlin_version}" apply false
 
     // https://github.com/ReplayMod/preprocessor
-    // https://github.com/Fallen-Breath/preprocessor
-    id "com.replaymod.preprocess" version "20c7ec554a"
+    // https://github.com/kikugie/preprocessor-kt
+    id "com.replaymod.preprocess" version "1.0-dev.4"
 
     // https://github.com/Fallen-Breath/yamlang
     id "me.fallenbreath.yamlang" version "1.3.0" apply false
@@ -24,13 +24,15 @@ preprocess {
 //    def mc16 = createNode("1.16.5", 1_16_05, "yarn")
 //    def mc17 = createNode("1.17.1", 1_17_01, "yarn")
 //    def mc18 = createNode("1.18.2", 1_18_02, "yarn")
-//    def mc19 = createNode("1.19.4", 1_19_04, "yarn")
-    def mc20 = createNode("1.20.2", 1_20_02, "yarn")
+    def mc19 = createNode("1.19.4", 1_19_04, "yarn")
+    def mc20 = createNode("1.20.1", 1_20_01, "yarn")
+    def mc202 = createNode("1.20.2", 1_20_02, "yarn")
 
 //    mc16.link(mc17, null)
 //    mc17.link(mc18, null)
 //    mc18.link(mc19, null)
-//    mc19.link(mc20, null)
+    mc202.link(mc20, null)
+    mc20.link(mc19, null)
 }
 
 tasks.register("buildAndGather") {
