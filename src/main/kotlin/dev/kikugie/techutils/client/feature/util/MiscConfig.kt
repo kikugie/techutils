@@ -1,8 +1,7 @@
-package dev.kikugie.techutils.client.feature.misc
+package dev.kikugie.techutils.client.feature.util
 
 import dev.kikugie.techutils.client.config.annotation.Group
 import dev.kikugie.techutils.client.config.option.Options
-import dev.kikugie.techutils.client.feature.misc.impl.GiveFullIInv
 import dev.kikugie.techutils.client.gui.config.TechUtilsConfigGui
 import net.minecraft.client.MinecraftClient
 

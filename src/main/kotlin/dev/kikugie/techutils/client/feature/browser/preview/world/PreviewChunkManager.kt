@@ -1,4 +1,4 @@
-package dev.kikugie.techutils.client.feature.preview.world
+package dev.kikugie.techutils.client.feature.browser.preview.world
 
 import fi.dy.masa.litematica.world.ChunkSchematic
 import fi.dy.masa.litematica.world.FakeLightingProvider

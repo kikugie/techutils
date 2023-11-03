@@ -7,13 +7,9 @@
   "mixins": [
   ],
   "client": [
-    "client.ClientPlayerInteractionManagerMixin",
-    "client.MinecraftClientMixin",
-    "client.ScreenHandlerAccessor",
     "mod.litematica.gui.GuiSchematicBrowserBaseMixin",
     "mod.litematica.gui.GuiSchematicLoadMixin",
     "mod.litematica.gui.GuiSchematicManagerMixin",
-    "mod.litematica.placement.SchematicPlacementMixin",
     "mod.litematica.widget.PreviewWidgetSchematicBrowserMixin",
     "mod.litematica.widget.WidgetFileBrowserBaseAccessor"
   ],

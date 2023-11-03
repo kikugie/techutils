@@ -4,7 +4,7 @@ import fi.dy.masa.malilib.config.options.*
 import fi.dy.masa.malilib.hotkeys.KeybindSettings
 
 object Options {
-    private const val DESCRIPTION_FORMATTER = "techutils.config.%s"
+    private const val DESCRIPTION_FORMATTER = "techutils.option.%s"
     fun create(name: String, default: Boolean = true) = ConfigBoolean(name, default, DESCRIPTION_FORMATTER.format(name))
     fun create(
         name: String,

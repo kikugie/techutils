@@ -1,4 +1,4 @@
-package dev.kikugie.techutils.client.feature.preview.world
+package dev.kikugie.techutils.client.feature.browser.preview.world
 
 import dev.kikugie.techutils.Reference
 import fi.dy.masa.litematica.util.PositionUtils

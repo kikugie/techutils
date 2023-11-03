@@ -1,8 +1,8 @@
 package dev.kikugie.techutils.client.feature.browser.widget
 
+import dev.kikugie.techutils.client.feature.browser.BrowserConfig
 import dev.kikugie.techutils.client.feature.browser.metadata.Structure
-import dev.kikugie.techutils.client.feature.preview.PreviewConfig
-import dev.kikugie.techutils.client.feature.preview.render.StructureRenderable
+import dev.kikugie.techutils.client.feature.browser.preview.render.StructureRenderable
 import dev.kikugie.techutils.client.util.render.Colors
 import dev.kikugie.techutils.client.util.render.ScissorStack
 import dev.kikugie.techutils.client.util.render.TextUtils
@@ -102,7 +102,7 @@ class MetadataWidget(
             if (!ready) return false
             val amount = horizontalAmount + verticalAmount
             val property = renderable.properties().scale
-            val modifier = PreviewConfig.scrollSensitivity.doubleValue * 0.1
+            val modifier = BrowserConfig.scrollSensitivity.doubleValue * 0.1
             val scale = property.get()
             val linear = ln(scale.toDouble() / 100)
             val newScale = Math.E.pow(linear + amount * modifier) * 100
@@ -119,7 +119,7 @@ class MetadataWidget(
         ): Boolean {
             if (!ready || !dragging)
                 return false
-            val modifier = PreviewConfig.scrollSensitivity.doubleValue * 5
+            val modifier = BrowserConfig.scrollSensitivity.doubleValue * 5
             when (button) {
                 0 -> {
                     renderable.properties().rotation.modify((deltaX * modifier).toInt())

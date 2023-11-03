@@ -3,7 +3,7 @@ package dev.kikugie.techutils.client.feature.browser.metadata
 import dev.kikugie.techutils.Reference
 import dev.kikugie.techutils.client.TechUtilsClient
 import dev.kikugie.techutils.client.compat.axiom.BlueprintLoader
-import dev.kikugie.techutils.client.feature.preview.world.PreviewWorld
+import dev.kikugie.techutils.client.feature.browser.preview.world.PreviewWorld
 import dev.kikugie.techutils.client.util.FabricUtils
 import fi.dy.masa.litematica.schematic.LitematicaSchematic
 import fi.dy.masa.litematica.schematic.SchematicaSchematic

@@ -1,11 +1,11 @@
-package dev.kikugie.techutils.client.feature.preview.render
+package dev.kikugie.techutils.client.feature.browser.preview.render
 
 import com.glisco.isometricrenders.render.AreaRenderable
 import com.glisco.isometricrenders.render.Renderable
 import com.glisco.isometricrenders.render.RenderableDispatcher
+import dev.kikugie.techutils.client.feature.browser.BrowserConfig
 import dev.kikugie.techutils.client.feature.browser.metadata.Structure
-import dev.kikugie.techutils.client.feature.preview.PreviewConfig
-import dev.kikugie.techutils.client.feature.preview.world.PreviewWorld
+import dev.kikugie.techutils.client.feature.browser.preview.world.PreviewWorld
 import dev.kikugie.techutils.client.util.render.ScissorStack
 import io.wispforest.owo.ui.container.FlowLayout
 import io.wispforest.worldmesher.WorldMesh
@@ -43,8 +43,8 @@ data class StructureRenderable(
     }
 
     private fun loadProperties() {
-        properties().rotation.set(PreviewConfig.previewAngle.integerValue)
-        properties().slant.set(PreviewConfig.previewSlant.integerValue)
+        properties().rotation.set(BrowserConfig.previewAngle.integerValue)
+        properties().slant.set(BrowserConfig.previewSlant.integerValue)
     }
 
     fun drawModel(x: Int, y: Int, size: Int): Boolean {

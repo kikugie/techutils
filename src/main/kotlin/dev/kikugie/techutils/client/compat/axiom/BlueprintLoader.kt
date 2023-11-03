@@ -4,7 +4,7 @@ import com.moulberry.axiom.blueprint.Blueprint
 import com.moulberry.axiom.blueprint.BlueprintIo
 import dev.kikugie.techutils.client.feature.browser.metadata.Structure
 import dev.kikugie.techutils.client.feature.browser.metadata.StructureMetadata
-import dev.kikugie.techutils.client.feature.preview.world.PreviewWorld
+import dev.kikugie.techutils.client.feature.browser.preview.world.PreviewWorld
 import fi.dy.masa.litematica.schematic.LitematicaSchematic
 import fi.dy.masa.litematica.schematic.LitematicaSchematic.SchematicSaveInfo
 import fi.dy.masa.litematica.selection.AreaSelection

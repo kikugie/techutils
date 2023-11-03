@@ -1,6 +1,6 @@
 package dev.kikugie.techutils.test
 
-import dev.kikugie.techutils.client.feature.misc.impl.GiveFullIInv.getStack
+import dev.kikugie.techutils.client.feature.util.GiveFullIInv.getStack
 import net.minecraft.Bootstrap
 import net.minecraft.SharedConstants
 import net.minecraft.block.Blocks

@@ -1,4 +1,4 @@
-package dev.kikugie.techutils.client.feature.misc
+package dev.kikugie.techutils.client.feature.util
 
 import dev.kikugie.techutils.client.config.annotation.Group
 import dev.kikugie.techutils.client.config.option.Options.create
@@ -25,7 +25,7 @@ object LitematicaMiscConfig {
         placement.setMirror(mirror, InGameNotifier)
         return@create true
     }
-    val refreshMaterialList = create("refreshMaterialList", "M, R") {
+    val refreshMaterialList = create("refreshMaterialList", "") {
         val materials = DataManager.getMaterialList() ?: return@create false
         materials.reCreateMaterialList()
         return@create true
