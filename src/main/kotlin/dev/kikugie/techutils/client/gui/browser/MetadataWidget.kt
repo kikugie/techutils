@@ -1,13 +1,13 @@
-package dev.kikugie.techutils.client.feature.browser.widget
+package dev.kikugie.techutils.client.gui.browser
 
 import dev.kikugie.techutils.client.feature.browser.BrowserConfig
-import dev.kikugie.techutils.client.feature.browser.metadata.Structure
-import dev.kikugie.techutils.client.feature.browser.preview.render.StructureRenderable
+import dev.kikugie.techutils.client.impl.structure.Structure
+import dev.kikugie.techutils.client.feature.browser.preview.StructureRenderable
+import dev.kikugie.techutils.client.util.multiversion.MetadataWidgetExtension
+import dev.kikugie.techutils.client.util.multiversion.ModelWidgetExtension
 import dev.kikugie.techutils.client.util.render.Colors
 import dev.kikugie.techutils.client.util.render.ScissorStack
 import dev.kikugie.techutils.client.util.render.TextUtils
-import fi.dy.masa.malilib.gui.widgets.WidgetBase
-import fi.dy.masa.malilib.gui.widgets.WidgetContainer
 import fi.dy.masa.malilib.render.RenderUtils
 import fi.dy.masa.malilib.util.StringUtils
 import net.minecraft.client.gui.DrawContext
@@ -19,34 +19,22 @@ import kotlin.math.sign
 class MetadataWidget(
     private val structure: Structure
     // Dimensions are updated at render time
-) : WidgetContainer(0, 0, 0, 0) {
+) : MetadataWidgetExtension() {
     private val scissors = ScissorStack()
     private val model = ModelWidget(structure, scissors)
-    var scroll = 0
+    private var scroll = 0
 
     init {
         addWidget(model)
     }
 
-    override fun onMouseScrolledImpl(
-        mouseX: Int,
-        mouseY: Int,
-        horizontalAmount: Double,
-        verticalAmount: Double
-    ): Boolean {
-        scroll = MathHelper.clamp(scroll + sign(verticalAmount).toInt(), 0, structure.metadata.map.size - 1)
+    override fun onScrolled(x: Int, y: Int, amount: Double): Boolean {
+        scroll = MathHelper.clamp(scroll + sign(amount).toInt(), 0, structure.metadata.map.size - 1)
         return true
     }
 
-    fun onMouseDragged(
-        mouseX: Double,
-        mouseY: Double,
-        button: Int,
-        deltaX: Double,
-        deltaY: Double
-    ): Boolean {
-        return model.onMouseDragged(mouseX, mouseY, button, deltaX, deltaY)
-    }
+    override fun onDragged(x: Double, y: Double, dx: Double, dy: Double, button: Int) =
+        model.onDragged(x, y, dx, dy, button)
 
     override fun render(mouseX: Int, mouseY: Int, selected: Boolean, context: DrawContext) {
         RenderUtils.drawOutlinedBox(x, y, width, height, Colors.guiBackground.intValue, Colors.guiBorder.intValue)
@@ -80,7 +68,7 @@ class MetadataWidget(
     class ModelWidget(
         structure: Structure,
         scissors: ScissorStack
-    ) : WidgetBase(0, 0, 0, 0) {
+    ) : ModelWidgetExtension() {
         private val renderable = StructureRenderable.from(structure, scissors)
         private val ready
             get() = renderable.mesh.canRender()
@@ -93,14 +81,9 @@ class MetadataWidget(
             RenderUtils.drawOutline(x, y, width, width, Colors.guiBorder.intValue)
         }
 
-        override fun onMouseScrolledImpl(
-            mouseX: Int,
-            mouseY: Int,
-            horizontalAmount: Double,
-            verticalAmount: Double
-        ): Boolean {
+        override fun onScrolled(mouseX: Int, mouseY: Int, verticalAmount: Double): Boolean {
             if (!ready) return false
-            val amount = horizontalAmount + verticalAmount
+            val amount = verticalAmount
             val property = renderable.properties().scale
             val modifier = BrowserConfig.scrollSensitivity.doubleValue * 0.1
             val scale = property.get()
@@ -110,35 +93,30 @@ class MetadataWidget(
             return true
         }
 
-        fun onMouseDragged(
-            mouseX: Double,
-            mouseY: Double,
-            button: Int,
-            deltaX: Double,
-            deltaY: Double
-        ): Boolean {
+        override fun onClicked(x: Int, y: Int, button: Int): Boolean {
+            dragging = true
+            return true
+        }
+
+        override fun onReleased(x: Int, y: Int, button: Int): Boolean {
+            dragging = false
+            return true
+        }
+
+        override fun onDragged(x: Double, y: Double, dx: Double, dy: Double, button: Int): Boolean {
             if (!ready || !dragging)
                 return false
             val modifier = BrowserConfig.scrollSensitivity.doubleValue * 5
             when (button) {
                 0 -> {
-                    renderable.properties().rotation.modify((deltaX * modifier).toInt())
+                    renderable.properties().rotation.modify((dx * modifier).toInt())
                 }
 
                 1 -> {
-                    renderable.shift(deltaX, deltaY)
+                    renderable.shift(dx, dy)
                 }
             }
             return true
-        }
-
-        override fun onMouseClickedImpl(mouseX: Int, mouseY: Int, mouseButton: Int): Boolean {
-            dragging = true
-            return true
-        }
-
-        override fun onMouseReleasedImpl(mouseX: Int, mouseY: Int, mouseButton: Int) {
-            dragging = false
         }
     }
 }

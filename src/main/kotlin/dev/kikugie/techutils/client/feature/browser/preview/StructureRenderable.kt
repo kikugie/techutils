@@ -1,11 +1,11 @@
-package dev.kikugie.techutils.client.feature.browser.preview.render
+package dev.kikugie.techutils.client.feature.browser.preview
 
 import com.glisco.isometricrenders.render.AreaRenderable
 import com.glisco.isometricrenders.render.Renderable
 import com.glisco.isometricrenders.render.RenderableDispatcher
 import dev.kikugie.techutils.client.feature.browser.BrowserConfig
-import dev.kikugie.techutils.client.feature.browser.metadata.Structure
-import dev.kikugie.techutils.client.feature.browser.preview.world.PreviewWorld
+import dev.kikugie.techutils.client.impl.structure.Structure
+import dev.kikugie.techutils.client.impl.structure.world.StructureWorld
 import dev.kikugie.techutils.client.util.render.ScissorStack
 import io.wispforest.owo.ui.container.FlowLayout
 import io.wispforest.worldmesher.WorldMesh
@@ -19,7 +19,7 @@ import kotlin.math.tan
 
 data class StructureRenderable(
     val mesh: WorldMesh,
-    val world: PreviewWorld,
+    val world: StructureWorld,
     val scissors: ScissorStack
 ) : AreaRenderable(mesh) {
     private val properties = LitematicPropertyBundle()

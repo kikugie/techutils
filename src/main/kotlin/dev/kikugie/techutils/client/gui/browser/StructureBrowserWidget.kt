@@ -1,12 +1,14 @@
-package dev.kikugie.techutils.client.feature.browser.widget
+package dev.kikugie.techutils.client.gui.browser
 
+import dev.kikugie.techutils.client.TechUtilsClient
 import dev.kikugie.techutils.client.gui.icon.IconProvider
-import dev.kikugie.techutils.client.feature.browser.metadata.Structure
+import dev.kikugie.techutils.client.impl.structure.Structure
 import dev.kikugie.techutils.client.util.FabricUtils
+import dev.kikugie.techutils.client.util.multiversion.WidgetSchematicBrowserExtension
 import dev.kikugie.techutils.mixin.mod.litematica.widget.WidgetFileBrowserBaseAccessor
 import fi.dy.masa.litematica.data.DataManager
 import fi.dy.masa.litematica.gui.GuiSchematicBrowserBase
-import fi.dy.masa.litematica.gui.widgets.WidgetSchematicBrowser
+import fi.dy.masa.malilib.gui.Message
 import fi.dy.masa.malilib.gui.interfaces.ISelectionListener
 import fi.dy.masa.malilib.util.StringUtils
 import net.minecraft.client.gui.DrawContext
@@ -20,7 +22,7 @@ class StructureBrowserWidget(
     height: Int,
     parent: GuiSchematicBrowserBase,
     selectionListener: ISelectionListener<DirectoryEntry>? = null
-) : WidgetSchematicBrowser(x, y, width, height, parent, selectionListener) {
+) : WidgetSchematicBrowserExtension(x, y, width, height, parent, selectionListener) {
     private val supportedFormats = mutableListOf("litematic", "schematic", "schem", "nbt")
     private val fileFilter = FileFilter { file: File ->
         supportedFormats.contains(file.extension)
@@ -87,25 +89,27 @@ class StructureBrowserWidget(
         return super.onMouseReleased(mouseX, mouseY, mouseButton)
     }
 
-    override fun onMouseScrolled(mouseX: Int, mouseY: Int, horizontalAmount: Double, verticalAmount: Double): Boolean {
-        currentMetadata?.onMouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount)
-        return super.onMouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount)
+    override fun onScrolled(x: Int, y: Int, amount: Double) =
+        currentMetadata?.onScrolled(x, y, amount) ?: false
+
+    override fun onReleased(x: Int, y: Int, button: Int): Boolean {
+        currentMetadata?.onMouseReleased(x, y, button)
+        return true
     }
 
-    override fun mouseDragged(mouseX: Double, mouseY: Double, button: Int, deltaX: Double, deltaY: Double): Boolean {
-        currentMetadata?.onMouseDragged(mouseX, mouseY, button, deltaX, deltaY)
-        return super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY)
-    }
+    override fun onDragged(x: Double, y: Double, dx: Double, dy: Double, button: Int) =
+        currentMetadata?.onDragged(x, y, dx, dy, button) ?: false
 
     private fun createMetadataWidget(entry: DirectoryEntry) {
         val file = entry.fullPath
         if (!metadataCache.containsKey(file))
-            Structure.from(entry, false).let {
-                when (it.second) {
-                    Structure.LoadResult.SUCCESS -> metadataCache[file] = MetadataWidget(it.first!!)
-                    else -> metadataCache[file] = null
-                }
-            }
+            metadataCache[file] = try {
+                Structure.load(entry)
+            } catch (e: Exception) {
+                TechUtilsClient.LOGGER.warn(e.message)
+                parent.addMessage(Message.MessageType.ERROR, e.message)
+                null
+            }?.let { MetadataWidget(it) }
         currentMetadata = metadataCache[file]
     }
 

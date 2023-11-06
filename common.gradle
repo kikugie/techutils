@@ -1,13 +1,8 @@
-import net.darkhax.curseforgegradle.TaskPublishCurseForge
-
 apply plugin: "org.jetbrains.kotlin.jvm"
 apply plugin: "maven-publish"
 apply plugin: "fabric-loom"
 apply plugin: "com.replaymod.preprocess"
 apply plugin: "me.fallenbreath.yamlang"
-apply plugin: "com.modrinth.minotaur"
-apply plugin: "com.github.breadmoirai.github-release"
-apply plugin: "net.darkhax.curseforgegradle"
 
 int mcVersion = project.mcVersion
 
@@ -88,13 +83,10 @@ dependencies {
 
     modImplementation "io.wispforest:worldmesher:${project.worldmesher_version}"
     modImplementation "maven.modrinth:isometric-renders:${project.isometric_renders_version}"
-    modCompileOnly "maven.modrinth:axiom:IMAETzr8"
-    modCompileOnly "com.github.moulberry:AxiomClientAPI:1.0.5.3"
     modImplementation "io.wispforest:owo-lib:${project.owo_version}"
 
     modRuntimeOnly "com.sk89q.worldedit:worldedit-fabric-mc${project.worldedit_version}"
     testImplementation "net.fabricmc:fabric-loader-junit:${project.loader_version}"
-
 }
 
 String MIXIN_CONFIG_PATH = "${project.mod_id}.mixins.json"
@@ -188,76 +180,6 @@ jar {
     from(rootProject.file("LICENSE")) {
         rename { "${it}_${project.archivesBaseName}" }
     }
-}
-
-def debug = false
-
-tasks.register("release") {
-    debug = false
-    group("publishing")
-    dependsOn("modrinth")
-    dependsOn("githubRelease")
-    dependsOn("publishing")
-}
-
-tasks.register("debugRelease") {
-    debug = true
-    group("publishing")
-    dependsOn("modrinth")
-    dependsOn("githubRelease")
-}
-
-modrinth {
-    token = project.findProperty("modrinthToken")
-    projectId = project.mod_id
-    versionName = "${project.mod_name} ${project.mod_version} for ${project.title_version}"
-    versionNumber = project.mod_version
-    versionType = project.release_type
-    uploadFile = remapJar
-    additionalFiles = [sourcesJar]
-    //noinspection GroovyAssignabilityCheck
-    gameVersions = project.release_versions.split(" ").toList()
-    loaders = ["fabric", "quilt"]
-    dependencies {
-
-    }
-    syncBodyFrom = rootProject.file("README.md").text
-    changelog = rootProject.file("CHANGELOG.md").text
-    failSilently = true
-    debugMode = debug
-}
-
-githubRelease {
-    def probablyToken = project.findProperty("githubToken")
-    token = probablyToken == null ? "" : probablyToken
-    owner = project.repo_owner
-    repo = project.mod_id
-    tagName = "v${project.mod_version}"
-    targetCommitish = "multi"
-    releaseName = "${project.mod_name} ${project.mod_version}"
-    body = rootProject.file("CHANGELOG.md").text
-    draft = mcVersion > 11605 // first file should be false
-    releaseAssets = [remapJar, sourcesJar]
-    prerelease = project.release_type != "release"
-    allowUploadToExisting = true // allows publishing multiple files
-    dryRun = debug
-}
-
-tasks.register("curseforge", TaskPublishCurseForge) {
-    group "publishing"
-    disableVersionDetection()
-    apiToken = project.findProperty("curseforgeToken")
-
-    def mainFile = upload(project.project_id, remapJar)
-    mainFile.releaseType = release_type
-    mainFile.displayName = "${project.mod_name} ${project.mod_version} for ${project.title_version}"
-    mainFile.changelog = rootProject.file("CHANGELOG.md").text
-    mainFile.changelogType = "markdown"
-    mainFile.addModLoader "fabric", "quilt"
-    for (String version : project.release_versions.split(" ")) {
-        mainFile.addGameVersion version
-    }
-    debugMode = debug
 }
 
 // configure the maven publication

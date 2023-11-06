@@ -1,12 +1,15 @@
 package dev.kikugie.techutils.mixin.mod.litematica.gui;
 
+import com.google.common.io.Files;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
-import dev.kikugie.techutils.client.compat.axiom.BlueprintLoader;
+import dev.kikugie.techutils.client.TechUtilsClient;
+import dev.kikugie.techutils.client.impl.structure.Structure;
+import dev.kikugie.techutils.client.impl.structure.loader.BlueprintLoader;
 import fi.dy.masa.litematica.gui.GuiSchematicLoad;
 import fi.dy.masa.litematica.schematic.LitematicaSchematic;
 import fi.dy.masa.litematica.util.FileType;
@@ -50,7 +53,7 @@ public class GuiSchematicLoadMixin {
 
     @ModifyExpressionValue(method = "actionPerformedWithButton", at = @At(value = "INVOKE", target = "Lfi/dy/masa/litematica/util/FileType;fromFile(Ljava/io/File;)Lfi/dy/masa/litematica/util/FileType;"))
     private FileType checkForBlueprint(FileType original, @Local WidgetFileBrowserBase.DirectoryEntry entry, @Share("isAxiom") LocalBooleanRef isAxiom) {
-        if (BlueprintLoader.isBlueprint(entry)) {
+        if (Files.getFileExtension(entry.getName()).equals("bp")) {
             isAxiom.set(true);
             return FileType.LITEMATICA_SCHEMATIC;
         }
@@ -63,6 +66,11 @@ public class GuiSchematicLoadMixin {
         if (!isAxiom.get())
             return original.call(dir, fileName);
         warnText.set(true);
-        return BlueprintLoader.toLitematic(new File(dir, fileName), this.gui);
+        try {
+            return BlueprintLoader.INSTANCE.toLitematic(new File(dir, fileName).toPath(), this.gui);
+        } catch (Exception e) {
+            TechUtilsClient.Companion.getLOGGER().error("Failed to load blueprint", e);
+            return null;
+        }
     }
 }

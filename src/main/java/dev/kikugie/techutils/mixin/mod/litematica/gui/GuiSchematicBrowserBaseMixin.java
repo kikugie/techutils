@@ -1,7 +1,7 @@
 package dev.kikugie.techutils.mixin.mod.litematica.gui;
 
 import dev.kikugie.techutils.client.feature.browser.BrowserConfig;
-import dev.kikugie.techutils.client.feature.browser.widget.StructureBrowserWidget;
+import dev.kikugie.techutils.client.gui.browser.StructureBrowserWidget;
 import fi.dy.masa.litematica.gui.GuiSchematicBrowserBase;
 import fi.dy.masa.litematica.gui.widgets.WidgetSchematicBrowser;
 import fi.dy.masa.malilib.gui.GuiListBase;
