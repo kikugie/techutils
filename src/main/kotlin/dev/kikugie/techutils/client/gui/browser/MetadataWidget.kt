@@ -23,14 +23,16 @@ class MetadataWidget(
     private val scissors = ScissorStack()
     private val model = ModelWidget(structure, scissors)
     private var scroll = 0
+    private val keyTranslations = structure.metadata.map.keys.associateWith { StringUtils.translate(it) }
 
     init {
         addWidget(model)
     }
 
     override fun onScrolled(x: Int, y: Int, amount: Double): Boolean {
-        scroll = MathHelper.clamp(scroll + sign(amount).toInt(), 0, structure.metadata.map.size - 1)
-        return model.onScrolled(x, y, amount)
+        if (model.onScrolled(x, y, amount)) return true
+        scroll = MathHelper.clamp(scroll + sign(-amount).toInt(), 0, structure.metadata.map.size - 1)
+        return true
     }
 
     override fun onDragged(x: Double, y: Double, dx: Double, dy: Double, button: Int) =
@@ -50,7 +52,23 @@ class MetadataWidget(
         model.height = height - 8
 
         val lines = arrayListOf<String>()
-        structure.metadata.map.forEach { (k, v) -> run { lines.addAll(formatLine(k, v, model.width)) } }
+        structure.metadata.map.forEach { (k, v) ->
+            run {
+                lines.addAll(
+                    formatLine(
+                        keyTranslations[k] ?: k,
+                        v,
+                        model.width
+                    )
+                )
+            }
+        }
+        for (i in scroll until lines.size) {
+            val line = lines[i]
+            val textY = model.y + (i - scroll) * 10
+            StringUtils.drawString(model.x, textY, Colors.guiText.intValue, line, context)
+        }
+        model.y += (lines.size - scroll) * 10
 
         model.render(mouseX, mouseY, selected, context)
     }
@@ -60,8 +78,8 @@ class MetadataWidget(
         return if (TextUtils.isWithin(combined, width))
             listOf(StringUtils.translate(combined))
         else listOf(
-            StringUtils.translate("$key:"),
-            StringUtils.translate(TextUtils.trimFancy("  $value", width))
+            TextUtils.trimFancy("$key: ", width),
+            TextUtils.trimFancy("  $value", width)
         )
     }
 
@@ -78,11 +96,13 @@ class MetadataWidget(
             if (renderable.mesh.canRender())
                 renderable.drawModel(x, y, width)
 
-            RenderUtils.drawOutline(x, y, width, width, Colors.guiBorder.intValue)
+            renderable.scissors.run(ScissorStack.ScreenRect.ofDims(x, y, width, width)) {
+                RenderUtils.drawOutline(x, y, width, width, Colors.guiBorder.intValue)
+            }
         }
 
         override fun onScrolled(x: Int, y: Int, amount: Double): Boolean {
-            if (!ready) return false
+            if (!ready || !isMouseOver(x, y)) return false
             val property = renderable.properties().scale
             val modifier = BrowserConfig.scrollSensitivity.doubleValue * 0.1
             val scale = property.get()

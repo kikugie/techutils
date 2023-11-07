@@ -4,6 +4,13 @@ techutils:
     litematica: Litematica
     worldedit: WorldEdit
     misc: Miscellaneous
+  browser:
+    metadata:
+      name: Name
+      author: Author
+      size: Size
+      blocks: Blocks
+      creation: Creation Date
   option:
     openConfig: Open TechUtils config screen
     giveFullInv: |-
