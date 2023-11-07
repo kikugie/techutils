@@ -102,8 +102,12 @@ data class StructureRenderable(
             val mesh = WorldMesh.Builder(
                 structure.world,
                 BlockPos.ORIGIN,
-                size
-            ) { _, _, _ -> structure.world.allEntities }
+                size)
+            //#if MC > 12000
+            { _, _, _ -> structure.world.allEntities }
+            //#else
+            //$$ { _ -> structure.world.allEntities }
+            //#endif
             return StructureRenderable(mesh.build(), structure.world, scissors)
         }
     }

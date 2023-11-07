@@ -23,7 +23,7 @@ preprocess {
 //    mc17.link(mc18, null)
 //    mc18.link(mc19, null)
     mc202.link(mc20, null)
-    mc20.link(mc19, null)
+    mc20.link(mc19, file("versions/mapping-1.20-1.19.4.txt"))
 }
 
 tasks.register("buildAndGather") {
