@@ -28,7 +28,6 @@ object TUConfig {
 
     init {
         classes.forEach { processClass(it) }
-        println(options)
     }
 
     @Throws(IllegalArgumentException::class)

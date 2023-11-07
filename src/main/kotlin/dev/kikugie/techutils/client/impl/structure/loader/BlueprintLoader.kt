@@ -87,7 +87,7 @@ object BlueprintLoader : StructureLoader {
         val regionTag = blockDataTag.getList("BlockRegion", 10)
         val world = readChunkData(file, regionTag, dataVersion)
 
-        val blockEntitiesTag = blockDataTag.getList("BlockEntities", 10);
+        val blockEntitiesTag = blockDataTag.getList("BlockEntities", 10)
         readBlockEntities(blockEntitiesTag, world, dataVersion, blueprintDataVersion)
         return world
     }
@@ -173,7 +173,7 @@ object BlueprintLoader : StructureLoader {
                     loadException(file, "Failed to parse block states")
                 }
 
-            iterate(16, 16, 16) { pos ->
+            iterate(15, 15, 15) { pos ->
                 container[pos.x, pos.y, pos.z]
                     .takeIf { it.block != Blocks.STRUCTURE_VOID }
                     ?.let { world.setBlockState(BlockPos(cx * 16 + pos.x, cy * 16 + pos.y, cz * 16 + pos.z), it, 0) }

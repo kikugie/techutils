@@ -49,7 +49,13 @@ abstract class DummyWorld(protected val client: MinecraftClient) : World(
 
     override fun getPlayers() = emptyList<PlayerEntity>()
 
-    override fun getBrightness(direction: Direction?, shaded: Boolean) = 15F
+    override fun getBrightness(direction: Direction?, shaded: Boolean) = when (direction) {
+        Direction.DOWN -> 0.9f
+        Direction.UP -> 1.0f
+        Direction.NORTH, Direction.SOUTH -> 0.8f
+        Direction.WEST, Direction.EAST -> 0.6f
+        else -> 1.0f
+    }
 
     override fun getGeneratorStoredBiome(biomeX: Int, biomeY: Int, biomeZ: Int): RegistryEntry<Biome> = biome
 

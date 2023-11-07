@@ -13,7 +13,7 @@ object SpongeLoader : StructureLoader {
             file.parent.toFile(),
             file.fileName.toString(),
             FileType.SPONGE_SCHEMATIC
-        ) ?: throw loadException(file, "Failed to load schem file")
+        ) ?: throw loadException(file, "Invalid schem file")
         return LitematicLoader.loadInternal(file, converted, lazy, false)
     }
 }
@@ -26,7 +26,7 @@ object SchematicLoader : StructureLoader {
             file.parent.toFile(),
             file.fileName.toString(),
             FileType.SCHEMATICA_SCHEMATIC
-        ) ?: throw loadException(file, "Failed to load schematic file")
+        ) ?: throw loadException(file, "Invalid schematic file")
         return LitematicLoader.loadInternal(file, converted, lazy, false)
     }
 }
@@ -39,7 +39,7 @@ object NbtLoader : StructureLoader {
             file.parent.toFile(),
             file.fileName.toString(),
             FileType.VANILLA_STRUCTURE
-        ) ?: throw loadException(file, "Failed to load nbt structure file")
+        ) ?: throw loadException(file, "Invalid nbt structure file")
         return LitematicLoader.loadInternal(file, converted, lazy, false)
     }
 }

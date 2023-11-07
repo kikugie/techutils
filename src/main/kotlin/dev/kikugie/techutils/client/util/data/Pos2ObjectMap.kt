@@ -42,7 +42,7 @@ class Pos2ObjectMap<T>(
     }
 
     fun compute(key: Long): T {
-        return delegate.computeIfAbsent(key, defaultSupplier as Function<in Long, out T>)
+        return delegate.computeIfAbsent(key, Function { defaultSupplier(key) })
     }
 
     override fun containsValue(value: T): Boolean {

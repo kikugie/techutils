@@ -1,8 +1,8 @@
 package dev.kikugie.techutils.client.gui.browser
 
 import dev.kikugie.techutils.client.feature.browser.BrowserConfig
-import dev.kikugie.techutils.client.impl.structure.Structure
 import dev.kikugie.techutils.client.feature.browser.preview.StructureRenderable
+import dev.kikugie.techutils.client.impl.structure.Structure
 import dev.kikugie.techutils.client.util.multiversion.MetadataWidgetExtension
 import dev.kikugie.techutils.client.util.multiversion.ModelWidgetExtension
 import dev.kikugie.techutils.client.util.render.Colors
@@ -30,7 +30,7 @@ class MetadataWidget(
 
     override fun onScrolled(x: Int, y: Int, amount: Double): Boolean {
         scroll = MathHelper.clamp(scroll + sign(amount).toInt(), 0, structure.metadata.map.size - 1)
-        return true
+        return model.onScrolled(x, y, amount)
     }
 
     override fun onDragged(x: Double, y: Double, dx: Double, dy: Double, button: Int) =
@@ -81,9 +81,8 @@ class MetadataWidget(
             RenderUtils.drawOutline(x, y, width, width, Colors.guiBorder.intValue)
         }
 
-        override fun onScrolled(mouseX: Int, mouseY: Int, verticalAmount: Double): Boolean {
+        override fun onScrolled(x: Int, y: Int, amount: Double): Boolean {
             if (!ready) return false
-            val amount = verticalAmount
             val property = renderable.properties().scale
             val modifier = BrowserConfig.scrollSensitivity.doubleValue * 0.1
             val scale = property.get()

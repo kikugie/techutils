@@ -106,7 +106,7 @@ class StructureBrowserWidget(
             metadataCache[file] = try {
                 Structure.load(entry)
             } catch (e: Exception) {
-                TechUtilsClient.LOGGER.warn(e.message)
+                TechUtilsClient.LOGGER.warn(e.message, e)
                 parent.addMessage(Message.MessageType.ERROR, e.message)
                 null
             }?.let { MetadataWidget(it) }

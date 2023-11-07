@@ -2,7 +2,6 @@ package dev.kikugie.techutils.client.impl.structure.world
 
 import dev.kikugie.techutils.client.util.data.Pos2ObjectMap
 import fi.dy.masa.litematica.world.ChunkSchematic
-import fi.dy.masa.litematica.world.FakeLightingProvider
 import net.minecraft.util.math.ChunkPos
 import net.minecraft.world.BlockView
 import net.minecraft.world.chunk.ChunkManager
@@ -11,7 +10,7 @@ import net.minecraft.world.chunk.light.LightingProvider
 import java.util.function.BooleanSupplier
 
 class StructureChunkManager(private val world: StructureWorld) :  ChunkManager() {
-    private val lightingProvider: LightingProvider = FakeLightingProvider(this)
+    private val lightingProvider: LightingProvider = LightingProvider(this, true, world.dimension.hasSkyLight())
     internal val chunks = Pos2ObjectMap { ChunkSchematic(world, ChunkPos(it)) }
 
     fun get(x: Int, z: Int, create: Boolean = true) = getChunk(x, z, null, create)

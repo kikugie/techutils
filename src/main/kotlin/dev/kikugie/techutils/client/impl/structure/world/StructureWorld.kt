@@ -22,7 +22,7 @@ class StructureWorld(val name: String? = null) : DummyWorld(MinecraftClient.getI
     private var nextEntityId = 1
     private val box = IntBox()
     val size = box.size!!
-    val volume = box.volume!!
+    val volume = box.volume
     override fun getChunkManager(): StructureChunkManager = manager
 
     override fun setBlockState(pos: BlockPos, state: BlockState, flags: Int): Boolean {
@@ -48,6 +48,7 @@ class StructureWorld(val name: String? = null) : DummyWorld(MinecraftClient.getI
         val cx = MathHelper.floor(entity.x / 16)
         val cz = MathHelper.floor(entity.z / 16)
         entity.id = nextEntityId++
+        entities++
         chunkManager.get(cx, cz, true).addEntity(entity)
         return true
     }
