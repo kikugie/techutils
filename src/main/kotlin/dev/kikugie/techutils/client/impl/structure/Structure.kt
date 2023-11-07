@@ -50,7 +50,8 @@ class Structure(
         @Throws(Exception::class)
         fun load(entry: WidgetFileBrowserBase.DirectoryEntry, lazy: Boolean = false): Structure {
             val file = entry.fullPath.toPath()
-            return loaders[file.extension]?.load(file, lazy) ?: throw IllegalArgumentException("Unsupported file format: ${file.extension}")
+            return loaders[file.extension]?.load(file, lazy)
+                ?: throw IllegalArgumentException("Unsupported file format: ${file.extension}")
         }
     }
 }

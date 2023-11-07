@@ -9,7 +9,7 @@ import net.minecraft.world.chunk.ChunkStatus
 import net.minecraft.world.chunk.light.LightingProvider
 import java.util.function.BooleanSupplier
 
-class StructureChunkManager(private val world: StructureWorld) :  ChunkManager() {
+class StructureChunkManager(private val world: StructureWorld) : ChunkManager() {
     private val lightingProvider: LightingProvider = LightingProvider(this, true, world.dimension.hasSkyLight())
     internal val chunks = Pos2ObjectMap { ChunkSchematic(world, ChunkPos(it)) }
 

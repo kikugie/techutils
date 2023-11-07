@@ -50,9 +50,18 @@ object BlueprintLoader : StructureLoader {
     fun toLitematic(file: Path, feedback: IStringConsumer): LitematicaSchematic {
         val structure = load(file, false)
         val selection = AreaSelection()
-        selection.addSubRegionBox(Box(BlockPos.ORIGIN, BlockPos(structure.metadata.size), structure.metadata.name), false)
+        selection.addSubRegionBox(
+            Box(BlockPos.ORIGIN, BlockPos(structure.metadata.size), structure.metadata.name),
+            false
+        )
         val info = LitematicaSchematic.SchematicSaveInfo(false, false)
-        return LitematicaSchematic.createFromWorld(structure.world, selection, info, structure.metadata.author, feedback) ?: throw IllegalStateException("Failed to create Litematica schematic")
+        return LitematicaSchematic.createFromWorld(
+            structure.world,
+            selection,
+            info,
+            structure.metadata.author,
+            feedback
+        ) ?: throw IllegalStateException("Failed to create Litematica schematic")
     }
 
     override fun load(file: Path, lazy: Boolean): Structure {

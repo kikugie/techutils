@@ -23,12 +23,15 @@ data class IntBox(
             val size = size
             return size.x * size.y * size.z
         }
+
     constructor(x: Int, y: Int, z: Int) : this(x, y, z, x, y, z)
     constructor() : this(0, 0, 0, 0, 0, 0)
     constructor(box: Vec3i) : this(box.x, box.y, box.z, box.x, box.y, box.z)
     constructor(pos1: Vec3i, pos2: Vec3i) : this(pos1.x, pos1.y, pos1.z, pos2.x, pos2.y, pos2.z)
 
-    fun toVanillaBox() = Box(x1.toDouble(), y1.toDouble(), z1.toDouble(), x2.toDouble() + 1, y2.toDouble() + 1, z2.toDouble() + 1)
+    fun toVanillaBox() =
+        Box(x1.toDouble(), y1.toDouble(), z1.toDouble(), x2.toDouble() + 1, y2.toDouble() + 1, z2.toDouble() + 1)
+
     fun toLitematicaBox(name: String = "") = LitematicaBox(min, max, name)
 
     fun extend(pos: Vec3i) {

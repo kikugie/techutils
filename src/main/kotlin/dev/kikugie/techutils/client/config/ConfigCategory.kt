@@ -12,6 +12,7 @@ class ConfigCategory(
         get() = StringUtils.translate("techutils.category.$name")
     val description: String
         get() = StringUtils.translate("techutils.category.$name.desc")
+
     companion object {
         val LITEMATICA = ConfigCategory("litematica")
         val WORLDEDIT = ConfigCategory("worldedit")

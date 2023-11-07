@@ -22,13 +22,24 @@ object Options {
         slider: Boolean = false
     ) = ConfigDouble(name, default, min, max, slider, DESCRIPTION_FORMATTER.format(name))
 
-    fun create(name: String, keybind: String, settings: KeybindSettings = KeybindSettings.DEFAULT, callback: (() ->Boolean)? = null): ConfigHotkey {
+    fun create(
+        name: String,
+        keybind: String,
+        settings: KeybindSettings = KeybindSettings.DEFAULT,
+        callback: (() -> Boolean)? = null
+    ): ConfigHotkey {
         val out = ConfigHotkey(name, keybind, settings, DESCRIPTION_FORMATTER.format(name))
-        if (callback != null) out.keybind.setCallback{ _, _ -> callback() }
+        if (callback != null) out.keybind.setCallback { _, _ -> callback() }
         return out
     }
 
-    fun create(name: String, default: Boolean, keybind: String, settings: KeybindSettings = KeybindSettings.DEFAULT, callback: (() ->Boolean)? = null): ConfigBooleanHotkeyed {
+    fun create(
+        name: String,
+        default: Boolean,
+        keybind: String,
+        settings: KeybindSettings = KeybindSettings.DEFAULT,
+        callback: (() -> Boolean)? = null
+    ): ConfigBooleanHotkeyed {
         val out = ConfigBooleanHotkeyed(name, default, keybind, settings, DESCRIPTION_FORMATTER.format(name), name)
         if (callback != null) out.keybind.setCallback { _, _ -> callback() }
         return out

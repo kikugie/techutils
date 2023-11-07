@@ -23,7 +23,10 @@ class ModRestriction private constructor(
             return of(restriction) { true }
         }
 
-        private fun generateRequirement(conditions: Array<Condition>, conditionPredicate: (Condition) -> Boolean): List<ModPredicate> {
+        private fun generateRequirement(
+            conditions: Array<Condition>,
+            conditionPredicate: (Condition) -> Boolean
+        ): List<ModPredicate> {
             return conditions
                 .filter { it.type == Condition.Type.MOD }
                 .filter(conditionPredicate)
