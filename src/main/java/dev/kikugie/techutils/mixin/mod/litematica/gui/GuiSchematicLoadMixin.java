@@ -69,7 +69,7 @@ public class GuiSchematicLoadMixin {
         try {
             return BlueprintLoader.INSTANCE.toLitematic(new File(dir, fileName).toPath(), this.gui);
         } catch (Exception e) {
-            TechUtilsClient.Companion.getLOGGER().error("Failed to load blueprint", e);
+            TechUtilsClient.INSTANCE.getLOGGER().error("Failed to load blueprint", e);
             return null;
         }
     }

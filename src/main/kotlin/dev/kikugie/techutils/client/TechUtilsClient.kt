@@ -7,10 +7,8 @@ import net.fabricmc.api.ClientModInitializer
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-class TechUtilsClient : ClientModInitializer {
-    companion object {
-        val LOGGER: Logger = LoggerFactory.getLogger(Reference.MOD_ID)
-    }
+object TechUtilsClient : ClientModInitializer {
+    val LOGGER: Logger = LoggerFactory.getLogger(Reference.MOD_ID)
 
     override fun onInitializeClient() {
         TUConfig.bootstrap()

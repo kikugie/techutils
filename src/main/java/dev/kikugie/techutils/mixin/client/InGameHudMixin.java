@@ -53,7 +53,7 @@ public class InGameHudMixin {
             score.set(Formatting.RED + formatter.format(Integer.parseInt(Objects.requireNonNull(Formatting.strip(score.get())))));
         } catch (NumberFormatException e) {
             if (!signUpForSpamProtectionProgram) {
-                TechUtilsClient.Companion.getLOGGER().warn("Error in scoreboard value formatting!", e);
+                TechUtilsClient.INSTANCE.getLOGGER().warn("Error in scoreboard value formatting!", e);
                 signUpForSpamProtectionProgram = true;
             }
         }

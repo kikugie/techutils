@@ -70,8 +70,8 @@ dependencies {
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
     mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-    modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_api_version}"
-    modImplementation "net.fabricmc:fabric-language-kotlin:${fabric_kotlin_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+    modImplementation "net.fabricmc:fabric-language-kotlin:${project.flk_dependency}+kotlin.${project.kotlin_version}"
     include api(annotationProcessor("com.github.LlamaLad7.mixinextras:mixinextras-fabric:${project.mixin_extras_version}"))
     include modImplementation("com.github.Fallen-Breath:conditional-mixin:v${project.conditional_mixin_version}")
 
@@ -130,19 +130,17 @@ processResources {
     inputs.property "minecraft_dependency", project.minecraft_dependency
     inputs.property "malilib_dependency", project.malilib_version
     inputs.property "litematica_dependency", project.litematica_version
-    inputs.property "itemscroller_dependency", project.litematica_version
-    inputs.property "tweakeroo_dependency", project.litematica_version
+    inputs.property "flk_dependency", project.flk_dependency
 
     filesMatching("fabric.mod.json") {
         def valueMap = [
-                "id"                     : project.mod_id,
-                "name"                   : project.mod_name,
-                "version"                : project.mod_version,
-                "minecraft_dependency"   : project.minecraft_dependency,
-                "malilib_dependency"     : project.malilib_version,
-                "litematica_dependency"  : project.litematica_version,
-                "itemscroller_dependency": project.litematica_version,
-                "tweakeroo_dependency"   : project.litematica_version
+                "id"                   : project.mod_id,
+                "name"                 : project.mod_name,
+                "version"              : project.mod_version,
+                "minecraft_dependency" : project.minecraft_dependency,
+                "malilib_dependency"   : project.malilib_version,
+                "litematica_dependency": project.litematica_version,
+                "flk_dependency"       : "${project.flk_dependency}+kotlin.${project.kotlin_version}"
         ]
         expand valueMap
     }

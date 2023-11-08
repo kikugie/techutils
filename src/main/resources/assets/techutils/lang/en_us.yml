@@ -32,6 +32,9 @@ techutils:
       - 1000 -> 1K
       - 1000000 -> 1M
       - 1000000000 -> 1B
+    downloadSchematic: |-
+      Opens a schematic downloader gui.
+      Downloaded schematic will be saved to .minecraft/schematics/downloads and a placement will be created.
     bundleFill: Amount of stacks to put in a bundle when using giveFullInv feature
     fillSafety: |-
       Restrict nested containers to prevent crashing yourself.
