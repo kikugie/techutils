@@ -4,17 +4,14 @@ import com.google.common.math.IntMath;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import dev.kikugie.techutils.client.TechUtilsClient;
-import dev.kikugie.techutils.client.feature.util.MiscConfig;
-import net.minecraft.client.gui.DrawContext;
+import dev.kikugie.techutils.client.feature.MiscConfig;
 import net.minecraft.client.gui.hud.InGameHud;
-import net.minecraft.scoreboard.ScoreboardObjective;
 import net.minecraft.util.Formatting;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.text.NumberFormat;
@@ -48,6 +45,7 @@ public class InGameHudMixin {
             //#else
             //$$ target = "Lnet/minecraft/client/gui/hud/InGameHud;fill(Lnet/minecraft/client/util/math/MatrixStack;IIIII)V"
             //#endif
+            , ordinal = 0
     ))
     private void shortenScore(CallbackInfo ci, @Local LocalRef<String> score) {
         if (!MiscConfig.INSTANCE.getCompactScoreboard().getBooleanValue()) return;

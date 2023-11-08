@@ -11,6 +11,11 @@ techutils:
       size: Size
       blocks: Blocks
       creation: Creation Date
+  downloader:
+    title: Schematic Downloader
+    force: Overwrite existing file
+    downloadFail: Failed to download file
+    loadFail: Failed to load downloaded file
   option:
     openConfig: Open TechUtils config screen
     giveFullInv: |-

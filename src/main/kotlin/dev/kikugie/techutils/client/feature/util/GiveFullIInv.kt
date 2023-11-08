@@ -1,5 +1,6 @@
 package dev.kikugie.techutils.client.feature.util
 
+import dev.kikugie.techutils.client.feature.MiscConfig
 import dev.kikugie.techutils.client.util.litematica.InGameNotifier
 import fi.dy.masa.malilib.gui.Message
 import net.minecraft.block.BlockEntityProvider
