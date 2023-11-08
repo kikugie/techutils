@@ -26,8 +26,7 @@ object LitematicaMiscConfig {
         return@create true
     }
     val refreshMaterialList = create("refreshMaterialList", "") {
-        val materials = DataManager.getMaterialList() ?: return@create false
-        materials.reCreateMaterialList()
+        DataManager.getMaterialList()?.reCreateMaterialList() ?: return@create false
         return@create true
     }
 }

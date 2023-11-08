@@ -1,4 +1,4 @@
-package dev.kikugie.techutils.client.util
+package dev.kikugie.techutils.client.util.data
 
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Box

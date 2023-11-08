@@ -72,15 +72,12 @@ object LitematicLoader : StructureLoader {
         return try {
             val image = NativeImage(size, size, false)
             val texture = NativeImageBackedTexture(image)
-            val id = Reference.id(DigestUtils.sha1Hex(path))
-            MinecraftClient.getInstance().textureManager.registerTexture(id, texture)
             for (y in 0 until size) for (x in 0 until size) {
                 val pixel = pixelData[y * size + x]
                 image.setColor(
                     x, y, pixel and -0xff0100 or (pixel and 0xFF0000 shr 16) or (pixel and 0xFF shl 16)
                 )
             }
-            texture.upload()
             texture
         } catch (e: Exception) {
             throw loadException(file, "Failed to load write preview image")

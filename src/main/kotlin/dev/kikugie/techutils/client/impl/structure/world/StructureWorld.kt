@@ -1,7 +1,7 @@
 package dev.kikugie.techutils.client.impl.structure.world
 
 import dev.kikugie.techutils.client.TechUtilsClient
-import dev.kikugie.techutils.client.util.IntBox
+import dev.kikugie.techutils.client.util.data.IntBox
 import fi.dy.masa.litematica.world.ChunkSchematic
 import net.minecraft.block.BlockState
 import net.minecraft.block.entity.BlockEntity

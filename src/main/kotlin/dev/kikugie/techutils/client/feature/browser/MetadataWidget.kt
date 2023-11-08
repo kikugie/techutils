@@ -1,8 +1,8 @@
-package dev.kikugie.techutils.client.gui.browser
+package dev.kikugie.techutils.client.feature.browser
 
-import dev.kikugie.techutils.client.feature.browser.BrowserConfig
 import dev.kikugie.techutils.client.feature.browser.preview.StructureRenderable
 import dev.kikugie.techutils.client.impl.structure.Structure
+import dev.kikugie.techutils.client.util.computeIfLoaded
 import dev.kikugie.techutils.client.util.multiversion.MetadataWidgetExtension
 import dev.kikugie.techutils.client.util.multiversion.ModelWidgetExtension
 import dev.kikugie.techutils.client.util.render.Colors
@@ -21,7 +21,7 @@ class MetadataWidget(
     // Dimensions are updated at render time
 ) : MetadataWidgetExtension() {
     private val scissors = ScissorStack()
-    private val model = ModelWidget(structure, scissors)
+    private val model = computeIfLoaded("isorender") { ModelWidget(structure, scissors) }
     private var scroll = 0
     private val keyTranslations = structure.metadata.map.keys.associateWith { StringUtils.translate(it) }
 
@@ -30,13 +30,13 @@ class MetadataWidget(
     }
 
     override fun onScrolled(x: Int, y: Int, amount: Double): Boolean {
-        if (model.onScrolled(x, y, amount)) return true
+        if (model?.onScrolled(x, y, amount) == true) return true
         scroll = MathHelper.clamp(scroll + sign(-amount).toInt(), 0, structure.metadata.map.size - 1)
         return true
     }
 
     override fun onDragged(x: Double, y: Double, dx: Double, dy: Double, button: Int) =
-        model.onDragged(x, y, dx, dy, button)
+        model?.onDragged(x, y, dx, dy, button) ?: false
 
     override fun render(mouseX: Int, mouseY: Int, selected: Boolean, context: DrawContext) {
         RenderUtils.drawOutlinedBox(x, y, width, height, Colors.guiBackground.intValue, Colors.guiBorder.intValue)
@@ -46,31 +46,28 @@ class MetadataWidget(
     }
 
     private fun drawMetadataWidget(mouseX: Int, mouseY: Int, selected: Boolean, context: DrawContext) {
-        model.x = x + 4
-        model.y = y + 4
-        model.width = width - 8
-        model.height = height - 8
+        val lx = x + 4
+        val ly = y + 4
+        val lw = width - 8
+        val lh = height - 4
 
         val lines = arrayListOf<String>()
         structure.metadata.map.forEach { (k, v) ->
-            run {
-                lines.addAll(
-                    formatLine(
-                        keyTranslations[k] ?: k,
-                        v,
-                        model.width
-                    )
-                )
-            }
+            lines.addAll(formatLine(keyTranslations[k] ?: k, v, lw))
         }
         for (i in scroll until lines.size) {
             val line = lines[i]
-            val textY = model.y + (i - scroll) * 10
-            StringUtils.drawString(model.x, textY, Colors.guiText.intValue, line, context)
+            val textY = ly + (i - scroll) * 10
+            StringUtils.drawString(lx, textY, Colors.guiText.intValue, line, context)
         }
-        model.y += (lines.size - scroll) * 10
 
-        model.render(mouseX, mouseY, selected, context)
+        if (model != null) {
+            model.x = lx
+            model.y = ly + (lines.size - scroll) * 10
+            model.width = lw
+            model.height = lh
+            model.render(mouseX, mouseY, selected, context)
+        }
     }
 
     private fun formatLine(key: String, value: String, width: Int): List<String> {

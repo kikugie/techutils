@@ -1,4 +1,4 @@
-package dev.kikugie.techutils.client.gui.browser
+package dev.kikugie.techutils.client.feature.browser
 
 import dev.kikugie.techutils.client.gui.icon.IconProvider
 import dev.kikugie.techutils.client.util.render.Colors
