@@ -1,6 +1,5 @@
 package dev.kikugie.techutils.client.impl.structure.loader
 
-import dev.kikugie.techutils.Reference
 import dev.kikugie.techutils.client.TechUtilsClient
 import dev.kikugie.techutils.client.impl.structure.Structure
 import dev.kikugie.techutils.client.impl.structure.StructureMetadata
@@ -8,11 +7,9 @@ import dev.kikugie.techutils.client.impl.structure.world.StructureWorld
 import fi.dy.masa.litematica.schematic.LitematicaSchematic
 import fi.dy.masa.litematica.schematic.placement.SchematicPlacement
 import fi.dy.masa.litematica.util.FileType
-import net.minecraft.client.MinecraftClient
 import net.minecraft.client.texture.NativeImage
 import net.minecraft.client.texture.NativeImageBackedTexture
 import net.minecraft.util.math.BlockPos
-import org.apache.commons.codec.digest.DigestUtils
 import java.nio.file.Path
 import kotlin.math.sqrt
 

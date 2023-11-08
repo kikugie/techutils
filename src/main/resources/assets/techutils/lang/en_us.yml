@@ -22,7 +22,11 @@ techutils:
             - Main hand: empty shulker box; Off hand: container; Result: container of stacked boxes.
             - Main hand: shulker box; Off hand: none: Result: chest of full boxes.
             - Main hand: shulker box; Off hand: container; Result: container of full boxes.
-      
+    compactScoreboard: |-
+      Use short number format for scoreboard values:
+      - 1000 -> 1K
+      - 1000000 -> 1M
+      - 1000000000 -> 1B
     bundleFill: Amount of stacks to put in a bundle when using giveFullInv feature
     fillSafety: |-
       Restrict nested containers to prevent crashing yourself.

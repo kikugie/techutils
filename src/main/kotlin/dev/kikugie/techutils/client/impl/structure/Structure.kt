@@ -5,7 +5,7 @@ import dev.kikugie.techutils.client.impl.structure.loader.LitematicLoader
 import dev.kikugie.techutils.client.impl.structure.loader.SchematicLoader
 import dev.kikugie.techutils.client.impl.structure.loader.SpongeLoader
 import dev.kikugie.techutils.client.impl.structure.world.StructureWorld
-import dev.kikugie.techutils.client.util.FabricUtils
+import dev.kikugie.techutils.client.util.computeIfLoaded
 import fi.dy.masa.malilib.gui.widgets.WidgetFileBrowserBase
 import net.minecraft.client.texture.NativeImageBackedTexture
 import java.nio.file.Path
@@ -44,7 +44,7 @@ class Structure(
         )
 
         init {
-            if (FabricUtils.isLoaded("axiom")) loaders["bp"] = BlueprintLoader
+            computeIfLoaded("axiom") { loaders["bp"] = BlueprintLoader }
         }
 
         @Throws(Exception::class)

@@ -5,8 +5,8 @@ import dev.kikugie.techutils.client.TechUtilsClient
 import dev.kikugie.techutils.client.impl.structure.Structure
 import dev.kikugie.techutils.client.impl.structure.StructureMetadata
 import dev.kikugie.techutils.client.impl.structure.world.StructureWorld
-import dev.kikugie.techutils.client.util.getString
 import dev.kikugie.techutils.client.util.data.iterate
+import dev.kikugie.techutils.client.util.getString
 import dev.kikugie.techutils.client.util.updatePalettedContainer
 import fi.dy.masa.litematica.schematic.LitematicaSchematic
 import fi.dy.masa.litematica.selection.AreaSelection

@@ -3,7 +3,7 @@ package dev.kikugie.techutils.client.util
 import me.fallenbreath.conditionalmixin.api.util.VersionChecker
 import net.fabricmc.loader.api.FabricLoader
 
-fun <T> computeIfLoaded(mod: String, action: () -> T ): T? {
+fun <T> computeIfLoaded(mod: String, action: () -> T): T? {
     return if (FabricLoader.getInstance().isModLoaded(mod)) action.invoke() else null
 }
 
