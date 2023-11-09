@@ -10,6 +10,7 @@ import fi.dy.masa.litematica.data.DataManager
 import fi.dy.masa.litematica.gui.GuiSchematicBrowserBase
 import fi.dy.masa.malilib.gui.Message
 import fi.dy.masa.malilib.gui.interfaces.ISelectionListener
+import fi.dy.masa.malilib.gui.widgets.WidgetDirectoryEntry
 import fi.dy.masa.malilib.util.StringUtils
 import net.minecraft.client.gui.DrawContext
 import java.io.File
@@ -83,18 +84,14 @@ class StructureBrowserWidget(
         return res || handled
     }
 
-    override fun onMouseReleased(mouseX: Int, mouseY: Int, mouseButton: Int): Boolean {
-        currentMetadata?.onMouseReleased(mouseX, mouseY, mouseButton)
-        return super.onMouseReleased(mouseX, mouseY, mouseButton)
+    override fun onReleased(x: Int, y: Int, button: Int): Boolean {
+        currentMetadata?.onMouseReleased(x, y, button)
+        return true
     }
 
     override fun onScrolled(x: Int, y: Int, amount: Double) =
         currentMetadata?.onScrolled(x, y, amount) ?: false
 
-    override fun onReleased(x: Int, y: Int, button: Int): Boolean {
-        currentMetadata?.onMouseReleased(x, y, button)
-        return true
-    }
 
     override fun onDragged(x: Double, y: Double, dx: Double, dy: Double, button: Int) =
         currentMetadata?.onDragged(x, y, dx, dy, button) ?: false
@@ -120,42 +117,14 @@ class StructureBrowserWidget(
         }
     }
 
-    override fun reCreateListEntryWidgets() {
-        listWidgets.clear()
-        maxVisibleBrowserEntries = 0
-
-        val listHeight = browserHeight - browserPaddingY - browserEntriesOffsetY
-        val x = posX + 2
-        val y = posY + 4 + browserEntriesOffsetY
-        var yOffset = 0
-
-        val header = createHeaderWidget(x, y, scrollBar.value, browserWidth, 0)
-        if (header != null) {
-            listWidgets.add(header)
-            yOffset = header.height
-        }
-
-        for (i in scrollBar.value + 1 until listContents.size) {
-            val entry = listContents[i]
-            val height = getBrowserEntryHeightFor(entry)
-            if (yOffset + height > listHeight) break
-            listWidgets.add(
-                DirectoryEntryWidget(
-                    entry,
-                    x,
-                    y + yOffset,
-                    browserEntryWidth,
-                    height,
-                    i,
-                    this,
-                    IconProvider
-                )
-            )
-            maxVisibleBrowserEntries++
-            yOffset += height
-        }
-
-        scrollBar.maxValue = listContents.size - maxVisibleBrowserEntries
+    override fun createListEntryWidget(
+        x: Int,
+        y: Int,
+        listIndex: Int,
+        isOdd: Boolean,
+        entry: DirectoryEntry
+    ): WidgetDirectoryEntry {
+        return DirectoryEntryWidget(entry, x, y, browserEntryWidth, getBrowserEntryHeightFor(entry), listIndex, this, IconProvider)
     }
 
     override fun drawAdditionalContents(mouseX: Int, mouseY: Int, context: DrawContext) {

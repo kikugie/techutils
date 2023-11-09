@@ -21,12 +21,12 @@ class MetadataWidget(
     // Dimensions are updated at render time
 ) : MetadataWidgetExtension() {
     private val scissors = ScissorStack()
-    private val model = computeIfLoaded("isorender") { ModelWidget(structure, scissors) }
+    private val model = computeIfLoaded("isometric-renders") { ModelWidget(structure, scissors) }
     private var scroll = 0
     private val keyTranslations = structure.metadata.map.keys.associateWith { StringUtils.translate(it) }
 
     init {
-        addWidget(model)
+        if (model != null) addWidget(model)
     }
 
     override fun onScrolled(x: Int, y: Int, amount: Double): Boolean {
