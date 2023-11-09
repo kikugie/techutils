@@ -5,6 +5,7 @@ import dev.kikugie.techutils.client.config.option.Options.create
 import dev.kikugie.techutils.client.feature.downloader.DownloaderGui
 import dev.kikugie.techutils.client.util.litematica.InGameNotifier
 import dev.kikugie.techutils.client.util.litematica.PlacementUtils
+import dev.kikugie.techutils.client.util.multiversion.floor
 import fi.dy.masa.litematica.data.DataManager
 import fi.dy.masa.litematica.data.SchematicHolder
 import fi.dy.masa.litematica.schematic.LitematicaSchematic
@@ -47,8 +48,8 @@ object LitematicaMiscConfig {
             }
             SchematicHolder.getInstance().addSchematic(schematic, true)
             if (DataManager.getCreatePlacementOnLoad()) {
-                val pos = BlockPos.ofFloored(MinecraftClient.getInstance().player?.pos)
-                val name: String = schematic.metadata.name
+                val pos = MinecraftClient.getInstance().player?.pos?.floor() ?: BlockPos.ORIGIN
+                val name = schematic.metadata.name
                 val manager = DataManager.getSchematicPlacementManager()
                 val placement = SchematicPlacement.createFor(schematic, pos, name, true, true)
                 manager.addSchematicPlacement(placement, true)

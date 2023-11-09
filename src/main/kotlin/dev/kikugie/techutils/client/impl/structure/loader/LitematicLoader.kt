@@ -7,10 +7,12 @@ import dev.kikugie.techutils.client.impl.structure.world.StructureWorld
 import fi.dy.masa.litematica.schematic.LitematicaSchematic
 import fi.dy.masa.litematica.schematic.placement.SchematicPlacement
 import fi.dy.masa.litematica.util.FileType
+import fi.dy.masa.malilib.interfaces.IStringConsumer
 import net.minecraft.client.texture.NativeImage
 import net.minecraft.client.texture.NativeImageBackedTexture
 import net.minecraft.util.math.BlockPos
 import java.nio.file.Path
+import kotlin.io.path.name
 import kotlin.math.sqrt
 
 object LitematicLoader : StructureLoader {
@@ -22,6 +24,10 @@ object LitematicLoader : StructureLoader {
             FileType.LITEMATICA_SCHEMATIC
         ) ?: throw loadException(file, "Failed to load litematic file")
         return loadInternal(file, litematic, lazy)
+    }
+
+    override fun toLitematic(file: Path, feedback: IStringConsumer): LitematicaSchematic {
+        return LitematicaSchematic.createFromFile(file.parent.toFile(), file.name, FileType.LITEMATICA_SCHEMATIC) ?: throw loadException(file, "Invalid litematic")
     }
 
     internal fun loadInternal(

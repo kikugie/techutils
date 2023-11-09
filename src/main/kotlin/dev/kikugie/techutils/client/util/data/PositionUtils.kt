@@ -2,6 +2,7 @@ package dev.kikugie.techutils.client.util.data
 
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.ChunkPos
+import net.minecraft.util.math.Vec3d
 
 fun Long.toBlockPos(): BlockPos = BlockPos.fromLong(this)
 fun Long.asChunksPos(): ChunkPos = toBlockPos().asChunkPos()

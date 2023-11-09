@@ -2,6 +2,7 @@ package dev.kikugie.techutils.client.feature.util
 
 import dev.kikugie.techutils.client.feature.MiscConfig
 import dev.kikugie.techutils.client.util.litematica.InGameNotifier
+import dev.kikugie.techutils.client.util.multiversion.withCount
 import fi.dy.masa.malilib.gui.Message
 import net.minecraft.block.BlockEntityProvider
 import net.minecraft.block.Blocks
@@ -59,7 +60,7 @@ object GiveFullIInv {
         val fullStack = if (containerHasItems(mainHand))
             mainHand.copy()
         else
-            mainHand.copyWithCount(64)
+            mainHand.withCount(64)
         return handleOffHand(offHand) { stack: ItemStack -> fillChest(stack) }.apply(fullStack)
     }
 
@@ -68,7 +69,7 @@ object GiveFullIInv {
             sendError("nested_stack")
             return null
         }
-        val fullStack = mainHand.copyWithCount(mainHand.maxCount)
+        val fullStack = mainHand.withCount(mainHand.maxCount)
         return handleOffHand(offHand) { stack: ItemStack ->
             fillShulker(stack, null)
         }.apply(fullStack)

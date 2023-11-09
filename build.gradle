@@ -14,16 +14,16 @@ plugins {
 preprocess {
 //    def mc16 = createNode("1.16.5", 1_16_05, "yarn")
 //    def mc17 = createNode("1.17.1", 1_17_01, "yarn")
-//    def mc18 = createNode("1.18.2", 1_18_02, "yarn")
+    def mc18 = createNode("1.18.2", 1_18_02, "yarn")
     def mc19 = createNode("1.19.4", 1_19_04, "yarn")
     def mc20 = createNode("1.20.1", 1_20_01, "yarn")
     def mc202 = createNode("1.20.2", 1_20_02, "yarn")
 
 //    mc16.link(mc17, null)
 //    mc17.link(mc18, null)
-//    mc18.link(mc19, null)
     mc202.link(mc20, null)
-    mc20.link(mc19, file("versions/mapping-1.20-1.19.4.txt"))
+    mc20.link(mc19, file("versions/mapping-1.20-1.19.txt"))
+    mc19.link(mc18, null)
 }
 
 tasks.register("buildAndGather") {

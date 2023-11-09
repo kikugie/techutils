@@ -39,7 +39,12 @@ import kotlin.io.path.inputStream
 object BlueprintLoader : StructureLoader {
     override val format: String = "bp"
     private const val MAGIC = 182827830
+
+    //#if MC > 11802
     private val BLOCK_STATE_CODEC = PalettedContainer.createPalettedContainerCodec(
+        //#else
+        //$$ private val BLOCK_STATE_CODEC = PalettedContainer.createCodec(
+        //#endif
         Block.STATE_IDS,
         BlockState.CODEC,
         PalettedContainer.PaletteProvider.BLOCK_STATE,
@@ -47,11 +52,11 @@ object BlueprintLoader : StructureLoader {
     )
 
     @Throws(Exception::class)
-    fun toLitematic(file: Path, feedback: IStringConsumer): LitematicaSchematic {
+    override fun toLitematic(file: Path, feedback: IStringConsumer): LitematicaSchematic {
         val structure = load(file, false)
         val selection = AreaSelection()
         selection.addSubRegionBox(
-            Box(BlockPos.ORIGIN, BlockPos(structure.metadata.size), structure.metadata.name),
+            Box(BlockPos.ORIGIN, BlockPos(structure.world.size), structure.metadata.name),
             false
         )
         val info = LitematicaSchematic.SchematicSaveInfo(false, false)

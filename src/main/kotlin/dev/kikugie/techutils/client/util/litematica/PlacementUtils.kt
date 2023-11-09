@@ -1,6 +1,7 @@
 package dev.kikugie.techutils.client.util.litematica
 
 import dev.kikugie.techutils.client.util.WorldUtils
+import dev.kikugie.techutils.client.util.multiversion.getPlacementsTouching
 import fi.dy.masa.litematica.data.DataManager
 import fi.dy.masa.litematica.schematic.placement.SchematicPlacement
 import fi.dy.masa.litematica.util.PositionUtils
@@ -23,7 +24,7 @@ object PlacementUtils {
         )
 
     fun getPlacementPos(world: BlockPos): PlacementPos? {
-        val parts = DataManager.getSchematicPlacementManager().getAllPlacementsTouchingChunk(world)
+        val parts = DataManager.getSchematicPlacementManager().getPlacementsTouching(world)
         for (part in parts) {
             if (!part.box.containsPos(world)) continue
 

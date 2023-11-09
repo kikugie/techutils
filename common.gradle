@@ -65,6 +65,12 @@ configurations {
     modRuntimeOnly.exclude group: "net.fabricmc", module: "fabric-loader"
 }
 
+configurations.configureEach {
+    resolutionStrategy {
+        force("net.fabricmc:fabric-loader:$loader_version")
+    }
+}
+
 dependencies {
     // loom
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
@@ -83,7 +89,8 @@ dependencies {
 
     modImplementation "io.wispforest:worldmesher:${project.worldmesher_version}"
     modImplementation "maven.modrinth:isometric-renders:${project.isometric_renders_version}"
-    modImplementation "io.wispforest:owo-lib:${project.owo_version}"
+    if (mcVersion > 11802)
+        modImplementation "io.wispforest:owo-lib:${project.owo_version}"
 
     modRuntimeOnly "com.sk89q.worldedit:worldedit-fabric-mc${project.worldedit_version}"
     testImplementation "net.fabricmc:fabric-loader-junit:${project.loader_version}"
@@ -164,10 +171,6 @@ tasks.withType(AbstractArchiveTask).configureEach {
 tasks.withType(JavaCompile).configureEach {
     options.encoding = "UTF-8"
     options.compilerArgs << "-Xlint:deprecation" << "-Xlint:unchecked"
-}
-
-test {
-    useJUnitPlatform()
 }
 
 java {

@@ -2,6 +2,7 @@ package dev.kikugie.techutils.client.impl.structure.world
 
 import dev.kikugie.techutils.client.TechUtilsClient
 import dev.kikugie.techutils.client.util.data.IntBox
+import dev.kikugie.techutils.client.util.multiversion.entities
 import fi.dy.masa.litematica.world.ChunkSchematic
 import net.minecraft.block.BlockState
 import net.minecraft.block.entity.BlockEntity
@@ -57,7 +58,7 @@ class StructureWorld(val name: String? = null) : DummyWorld(MinecraftClient.getI
         get() {
             val entities: MutableList<Entity> = ArrayList()
             for (chunk in chunkManager.chunks.values) {
-                entities.addAll(chunk.entityList)
+                entities.addAll(chunk.entities())
             }
             return entities
         }
@@ -65,7 +66,7 @@ class StructureWorld(val name: String? = null) : DummyWorld(MinecraftClient.getI
     override fun getOtherEntities(except: Entity?, box: Box, predicate: Predicate<in Entity>): List<Entity> {
         val entities: MutableList<Entity> = ArrayList()
         for (chunk in getChunksWithinBox(box)) {
-            chunk.entityList.forEach(Consumer { e: Entity ->
+            chunk.entities().forEach(Consumer { e: Entity ->
                 if (e !== except && box.intersects(e.boundingBox) && predicate.test(e)) {
                     entities.add(e)
                 }
