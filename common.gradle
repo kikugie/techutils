@@ -81,18 +81,18 @@ dependencies {
     include api(annotationProcessor("com.github.LlamaLad7.mixinextras:mixinextras-fabric:${project.mixin_extras_version}"))
     include modImplementation("com.github.Fallen-Breath:conditional-mixin:v${project.conditional_mixin_version}")
 
-    modApi "com.terraformersmc:modmenu:${project.modmenu_version}"
-    modImplementation "fi.dy.masa.malilib:malilib-fabric-${project.minecraft_version}:${project.malilib_version}"
-    modImplementation "fi.dy.masa:litematica:${project.litematica_version}+${project.minecraft_version}"
-    modImplementation "fi.dy.masa:itemscroller:${project.itemscroller_version}+${project.minecraft_version}"
-    modImplementation "fi.dy.masa:tweakeroo:${project.tweakeroo_version}+${project.minecraft_version}"
+    modApi ("com.terraformersmc:modmenu:${project.modmenu_version}")
+    modImplementation ("fi.dy.masa.malilib:malilib-fabric-${project.minecraft_version}:${project.malilib_version}")
+    modImplementation ("fi.dy.masa:litematica:${project.litematica_version}+${project.minecraft_version}")
+//    modImplementation "fi.dy.masa:itemscroller:${project.itemscroller_version}+${project.minecraft_version}"
+//    modImplementation "fi.dy.masa:tweakeroo:${project.tweakeroo_version}+${project.minecraft_version}"
 
-    modImplementation "io.wispforest:worldmesher:${project.worldmesher_version}"
-    modImplementation "maven.modrinth:isometric-renders:${project.isometric_renders_version}"
+    modImplementation ("io.wispforest:worldmesher:${project.worldmesher_version}")
+    modImplementation ("maven.modrinth:isometric-renders:${project.isometric_renders_version}")
     if (mcVersion > 11802)
-        modImplementation "io.wispforest:owo-lib:${project.owo_version}"
+        modImplementation ("io.wispforest:owo-lib:${project.owo_version}")
 
-    modRuntimeOnly "com.sk89q.worldedit:worldedit-fabric-mc${project.worldedit_version}"
+//    modRuntimeOnly ("com.sk89q.worldedit:worldedit-fabric-mc${project.worldedit_version}")
     testImplementation "net.fabricmc:fabric-loader-junit:${project.loader_version}"
 }
 
@@ -124,9 +124,9 @@ remapJar {
 sourceCompatibility = JAVA_COMPATIBILITY
 targetCompatibility = JAVA_COMPATIBILITY
 
-version = project.mod_version
+version = "${project.mod_version}+${project.title_version}"
 group = project.maven_group
-archivesBaseName = "${project.archives_base_name}-${project.mod_version}+${project.title_version}"
+archivesBaseName = project.archives_base_name
 
 // See https://youtrack.jetbrains.com/issue/IDEA-296490
 // if IDEA complains about "Cannot resolve resource filtering of MatchingCopyAction" and you want to know why

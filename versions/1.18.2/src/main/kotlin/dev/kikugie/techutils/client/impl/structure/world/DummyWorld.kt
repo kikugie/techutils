@@ -45,7 +45,7 @@ abstract class DummyWorld(protected val client: MinecraftClient) : World(
         val PROPERTIES = ClientWorld.Properties(Difficulty.PEACEFUL, false, true)
         val DIMENSION_TYPE = DimensionType.create(
             OptionalLong.of(6000L),
-            false,
+            true,
             false,
             false,
             false,
@@ -60,7 +60,7 @@ abstract class DummyWorld(protected val client: MinecraftClient) : World(
             384,
             BlockTags.INFINIBURN_END,
             DimensionType.OVERWORLD_ID,
-            0.0f
+            1.0f
         )
     }
 
