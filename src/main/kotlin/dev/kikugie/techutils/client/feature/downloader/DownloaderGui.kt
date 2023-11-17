@@ -87,41 +87,35 @@ class DownloaderGui : GuiDialogBase() {
     }
 
     private fun apply() {
-        var placement: SchematicPlacement? = null
-        if (runBlocking {
-                // Indent *dies*
-                try {
-                    SchematicDownloader.download(urlField.text, force) { placement = createPlacement(it) }
-                    false
-                } catch (e: Exception) {
-                    addMessage(Message.MessageType.ERROR, e.message ?: "techutils.download.downloadFail")
-                    true
-                }
-            }) return
-
-        openGui(parent)
-        if (placementData.text == "" || placement == null) return
-        if (!PlacementSerializer.deserialize(placementData.text, placement!!))
-            InGameNotifier.addMessage(Message.MessageType.ERROR, "techutils.downloader.dataFail")
+        runBlocking {
+            try {
+                SchematicDownloader.download(urlField.text, force) { createPlacement(it) }
+                openGui(parent)
+            } catch (e: Exception) {
+                addMessage(Message.MessageType.ERROR, e.message ?: "techutils.download.downloadFail")
+            }
+        }
     }
 
-    private fun createPlacement(file: File): SchematicPlacement? {
+    private fun createPlacement(file: File) {
         // TODO: Use Structure.load() instead
         val schematic = LitematicaSchematic.createFromFile(file.parentFile, file.name)
         if (schematic == null) {
             addMessage(Message.MessageType.ERROR, "techutils.downloader.failLoad")
-            return null
+            return
         }
         SchematicHolder.getInstance().addSchematic(schematic, true)
-        return if (DataManager.getCreatePlacementOnLoad()) {
-            val pos = MinecraftClient.getInstance().player?.pos?.floor() ?: BlockPos.ORIGIN
-            val name = schematic.metadata.name
-            val manager = DataManager.getSchematicPlacementManager()
-            val placement = SchematicPlacement.createFor(schematic, pos, name, true, true)
-            manager.addSchematicPlacement(placement, true)
-            manager.selectedSchematicPlacement = placement
-            placement
-        } else null
+        if (!DataManager.getCreatePlacementOnLoad()) return
+
+        val pos = MinecraftClient.getInstance().player?.pos?.floor() ?: BlockPos.ORIGIN
+        val name = schematic.metadata.name
+        val manager = DataManager.getSchematicPlacementManager()
+        val placement = SchematicPlacement.createFor(schematic, pos, name, true, true)
+        manager.addSchematicPlacement(placement, true)
+        manager.selectedSchematicPlacement = placement
+
+        if (placementData.text != "" && !PlacementSerializer.deserialize(placementData.text, placement!!))
+            InGameNotifier.addMessage(Message.MessageType.ERROR, "techutils.downloader.dataFail")
     }
 
     public override fun drawContents(context: DrawContext, mouseX: Int, mouseY: Int, partialTicks: Float) {
