@@ -186,10 +186,6 @@ java {
     withSourcesJar()
 }
 
-test {
-    useJUnitPlatform()
-}
-
 jar {
     from(rootProject.file("LICENSE")) {
         rename { "${it}_${project.archivesBaseName}" }
