@@ -54,7 +54,7 @@ object PlacementSerializer {
         placementData.apply(placement)
         val subregions = placement.allSubRegionsPlacements.associateBy { it.name }
 
-        json.asMap().forEach { (key, it) ->
+        json.entrySet().forEach { (key, it) ->
             if (key == KEY) return@forEach
             if (!subregions.contains(key)) throw IllegalStateException("Subregion $key doesn't exist in the placement")
             val region = subregions[key]

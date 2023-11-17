@@ -127,9 +127,13 @@ class DownloaderGui : GuiDialogBase() {
     public override fun drawContents(context: DrawContext, mouseX: Int, mouseY: Int, partialTicks: Float) {
         parent?.render(context, mouseX, mouseY, partialTicks)
 
+        //#if MC >= 12000
         val matrixStack = context.matrices
+        //#else
+        //$$ val matrixStack = context
+        //#endif
         matrixStack.push()
-        matrixStack.translate(0f, 0f, .5f)
+        matrixStack.translate(0.0, 0.0, 1.0)
         RenderUtils.drawOutlinedBox(
             dialogLeft,
             dialogTop, dialogWidth, dialogHeight, -0x20000000, COLOR_HORIZONTAL_BAR

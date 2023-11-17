@@ -17,6 +17,8 @@ class StaticButton(
     init {
         alignment = LeftRight.CENTER
     }
-
+    /*
+    FIXME: disabled texture and offset in 1.20.1-
+     */
     override fun getTextureOffset(isMouseOver: Boolean) = 0
 }
