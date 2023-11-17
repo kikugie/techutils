@@ -27,4 +27,5 @@ fun ChunkSchematic.entities(): List<Entity> = this.entityList
 /**
  * Still working in subchunks
  */
-fun SchematicPlacementManager.getPlacementsTouching(pos: BlockPos): List<PlacementPart> = this.getAllPlacementsTouchingChunk(pos)
+fun SchematicPlacementManager.getPlacementsTouching(pos: BlockPos): List<PlacementPart> =
+    this.getAllPlacementsTouchingChunk(pos)

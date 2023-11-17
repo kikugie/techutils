@@ -1,6 +1,6 @@
 package dev.kikugie.techutils.client.feature.browser
 
-import dev.kikugie.techutils.client.gui.icon.IconProvider
+import dev.kikugie.techutils.client.impl.icon.IconProvider
 import dev.kikugie.techutils.client.util.render.Colors
 import fi.dy.masa.malilib.gui.interfaces.IDirectoryNavigator
 import fi.dy.masa.malilib.gui.widgets.WidgetDirectoryEntry

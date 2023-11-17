@@ -1,8 +1,7 @@
-package dev.kikugie.techutils.client.gui.config
+package dev.kikugie.techutils.client.config
 
 import dev.kikugie.techutils.Reference
-import dev.kikugie.techutils.client.config.ConfigCategory
-import dev.kikugie.techutils.client.gui.icon.GuiIcon
+import dev.kikugie.techutils.client.impl.icon.GuiIcon
 import fi.dy.masa.malilib.gui.GuiConfigsBase
 import fi.dy.masa.malilib.gui.button.ButtonBase
 import fi.dy.masa.malilib.gui.button.ButtonGeneric

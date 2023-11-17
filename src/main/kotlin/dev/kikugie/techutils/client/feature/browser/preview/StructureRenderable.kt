@@ -3,6 +3,7 @@ package dev.kikugie.techutils.client.feature.browser.preview
 import com.glisco.isometricrenders.render.AreaRenderable
 import com.glisco.isometricrenders.render.Renderable
 import com.glisco.isometricrenders.render.RenderableDispatcher
+import com.glisco.isometricrenders.util.ParticleRestriction
 import dev.kikugie.techutils.client.feature.browser.BrowserConfig
 import dev.kikugie.techutils.client.impl.structure.Structure
 import dev.kikugie.techutils.client.impl.structure.world.StructureWorld
@@ -67,6 +68,8 @@ data class StructureRenderable(
         }
         return true
     }
+
+    override fun particleRestriction(): ParticleRestriction<Void> = ParticleRestriction.never()
 
     override fun prepare() {
         scissors.pushDirect(x, y, size, size)

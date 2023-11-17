@@ -27,7 +27,8 @@ object LitematicLoader : StructureLoader {
     }
 
     override fun toLitematic(file: Path, feedback: IStringConsumer): LitematicaSchematic {
-        return LitematicaSchematic.createFromFile(file.parent.toFile(), file.name, FileType.LITEMATICA_SCHEMATIC) ?: throw loadException(file, "Invalid litematic")
+        return LitematicaSchematic.createFromFile(file.parent.toFile(), file.name, FileType.LITEMATICA_SCHEMATIC)
+            ?: throw loadException(file, "Invalid litematic")
     }
 
     internal fun loadInternal(

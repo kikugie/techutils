@@ -1,7 +1,7 @@
 package dev.kikugie.techutils.client.feature.browser
 
 import dev.kikugie.techutils.client.TechUtilsClient
-import dev.kikugie.techutils.client.gui.icon.IconProvider
+import dev.kikugie.techutils.client.impl.icon.IconProvider
 import dev.kikugie.techutils.client.impl.structure.Structure
 import dev.kikugie.techutils.client.util.computeIfLoaded
 import dev.kikugie.techutils.client.util.multiversion.WidgetSchematicBrowserExtension
@@ -124,7 +124,16 @@ class StructureBrowserWidget(
         isOdd: Boolean,
         entry: DirectoryEntry
     ): WidgetDirectoryEntry {
-        return DirectoryEntryWidget(entry, x, y, browserEntryWidth, getBrowserEntryHeightFor(entry), listIndex, this, IconProvider)
+        return DirectoryEntryWidget(
+            entry,
+            x,
+            y,
+            browserEntryWidth,
+            getBrowserEntryHeightFor(entry),
+            listIndex,
+            this,
+            IconProvider
+        )
     }
 
     override fun drawAdditionalContents(mouseX: Int, mouseY: Int, context: DrawContext) {

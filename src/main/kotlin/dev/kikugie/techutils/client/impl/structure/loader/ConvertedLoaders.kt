@@ -21,7 +21,8 @@ object SpongeLoader : StructureLoader {
     }
 
     override fun toLitematic(file: Path, feedback: IStringConsumer): LitematicaSchematic {
-        return WorldUtils.convertSpongeSchematicToLitematicaSchematic(file.parent.toFile(), file.name) ?: throw loadException(file, "Failed to convert schematic")
+        return WorldUtils.convertSpongeSchematicToLitematicaSchematic(file.parent.toFile(), file.name)
+            ?: throw loadException(file, "Failed to convert schematic")
     }
 }
 
@@ -38,7 +39,12 @@ object SchematicLoader : StructureLoader {
     }
 
     override fun toLitematic(file: Path, feedback: IStringConsumer): LitematicaSchematic {
-        return WorldUtils.convertSchematicaSchematicToLitematicaSchematic(file.parent.toFile(), file.name, false, feedback) ?: throw loadException(file, "Failed to convert schematic")
+        return WorldUtils.convertSchematicaSchematicToLitematicaSchematic(
+            file.parent.toFile(),
+            file.name,
+            false,
+            feedback
+        ) ?: throw loadException(file, "Failed to convert schematic")
     }
 }
 
@@ -55,6 +61,9 @@ object NbtLoader : StructureLoader {
     }
 
     override fun toLitematic(file: Path, feedback: IStringConsumer): LitematicaSchematic {
-        return WorldUtils.convertStructureToLitematicaSchematic(file.parent.toFile(), file.name) ?: throw loadException(file, "Failed to convert schematic")
+        return WorldUtils.convertStructureToLitematicaSchematic(file.parent.toFile(), file.name) ?: throw loadException(
+            file,
+            "Failed to convert schematic"
+        )
     }
 }

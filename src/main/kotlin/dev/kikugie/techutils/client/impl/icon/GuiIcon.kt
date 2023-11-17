@@ -1,4 +1,4 @@
-package dev.kikugie.techutils.client.gui.icon
+package dev.kikugie.techutils.client.impl.icon
 
 import dev.kikugie.techutils.Reference
 import fi.dy.masa.malilib.gui.interfaces.IGuiIcon
@@ -37,9 +37,13 @@ data class GuiIcon(
     }
 
     companion object {
-        val blueprintFile = GuiIcon(Reference.id("textures/gui/widgets.png"), 24, 0, 12, 12)
-        val errorFile = GuiIcon(Reference.id("textures/gui/widgets.png"), 12, 0, 12, 12)
-        val unknownFile = GuiIcon(Reference.id("textures/gui/widgets.png"), 0, 0, 12, 12)
-        val linkedDirectory = GuiIcon(Reference.id("textures/gui/widgets.png"), 0, 12, 12, 12)
+        val WIDGETS = Reference.id("textures/gui/widgets.png")
+
+        val blueprintFile = GuiIcon(WIDGETS, 24, 0, 12, 12)
+        val errorFile = GuiIcon(WIDGETS, 12, 0, 12, 12)
+        val unknownFile = GuiIcon(WIDGETS, 0, 0, 12, 12)
+
+        val export = GuiIcon(WIDGETS, 0, 12, 16, 16)
+        val import = GuiIcon(WIDGETS, 16, 12, 16, 16)
     }
 }

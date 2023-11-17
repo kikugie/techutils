@@ -1,11 +1,8 @@
 package dev.kikugie.techutils.client.feature.downloader
 
-import dev.kikugie.techutils.client.TechUtilsClient
 import dev.kikugie.techutils.client.util.litematica.InGameNotifier
 import fi.dy.masa.litematica.data.DataManager
 import fi.dy.masa.malilib.gui.Message
-import fi.dy.masa.malilib.gui.interfaces.IMessageConsumer
-import fi.dy.masa.malilib.interfaces.IStringConsumer
 import kotlinx.coroutines.*
 import org.apache.commons.io.FilenameUtils
 import java.io.File
@@ -28,7 +25,7 @@ object SchematicDownloader {
                 file.writeBytes(content)
                 action(file)
             } catch (e: Exception) {
-                InGameNotifier.addMessage(Message.MessageType.ERROR, e.message?: "techutils.download.downloadFail")
+                InGameNotifier.addMessage(Message.MessageType.ERROR, e.message ?: "techutils.download.downloadFail")
             } finally {
                 currentDownloads.remove(link)
             }

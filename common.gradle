@@ -58,6 +58,7 @@ repositories {
         name = "KikuGie Maven"
         url = "https://maven.kikugie.dev/third-party"
     }
+
 }
 
 // https://github.com/FabricMC/fabric-loader/issues/783
@@ -81,16 +82,24 @@ dependencies {
     include api(annotationProcessor("com.github.LlamaLad7.mixinextras:mixinextras-fabric:${project.mixin_extras_version}"))
     include modImplementation("com.github.Fallen-Breath:conditional-mixin:v${project.conditional_mixin_version}")
 
-    modApi ("com.terraformersmc:modmenu:${project.modmenu_version}")
-    modImplementation ("fi.dy.masa.malilib:malilib-fabric-${project.minecraft_version}:${project.malilib_version}")
-    modImplementation ("fi.dy.masa:litematica:${project.litematica_version}+${project.minecraft_version}")
+    modApi "com.terraformersmc:modmenu:${project.modmenu_version}"
+    modImplementation "fi.dy.masa.malilib:malilib-fabric-${project.minecraft_version}:${project.malilib_version}"
+    if (mcVersion > 11701)
+        modImplementation "fi.dy.masa:litematica:${project.litematica_version}+${project.minecraft_version}"
+    else
+        // Weird dependency bug workaround
+        modImplementation "curse.maven:litematica-308892:3580241"
 //    modImplementation "fi.dy.masa:itemscroller:${project.itemscroller_version}+${project.minecraft_version}"
 //    modImplementation "fi.dy.masa:tweakeroo:${project.tweakeroo_version}+${project.minecraft_version}"
 
-    modImplementation ("io.wispforest:worldmesher:${project.worldmesher_version}")
-    modImplementation ("maven.modrinth:isometric-renders:${project.isometric_renders_version}")
+    modImplementation "maven.modrinth:isometric-renders:${project.isometric_renders_version}"
+    if (mcVersion > 11701)
+        modImplementation "io.wispforest:worldmesher:${project.worldmesher_version}"
+    else
+        modImplementation "com.glisco:worldmesher:${project.worldmesher_version}"
+
     if (mcVersion > 11802)
-        modImplementation ("io.wispforest:owo-lib:${project.owo_version}")
+        modImplementation "io.wispforest:owo-lib:${project.owo_version}"
 
 //    modRuntimeOnly ("com.sk89q.worldedit:worldedit-fabric-mc${project.worldedit_version}")
     testImplementation "net.fabricmc:fabric-loader-junit:${project.loader_version}"
@@ -175,6 +184,10 @@ tasks.withType(JavaCompile).configureEach {
 
 java {
     withSourcesJar()
+}
+
+test {
+    useJUnitPlatform()
 }
 
 jar {

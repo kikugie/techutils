@@ -1,4 +1,4 @@
-package dev.kikugie.techutils.client.gui.icon
+package dev.kikugie.techutils.client.impl.icon
 
 import fi.dy.masa.litematica.gui.Icons
 import fi.dy.masa.malilib.gui.interfaces.IFileBrowserIconProvider

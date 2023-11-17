@@ -14,8 +14,18 @@ techutils:
   downloader:
     title: Schematic Downloader
     force: Overwrite existing file
+    link: Schematic file link
+    data: Placement setup string (Optional)
     downloadFail: Failed to download file
     loadFail: Failed to load downloaded file
+    dataFail: Failed to parse placement setup
+  placement:
+    importButton: Import placement setup
+    exportButton: Export placement setup
+    importGui: Placement importer
+    importFail: Failed to import placement setup
+    exportFail: Failed to export placement setup
+    exportSuccess: Placement setup copied to clipboard
   option:
     openConfig: Open TechUtils config screen
     giveFullInv: |-

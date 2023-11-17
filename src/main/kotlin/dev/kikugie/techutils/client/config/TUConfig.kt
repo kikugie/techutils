@@ -5,9 +5,9 @@ import dev.kikugie.techutils.client.config.annotation.Group
 import dev.kikugie.techutils.client.config.annotation.Group.Mode
 import dev.kikugie.techutils.client.config.annotation.Settings
 import dev.kikugie.techutils.client.config.option.TUOption
-import dev.kikugie.techutils.client.feature.browser.BrowserConfig
 import dev.kikugie.techutils.client.feature.LitematicaMiscConfig
 import dev.kikugie.techutils.client.feature.MiscConfig
+import dev.kikugie.techutils.client.feature.browser.BrowserConfig
 import fi.dy.masa.malilib.config.IConfigBase
 import fi.dy.masa.malilib.hotkeys.IHotkey
 import kotlin.reflect.KClass
