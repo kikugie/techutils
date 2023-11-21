@@ -57,3 +57,6 @@ techutils:
     rotatePlacement: Rotate selected Litematica placement
     mirrorPlacement: Mirror selected Litematica placement
     refreshMaterialList: Refresh active material list
+    easyPlaceFullBlocks: |-
+      Make easyPlaceMode detect a block you're looking at regardless of the shape
+      (Useful with blocks like chains, fences, buttons)

@@ -14,9 +14,9 @@
     "mod.litematica.gui.GuiSchematicManagerMixin",
     "mod.litematica.placement.SchematicPlacementAccessor",
     "mod.litematica.placement.SubRegionPlacementAccessor",
+    "mod.litematica.util.RayTraceUtilsMixin",
     "mod.litematica.widget.PreviewWidgetSchematicBrowserMixin",
     "mod.litematica.widget.WidgetFileBrowserBaseAccessor",
-    ,
     "mod.malilib.gui.ButtonGenericMixin"
   ],
   "injectors": {
