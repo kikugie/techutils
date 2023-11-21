@@ -30,6 +30,7 @@ class MetadataWidget(
     }
 
     override fun onScrolled(x: Int, y: Int, amount: Double): Boolean {
+        if (!isMouseOver(x, y)) return false
         if (model?.onScrolled(x, y, amount) == true) return true
         scroll = MathHelper.clamp(scroll + sign(-amount).toInt(), 0, structure.metadata.map.size - 1)
         return true
