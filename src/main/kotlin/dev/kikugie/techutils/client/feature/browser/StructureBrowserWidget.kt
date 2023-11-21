@@ -8,13 +8,16 @@ import dev.kikugie.techutils.client.util.multiversion.WidgetSchematicBrowserExte
 import dev.kikugie.techutils.mixin.mod.litematica.widget.WidgetFileBrowserBaseAccessor
 import fi.dy.masa.litematica.data.DataManager
 import fi.dy.masa.litematica.gui.GuiSchematicBrowserBase
-import fi.dy.masa.malilib.gui.Message
 import fi.dy.masa.malilib.gui.interfaces.ISelectionListener
 import fi.dy.masa.malilib.gui.widgets.WidgetDirectoryEntry
 import fi.dy.masa.malilib.util.StringUtils
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import net.minecraft.client.gui.DrawContext
 import java.io.File
 import java.io.FileFilter
+import java.util.*
+import java.util.concurrent.ConcurrentHashMap
 
 class StructureBrowserWidget(
     x: Int,
@@ -44,11 +47,12 @@ class StructureBrowserWidget(
     )
     */
 
-    private val metadataCache = mutableMapOf<File, MetadataWidget?>()
+    private val metadataCache = ConcurrentHashMap<File, Optional<MetadataWidget>>()
     private var currentMetadata: MetadataWidget? = null
     private val showMetadata
         get() = currentMetadata != null
     private var prevMetaStatus = false
+    private var loadTask: Pair<DirectoryEntry, Deferred<Structure>>? = null
 
     init {
         computeIfLoaded("axiom") { supportedFormats.add("bp") }
@@ -96,17 +100,31 @@ class StructureBrowserWidget(
     override fun onDragged(x: Double, y: Double, dx: Double, dy: Double, button: Int) =
         currentMetadata?.onDragged(x, y, dx, dy, button) ?: false
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     private fun createMetadataWidget(entry: DirectoryEntry) {
         val file = entry.fullPath
-        if (!metadataCache.containsKey(file))
-            metadataCache[file] = try {
-                Structure.load(entry)
-            } catch (e: Exception) {
-                TechUtilsClient.LOGGER.warn(e.message, e)
-                parent.addMessage(Message.MessageType.ERROR, e.message)
-                null
-            }?.let { MetadataWidget(it) }
-        currentMetadata = metadataCache[file]
+        if (loadTask?.first != entry)
+            loadTask?.second?.let {
+                it.cancel()
+                metadataCache.remove(file)
+            }
+
+        if (!metadataCache.containsKey(file)) {
+            metadataCache[file] = Optional.empty()
+            val job = Structure.loadAsync(entry)
+            loadTask = entry to job
+            job.invokeOnCompletion { error ->
+                if (error != null)
+                    TechUtilsClient.LOGGER.warn(error.message, error)
+                else
+                    MetadataWidget(job.getCompleted()).also {
+                        metadataCache[file] = Optional.of(it)
+                        currentMetadata = it
+                        updateBrowser()
+                    }
+            }
+        }
+        currentMetadata = metadataCache[file]?.orElse(null)
     }
 
     private fun updateBrowser() {

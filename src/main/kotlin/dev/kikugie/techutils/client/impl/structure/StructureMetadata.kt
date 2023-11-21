@@ -1,6 +1,7 @@
 package dev.kikugie.techutils.client.impl.structure
 
 import net.minecraft.util.math.Vec3i
+import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 
 data class StructureMetadata(
@@ -17,8 +18,8 @@ data class StructureMetadata(
         "$key.name" to name,
         "$key.author" to author,
         "$key.size" to "${size.x} x ${size.y} x ${size.z}",
-        "$key.blocks" to "$blocks/$volume",
-        "$key.creation" to SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(timeCreated),
+        "$key.blocks" to "${dateFormat.format(blocks)}/${dateFormat.format(volume)}",
+        "$key.creation" to dateFormat.format(timeCreated),
     )
 
     class Mutable(
@@ -35,5 +36,10 @@ data class StructureMetadata(
 
         fun isAnyNull(): Boolean =
             listOf(name, author, size, blocks, volume, timeCreated, timeModified).any { it == null }
+    }
+
+    companion object {
+        private val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+        private val countFormat = DecimalFormat("#,###")
     }
 }

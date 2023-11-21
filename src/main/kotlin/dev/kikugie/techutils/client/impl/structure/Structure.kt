@@ -7,6 +7,10 @@ import dev.kikugie.techutils.client.impl.structure.loader.SpongeLoader
 import dev.kikugie.techutils.client.impl.structure.world.StructureWorld
 import dev.kikugie.techutils.client.util.computeIfLoaded
 import fi.dy.masa.malilib.gui.widgets.WidgetFileBrowserBase
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 import net.minecraft.client.texture.NativeImageBackedTexture
 import java.nio.file.Path
 import kotlin.io.path.extension
@@ -52,6 +56,14 @@ class Structure(
             val file = entry.fullPath.toPath()
             return loaders[file.extension]?.load(file, lazy)
                 ?: throw IllegalArgumentException("Unsupported file format: ${file.extension}")
+        }
+
+        @OptIn(DelicateCoroutinesApi::class)
+        fun loadAsync(
+            entry: WidgetFileBrowserBase.DirectoryEntry,
+            lazy: Boolean = false
+        ): Deferred<Structure> {
+            return GlobalScope.async { load(entry, lazy) }
         }
     }
 }

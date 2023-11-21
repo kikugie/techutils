@@ -12,6 +12,7 @@ import fi.dy.masa.malilib.render.RenderUtils
 import fi.dy.masa.malilib.util.StringUtils
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.util.math.MathHelper
+import kotlin.math.ceil
 import kotlin.math.ln
 import kotlin.math.pow
 import kotlin.math.sign
@@ -106,7 +107,8 @@ class MetadataWidget(
             val scale = property.get()
             val linear = ln(scale.toDouble() / 100)
             val newScale = Math.E.pow(linear + amount * modifier) * 100
-            property.modify(newScale.toInt() - scale)
+            val delta = ceil(newScale - scale).toInt()
+            property.modify(delta)
             return true
         }
 
@@ -123,6 +125,10 @@ class MetadataWidget(
         override fun onDragged(x: Double, y: Double, dx: Double, dy: Double, button: Int): Boolean {
             if (!ready || !dragging)
                 return false
+            if (!isMouseOver(x.toInt(), y.toInt())) {
+                dragging = false
+                return true
+            }
             val modifier = BrowserConfig.scrollSensitivity.doubleValue * 5
             when (button) {
                 0 -> {
