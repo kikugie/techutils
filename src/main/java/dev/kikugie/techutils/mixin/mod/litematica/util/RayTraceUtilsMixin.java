@@ -1,7 +1,7 @@
 package dev.kikugie.techutils.mixin.mod.litematica.util;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
-import dev.kikugie.techutils.client.feature.MiscConfig;
+import dev.kikugie.techutils.client.feature.LitematicaMiscConfig;
 import fi.dy.masa.litematica.util.RayTraceUtils;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -22,6 +22,6 @@ public class RayTraceUtilsMixin {
                     //#endif
             ))
     private static VoxelShape useFullCube(VoxelShape original) {
-        return !original.isEmpty() && MiscConfig.INSTANCE.getEasyPlaceFullBlocks().getBooleanValue() ? VoxelShapes.fullCube() : original;
+        return !original.isEmpty() && LitematicaMiscConfig.INSTANCE.getEasyPlaceFullBlocks().getBooleanValue() ? VoxelShapes.fullCube() : original;
     }
 }

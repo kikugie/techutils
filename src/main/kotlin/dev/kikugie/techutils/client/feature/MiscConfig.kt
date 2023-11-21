@@ -18,5 +18,4 @@ object MiscConfig {
     }
     val bundleFill = create("bundleFill", 1, 1, 100)
     val fillSafety = create("fillSafety")
-    val easyPlaceFullBlocks = create("easyPlaceFullBlocks", false, "")
 }

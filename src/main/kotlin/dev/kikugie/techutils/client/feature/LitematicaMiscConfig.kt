@@ -35,4 +35,5 @@ object LitematicaMiscConfig {
         GuiBase.openGui(DownloaderGui())
         true
     }
+    val easyPlaceFullBlocks = create("easyPlaceFullBlocks", false, "")
 }
