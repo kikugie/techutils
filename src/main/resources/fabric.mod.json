@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "id": "${id}",
+  "id": "techutils",
   "version": "${version}",
-  "name": "${name}",
+  "name": "Technical Utilities",
   "description": "",
   "authors": [
     "KikuGie"
@@ -27,10 +27,10 @@
     "techutils.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">=0.11.4",
-    "minecraft": "${minecraft_dependency}",
-    "malilib": "~${malilib_dependency}",
-    "litematica": "*",
-    "fabric-language-kotlin": ">=${flk_dependency}"
+    "fabricloader": ">=0.15",
+    "minecraft": "${minecraft}",
+    "malilib": "~${malilib}",
+    "litematica": "~${litematica}",
+    "fabric-language-kotlin": ">=${flk}"
   }
 }
