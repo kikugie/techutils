@@ -5,7 +5,8 @@ techutils:
       litematica: Litematica
       worldedit: WorldEdit
       misc: Miscellaneous
-
+  selection_render:
+    no_selection: No valid active selection!
   browser:
     metadata:
       name: "Name: %s"

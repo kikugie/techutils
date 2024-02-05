@@ -16,7 +16,7 @@
     "client": [
       {
         "adapter": "kotlin",
-        "value": "dev.kikugie.techutils2.TechUtilsClient"
+        "value": "dev.kikugie.techutils.TechUtilsClient"
       }
     ]
   },

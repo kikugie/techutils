@@ -57,11 +57,11 @@ dependencies {
     modImplementation("dev.kikugie.malilib_extras:${property("deps.malilib_extras")}:$mcVersion")
 
     modImplementation("fi.dy.masa:litematica:${property("deps.litematica")}+$mcVersion")
-    modImplementation(fabricApi.module("fabric-command-api-v2", "${property("deps.fabric_api")}"))
-
     testImplementation("net.fabricmc:fabric-loader-junit:${property("deps.fabric_loader")}")
 
-    modCompileOnly("maven.modrinth:axiom:Ltd8ZQ1T")
+    fun fapiModule(vararg names: String) =
+        names.forEach { modImplementation(fabricApi.module(it, "${property("deps.fabric_api")}")) }
+    fapiModule("fabric-command-api-v2", "fabric-message-api-v1")
 }
 
 loom {
