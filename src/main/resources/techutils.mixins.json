@@ -2,23 +2,7 @@
   "required": true,
   "minVersion": "0.8",
   "package": "dev.kikugie.techutils.mixin",
-  "plugin": "dev.kikugie.techutils.ConditionalMixinPlugin",
-  "compatibilityLevel": "${compatibility_level}",
-  "mixins": [
-  ],
-  "client": [
-    "client.InGameHudMixin",
-    "mod.litematica.gui.GuiPlacementConfigurationMixin",
-    "mod.litematica.gui.GuiSchematicBrowserBaseMixin",
-    "mod.litematica.gui.GuiSchematicLoadMixin",
-    "mod.litematica.gui.GuiSchematicManagerMixin",
-    "mod.litematica.placement.SchematicPlacementAccessor",
-    "mod.litematica.placement.SubRegionPlacementAccessor",
-    "mod.litematica.util.RayTraceUtilsMixin",
-    "mod.litematica.widget.PreviewWidgetSchematicBrowserMixin",
-    "mod.litematica.widget.WidgetFileBrowserBaseAccessor",
-    "mod.malilib.gui.ButtonGenericMixin"
-  ],
+  "compatibilityLevel": "JAVA_17",
   "injectors": {
     "defaultRequire": 1
   }

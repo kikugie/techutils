@@ -16,15 +16,16 @@
     "client": [
       {
         "adapter": "kotlin",
-        "value": "dev.kikugie.techutils.client.TechUtilsClient"
+        "value": "dev.kikugie.techutils2.TechUtilsClient"
       }
-    ],
-    "modmenu": [
-      "dev.kikugie.techutils.client.config.compat.ModMenuIntegration"
     ]
   },
   "mixins": [
-    "techutils.mixins.json"
+    "techutils.mixins.json",
+    {
+      "environment": "client",
+      "config": "techutils.client.mixins.json"
+    }
   ],
   "depends": {
     "fabricloader": ">=0.15",

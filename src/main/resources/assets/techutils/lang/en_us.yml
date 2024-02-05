@@ -1,62 +1,32 @@
 techutils:
-  title: Technical Utilities
-  category:
-    litematica: Litematica
-    worldedit: WorldEdit
-    misc: Miscellaneous
+  config:
+    title:
+      .: Tech Utils
+      litematica: Litematica
+      worldedit: WorldEdit
+      misc: Miscellaneous
+
   browser:
     metadata:
-      name: Name
-      author: Author
-      size: Size
-      blocks: Blocks
-      creation: Creation Date
+      name: "Name: %s"
+      author: "Author: %s"
+      size: "Size: (%s, %s, %s)"
+      blocks: "Blocks: %s / %s"
+      created: "Created: %s"
+      modified: "Modified: %s"
   downloader:
-    title: Schematic Downloader
-    force: Overwrite existing file
     link: Schematic file link
     data: Placement setup string (Optional)
-    downloadFail: Failed to download file
-    loadFail: Failed to load downloaded file
-    dataFail: Failed to parse placement setup
+    title: Schematic Downloader
+    force: Overwrite existing file
+    invalid_link: Invalid link
+    download_fail: "Failed to download file: %s"
+    load_fail: Failed to load downloaded file
+    data_fail: Failed to parse placement setup
   placement:
-    importButton: Import placement setup
-    exportButton: Export placement setup
-    importGui: Placement importer
-    importFail: Failed to import placement setup
-    exportFail: Failed to export placement setup
-    exportSuccess: Placement setup copied to clipboard
-  option:
-    openConfig: Open TechUtils config screen
-    giveFullInv: |-
-      Give full inventory of an item with following rules:
-            - Main hand: item; Off hand: none; Result: shulker box of item.
-            - Main hand: item; Off hand: container; Result: container of item.
-            - Main hand: item; Off hand: bundle; Result: bundle of item * config.
-            - Main hand: empty shulker box; Off hand: none: Result: chest of stacked boxes.
-            - Main hand: empty shulker box; Off hand: container; Result: container of stacked boxes.
-            - Main hand: shulker box; Off hand: none: Result: chest of full boxes.
-            - Main hand: shulker box; Off hand: container; Result: container of full boxes.
-    compactScoreboard: |-
-      Use short number format for scoreboard values:
-      - 1000 -> 1K
-      - 1000000 -> 1M
-      - 1000000000 -> 1B
-    downloadSchematic: |-
-      Opens a schematic downloader gui.
-      Downloaded schematic will be saved to .minecraft/schematics/downloads 
-      and a placement will be created.
-    bundleFill: Amount of stacks to put in a bundle when using giveFullInv feature
-    fillSafety: |-
-      Restrict nested containers to prevent crashing yourself.
-      Here be cats and scratches!
-    renderPreview: Show 3D render of selected litematic in Load Schematics menu
-    previewAngle: Default preview rotation angle
-    previewSlant: Default preview slant
-    scrollSensitivity: Sensitivity of the scroll wheel
-    rotatePlacement: Rotate selected Litematica placement
-    mirrorPlacement: Mirror selected Litematica placement
-    refreshMaterialList: Refresh active material list
-    easyPlaceFullBlocks: |-
-      Make easyPlaceMode detect a block you're looking at regardless of the shape
-      (Useful with blocks like chains, fences, buttons)
+    gui_title: Placement importer
+    import_fail: Failed to import placement setup
+    import_button: Import placement setup
+    export_button: Export placement setup
+    export_fail: Failed to export placement setup
+    export_success: Placement setup copied to clipboard
