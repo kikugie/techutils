@@ -8,15 +8,14 @@ import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource
 import net.minecraft.client.MinecraftClient
-import net.minecraft.command.CommandRegistryAccess
 import net.minecraft.text.Text
 
 object IsorenderSelectionCommand {
     fun register() {
-        ClientCommandRegistrationCallback.EVENT.register(::register)
+        ClientCommandRegistrationCallback.EVENT.register { it, _ -> register(it) }
     }
 
-    fun register(dispatcher: CommandDispatcher<FabricClientCommandSource>, access: CommandRegistryAccess) {
+    fun register(dispatcher: CommandDispatcher<FabricClientCommandSource>) {
         dispatcher.register(literal("isorender").then(literal("selection").executes(::renderSelection)))
     }
 

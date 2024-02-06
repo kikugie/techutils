@@ -9,7 +9,7 @@ import fi.dy.masa.malilib.gui.GuiBase
 
 @Category(MISC)
 object GeneralMisc {
-    val openConfig = FACTORY.create<ConfigHotkey>("openConfig", "X, O") {
+    val openConfig = FACTORY.create<ConfigHotkey>("openConfig", "X, K") {
         callback = {
             GuiBase.openGui(ConfigGui(TechUtilsClient.config, null))
             true

@@ -50,7 +50,7 @@ private fun writeData(
     )
     val absSize = BlockPos(abs(size.x) - 1, abs(size.y) - 1, abs(size.z) - 1)
 
-    if (container != null) for (localPos in BlockPos.iterate(minCorner, absSize)) {
+    if (container != null) for (localPos in BlockPos.iterate(BlockPos.ORIGIN, absSize)) {
         val pos = minCorner.add(localPos)
         val state = container[localPos.x, localPos.y, localPos.z]
         world[pos] = state

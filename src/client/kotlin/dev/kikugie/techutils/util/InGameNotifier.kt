@@ -12,7 +12,7 @@ object InGameNotifier : IMessageConsumer, IStringConsumer {
         get() = MinecraftClient.getInstance()
 
     override fun addMessage(type: Message.MessageType, key: String, vararg args: Any?) {
-        client.player?.sendMessage(Text.of("${type.formatting}${StringUtils.translate(key, args)}"), true)
+        client.player?.sendMessage(Text.of("${type.formatting}${StringUtils.translate(key, *args)}"), true)
     }
 
     override fun addMessage(type: Message.MessageType, lifeTime: Int, key: String, vararg args: Any?) {

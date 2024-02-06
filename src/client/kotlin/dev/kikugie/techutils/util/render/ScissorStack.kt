@@ -18,7 +18,7 @@ class ScissorStack {
      * @return The pushed ScreenRect object.
      */
     fun push(x1: Int, y1: Int, x2: Int, y2: Int): ScreenRect {
-        val rect = ScreenRect(x1, y1, x2, y2)
+        val rect = ScreenRect.ofCorners(x1, y1, x2, y2)
         val new = stack.lastOrNull()?.intersection(rect) ?: rect
 
         setScissor(new)

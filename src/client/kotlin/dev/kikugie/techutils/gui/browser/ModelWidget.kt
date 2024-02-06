@@ -1,14 +1,16 @@
 package dev.kikugie.techutils.gui.browser
 
-import dev.kikugie.techutils.util.render.ScissorStack
 import dev.kikugie.techutils.config.BrowserConfig
+import dev.kikugie.techutils.gui.util.Colors
 import dev.kikugie.techutils.gui.util.Draggable
 import dev.kikugie.techutils.impl.structure.Structure
+import dev.kikugie.techutils.util.render.ScissorStack
 import dev.kikugie.worldrenderer.mesh.WorldMesh
 import dev.kikugie.worldrenderer.property.DefaultRenderProperties
 import dev.kikugie.worldrenderer.render.AreaRenderable
 import dev.kikugie.worldrenderer.render.RenderableDispatcher
 import fi.dy.masa.malilib.gui.widgets.WidgetBase
+import fi.dy.masa.malilib.render.RenderUtils
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.util.math.MatrixStack
 import kotlin.math.E
@@ -17,7 +19,7 @@ import kotlin.math.pow
 
 class ModelWidget(
     structure: Structure,
-    private val scissorStack: ScissorStack
+    private val scissorStack: ScissorStack,
 ) : WidgetBase(0, 0, 0, 0), Draggable {
     private val client = MinecraftClient.getInstance()
     private val model = AreaRenderable(
@@ -40,11 +42,12 @@ class ModelWidget(
         get() = model.mesh.canRender
 
     override fun render(mouseX: Int, mouseY: Int, selected: Boolean, context: MatrixStack) {
+        RenderUtils.drawOutline(x, y, width, height, 1, Colors.guiBorder.intValue)
         if (ready) drawModel()
     }
 
     private fun drawModel() {
-//        scissorStack.push(x, y, x + width, x + height)
+        // FIXME: WHY THE FUCK ARE YOU NOT WORKING
         val window = client.window
         RenderableDispatcher.draw(
             model,
@@ -56,7 +59,6 @@ class ModelWidget(
                 y + model.properties.yOffset + height / 2
             )
         }
-//        scissorStack.pop()
     }
 
     override fun onMouseScrolledImpl(mouseX: Int, mouseY: Int, amount: Double): Boolean {
@@ -75,7 +77,7 @@ class ModelWidget(
 
     override fun onDragged(x: Double, y: Double, dx: Double, dy: Double, button: Int): Boolean {
         if (!ready || !dragging) return true
-        if (!isMouseOver(x.toInt(),y.toInt())) return true.also { dragging = false }
+        if (!isMouseOver(x.toInt(), y.toInt())) return true.also { dragging = false }
         val mod = BrowserConfig.mouseSensitivity.doubleValue * 5
         when (button) {
             0 -> model.properties.rotation += dx * mod

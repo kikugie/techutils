@@ -1,13 +1,16 @@
 package dev.kikugie.techutils.gui.browser
 
-import dev.kikugie.techutils.util.render.ScissorStack
 import dev.kikugie.techutils.gui.icon.IconProvider
 import dev.kikugie.techutils.impl.structure.load.StructureLoader
+import dev.kikugie.techutils.util.render.ScissorStack
 import fi.dy.masa.litematica.gui.GuiSchematicBrowserBase
 import fi.dy.masa.litematica.gui.widgets.WidgetSchematicBrowser
 import fi.dy.masa.malilib.gui.interfaces.ISelectionListener
 import fi.dy.masa.malilib.gui.widgets.WidgetDirectoryEntry
-import kotlinx.coroutines.*
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import net.minecraft.client.util.math.MatrixStack
 import java.io.FileFilter
 import java.nio.file.Path
@@ -18,7 +21,7 @@ class StructureBrowser(
     width: Int,
     height: Int,
     parent: GuiSchematicBrowserBase,
-    listener: ISelectionListener<DirectoryEntry>? = null
+    listener: ISelectionListener<DirectoryEntry>? = null,
 ) : WidgetSchematicBrowser(x, y, width, height, parent, listener) {
     private val scissorStack = ScissorStack()
     private val supportedFormats = setOf("litematic", "schematic", "schem", "nbt", "bp")
@@ -42,6 +45,7 @@ class StructureBrowser(
 
         currentMetadata.render(mouseX, mouseY, true, context)
     }
+
     override fun onMouseClicked(mouseX: Int, mouseY: Int, mouseButton: Int): Boolean {
         val currentMetadata = currentMetadataKey?.let { metadataCache[it] }
         if (currentMetadata?.onMouseClicked(mouseX, mouseY, mouseButton) == true) return true
@@ -63,7 +67,7 @@ class StructureBrowser(
         y: Int,
         listIndex: Int,
         isOdd: Boolean,
-        entry: DirectoryEntry
+        entry: DirectoryEntry,
     ): WidgetDirectoryEntry = DirectoryEntryWidget(
         entry,
         x,

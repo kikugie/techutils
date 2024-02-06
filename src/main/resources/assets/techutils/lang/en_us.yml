@@ -2,11 +2,50 @@ techutils:
   config:
     title:
       .: Tech Utils
-      litematica: Litematica
-      worldedit: WorldEdit
-      misc: Miscellaneous
+      litematica:
+        .: Litematica
+        desc: Litematica related features
+      misc:
+        .: Miscellaneous
+        desc: Random uncategorized features
+    # Improved browser
+    improvedBrowser: |
+      Replaces Litematica schematic browser with an improved version,
+      which includes more responsive controls, axiom support and 3D previews.
+      §7Realistically, you only need to disable if it blocks some other mod's features.
+    previewAngle: Default angle for 3D previews.
+    previewSlant: Default slant for 3D previews.
+    mouseSensitivity: Mouse sensitivity for rotating and scaling the model.
+    # WorldEdit sync
+    worldEditSync: |
+      Periodically snaps your WorldEdit region to the active Litematica selection.
+    worldEditSyncTicks: | 
+      Cooldown after Litematica selection changes before snapping the WorldEdit region.
+      §7Increase the value if you have bad ping or get kicked for command spam.
+    worldEditSyncFeedback: Display a message above the hotbar when snapping the region.
+    worldEditPerfOff: Disable WorldEdit neighbour updates when logging on a world.
+    # Litematica interactions
+    rotatePlacement: Rotate selected Litematica placement 90° clockwise.
+    mirrorPlacement: Cycle through mirror options of the selected Litematica placement.
+    refreshMaterialList: |
+      Refreshes active Litematica material list.
+      §7This can be used in combination with layered lists to update the HUD when changing the active layer.
+    downloadSchematic: |
+      Opens the schematic downloader GUI.
+      Downloader must be provided a direct link to the file.
+    easyPlaceFullBlocks: | 
+      Treat all blocks as full cubes when using Litematica's easy place feature.
+      §7Useful for placing blocks with small hitboxes like buttons, chains, fences, etc.
+    # Misc
+    openConfig: Keybind for this screen.
+    compactScoreboard: |
+      Abbreviate scoreboard values:
+      §71,234 -> 1.23K
+      §77,654,321-> 7.65M
   selection_render:
-    no_selection: No valid active selection!
+    no_selection: No valid active selection
+  worldedit_sync:
+    synced: WorldEdit selection syncronized
   browser:
     metadata:
       name: "Name: %s"

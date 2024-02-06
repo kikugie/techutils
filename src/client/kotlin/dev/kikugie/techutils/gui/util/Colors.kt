@@ -9,4 +9,5 @@ object Colors {
     val guiBorder = Color4f(0.6F, 0.6F, 0.6F, 1F)
     val guiBackground = Color4f(0F, 0F, 0F, 0.627451F)
     val guiText = Color4f.fromColor(-0x1)!!
+    val guiLime = Color4f.fromColor(0x00FF00)!!
 }

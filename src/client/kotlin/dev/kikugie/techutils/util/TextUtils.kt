@@ -21,10 +21,11 @@ object TextUtils {
         } catch (ignored: HeadlessException) {
             null
         }
-        set(value) {
+        set(value) = try {
             val stringSelection = StringSelection(value)
             val clipboard = Toolkit.getDefaultToolkit().systemClipboard
             clipboard.setContents(stringSelection, null)
+        } catch (ignored: HeadlessException) {
         }
 
     fun trimFancy(text: String, width: Int): String {

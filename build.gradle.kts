@@ -60,8 +60,13 @@ dependencies {
     testImplementation("net.fabricmc:fabric-loader-junit:${property("deps.fabric_loader")}")
 
     fun fapiModule(vararg names: String) =
-        names.forEach { modImplementation(fabricApi.module(it, "${property("deps.fabric_api")}")) }
-    fapiModule("fabric-command-api-v2", "fabric-message-api-v1")
+        names.forEach { modImplementation(fabricApi.module("fabric-$it", "${property("deps.fabric_api")}")) }
+    fapiModule(
+        "command-api-v2",
+        "message-api-v1",
+        "networking-api-v1",
+        "lifecycle-events-v1"
+    )
 }
 
 loom {

@@ -33,9 +33,7 @@ class MetadataWidget(
 
     override fun render(mouseX: Int, mouseY: Int, selected: Boolean, context: MatrixStack) {
         RenderUtils.drawOutlinedBox(x, y, width, height, Colors.guiBackground.intValue, Colors.guiBorder.intValue)
-//        scissorStack.push(x + 2, y + 2, x + width - 4, y + height - 4)
         drawMetadataWidget(mouseX, mouseY, selected, context)
-//        scissorStack.pop()
     }
 
     private fun drawMetadataWidget(mouseX: Int, mouseY: Int, selected: Boolean, context: MatrixStack) {
@@ -53,7 +51,7 @@ class MetadataWidget(
             x = lx
             y = ly + (lines.size - scroll) * 10
             width = lw
-            height = lh
+            height = lw
             render(mouseX, mouseY, selected, context)
         }
     }

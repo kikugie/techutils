@@ -20,7 +20,7 @@ class ConfigGui(
     50,
     Reference.MOD_ID,
     parent,
-    "techutils.title",
+    "techutils.config.title",
     Reference.VERSION
 ) {
     private var tab = config.categories.first()

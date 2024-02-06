@@ -39,7 +39,7 @@ object LitematicaMisc {
             true
         }
     }
-    val downloadSchematic = FACTORY.create<ConfigHotkey>("downloadSchematic", "") {
+    val downloadSchematic = FACTORY.create<ConfigHotkey>("downloadSchematic", "K, D") {
         callback = {
             GuiBase.openGui(DownloaderGui())
             true
