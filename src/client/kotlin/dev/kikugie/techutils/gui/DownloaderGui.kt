@@ -1,10 +1,10 @@
 package dev.kikugie.techutils.gui
 
-import dev.kikugie.techutils.util.InGameNotifier
 import dev.kikugie.techutils.gui.util.Colors
 import dev.kikugie.techutils.impl.DownloadResult
 import dev.kikugie.techutils.impl.SchematicDownloader
 import dev.kikugie.techutils.impl.serializer.PlacementSerializer
+import dev.kikugie.techutils.util.InGameNotifier
 import dev.kikugie.techutils.util.TextUtils
 import fi.dy.masa.litematica.data.DataManager
 import fi.dy.masa.litematica.data.SchematicHolder
@@ -135,10 +135,15 @@ class DownloaderGui : GuiDialogBase() {
             InGameNotifier.addMessage(Message.MessageType.ERROR, "techutils.downloader.data_fail")
     }
 
-    public override fun drawContents(context: MatrixStack, mouseX: Int, mouseY: Int, partialTicks: Float) {
+    public override fun drawContents(
+        context: /*? if <1.20 {*/MatrixStack,/*?} else {*//*net.minecraft.client.gui.DrawContext,*//*?} */
+        mouseX: Int,
+        mouseY: Int,
+        partialTicks: Float,
+    ) {
         parent?.render(context, mouseX, mouseY, partialTicks)
 
-        val matrixStack = context
+        val matrixStack = context/*? if >=1.20 *//*.matrices*/
         matrixStack.push()
         matrixStack.translate(0.0, 0.0, 1.0)
         RenderUtils.drawOutlinedBox(
@@ -203,6 +208,7 @@ class DownloaderGui : GuiDialogBase() {
     }
 
     companion object {
-        private fun getClipboardLink(): String = TextUtils.clipboard?.takeIf { SchematicDownloader.verifyLink(it) } ?: ""
+        private fun getClipboardLink(): String =
+            TextUtils.clipboard?.takeIf { SchematicDownloader.verifyLink(it) } ?: ""
     }
 }

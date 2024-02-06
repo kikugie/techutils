@@ -41,7 +41,12 @@ class ModelWidget(
     private val ready
         get() = model.mesh.canRender
 
-    override fun render(mouseX: Int, mouseY: Int, selected: Boolean, context: MatrixStack) {
+    override fun render(
+        mouseX: Int,
+        mouseY: Int,
+        selected: Boolean,
+        context: /*? if <1.20 {*/MatrixStack/*?} else {*//*net.minecraft.client.gui.DrawContext,*//*?} */
+    ) {
         RenderUtils.drawOutline(x, y, width, height, 1, Colors.guiBorder.intValue)
         if (ready) drawModel()
     }
@@ -61,7 +66,13 @@ class ModelWidget(
         }
     }
 
-    override fun onMouseScrolledImpl(mouseX: Int, mouseY: Int, amount: Double): Boolean {
+    override fun onMouseScrolledImpl(
+        mouseX: Int,
+        mouseY: Int,
+        /*? if >=1.20.2 */
+        /*ignored: Double,*/
+        amount: Double,
+    ): Boolean {
         if (ready) {
             val mod = BrowserConfig.mouseSensitivity.doubleValue
             model.properties.scale = E.pow(ln(model.properties.scale) + amount * mod)

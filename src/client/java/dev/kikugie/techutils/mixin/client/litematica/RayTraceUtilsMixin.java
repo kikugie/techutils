@@ -13,7 +13,13 @@ import org.spongepowered.asm.mixin.injection.At;
 @Environment(EnvType.CLIENT)
 @Mixin(RayTraceUtils.class)
 public class RayTraceUtilsMixin {
-    @ModifyExpressionValue(method = {"traceFirstStep", "traceLoopSteps"}, at = @At(value = "INVOKE", target = "Lnet/minecraft/block/BlockState;getOutlineShape(Lnet/minecraft/world/BlockView;Lnet/minecraft/util/math/BlockPos;)Lnet/minecraft/util/shape/VoxelShape;"))
+    @ModifyExpressionValue(method = {"traceFirstStep", "traceLoopSteps"}, at = @At(
+            value = "INVOKE",
+            /*? if <1.20 */
+            target = "Lnet/minecraft/block/BlockState;getOutlineShape(Lnet/minecraft/world/BlockView;Lnet/minecraft/util/math/BlockPos;)Lnet/minecraft/util/shape/VoxelShape;"
+            /*? if >=1.20 */
+            /*target = "Lnet/minecraft/block/BlockState;getOutlineShape(Lnet/minecraft/world/BlockView;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/ShapeContext;)Lnet/minecraft/util/shape/VoxelShape;"*/
+    ))
     private static VoxelShape useFullCube(VoxelShape original) {
         return !original.isEmpty() && LitematicaMisc.INSTANCE.getEasyPlaceFullBlocks().getBooleanValue() ? VoxelShapes.fullCube() : original;
     }

@@ -11,7 +11,6 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import net.minecraft.client.util.math.MatrixStack
 import java.io.FileFilter
 import java.nio.file.Path
 
@@ -34,7 +33,11 @@ class StructureBrowser(
 
     override fun getFileFilter() = fileFilter
     override fun getBrowserWidthForTotalWidth(width: Int) = (width * (if (showMetadata) 0.75F else 1F) - 6).toInt()
-    override fun drawAdditionalContents(mouseX: Int, mouseY: Int, context: MatrixStack) {
+    override fun drawAdditionalContents(
+        mouseX: Int,
+        mouseY: Int,
+        context: /*? if <1.20 {*/net.minecraft.client.util.math.MatrixStack/*?} else {*//*net.minecraft.client.gui.DrawContext,*//*?} */
+    ) {
         if (!showMetadata || currentMetadataKey == null) return
         val currentMetadata = metadataCache[currentMetadataKey] ?: return
 

@@ -1,13 +1,12 @@
 package dev.kikugie.techutils.gui.browser
 
-import dev.kikugie.techutils.gui.util.Colors
 import dev.kikugie.techutils.gui.icon.IconProvider
+import dev.kikugie.techutils.gui.util.Colors
 import fi.dy.masa.malilib.gui.interfaces.IDirectoryNavigator
 import fi.dy.masa.malilib.gui.widgets.WidgetDirectoryEntry
 import fi.dy.masa.malilib.gui.widgets.WidgetFileBrowserBase
 import fi.dy.masa.malilib.gui.widgets.WidgetFileBrowserBase.DirectoryEntry
 import fi.dy.masa.malilib.render.RenderUtils
-import net.minecraft.client.util.math.MatrixStack
 import java.io.File
 
 class DirectoryEntryWidget(
@@ -18,7 +17,7 @@ class DirectoryEntryWidget(
     height: Int,
     index: Int,
     navigator: IDirectoryNavigator,
-    iconProvider: IconProvider
+    iconProvider: IconProvider,
 ) : WidgetDirectoryEntry(x, y, width, height, index % 2 == 1, entry, index, navigator, iconProvider) {
     /* Metadata */
     private val icon = iconProvider.get(entry)
@@ -27,7 +26,12 @@ class DirectoryEntryWidget(
     private val dotWidth = textRenderer.getWidth("...")
     private var cachedText: String? = null
 
-    override fun render(mouseX: Int, mouseY: Int, selected: Boolean, context: MatrixStack) {
+    override fun render(
+        mouseX: Int,
+        mouseY: Int,
+        selected: Boolean,
+        context: /*? if <1.20 {*/net.minecraft.client.util.math.MatrixStack/*?} else {*//*net.minecraft.client.gui.DrawContext,*//*?} */
+    ) {
         val color = when {
             selected || isMouseOver(mouseX, mouseY) -> Colors.listEntryHovered
             isOdd -> Colors.listEntryOdd

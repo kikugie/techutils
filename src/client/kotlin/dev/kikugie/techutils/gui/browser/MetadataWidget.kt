@@ -12,7 +12,6 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import net.minecraft.client.util.math.MatrixStack
 import kotlin.math.sign
 
 @OptIn(DelicateCoroutinesApi::class)
@@ -26,17 +25,27 @@ class MetadataWidget(
     private var scroll: Int = 0
 
     init {
-        GlobalScope.launch(Dispatchers.Default) {
-            model = ModelWidget(structure, scissorStack)
-        }
+//        GlobalScope.launch(Dispatchers.Default) {
+//            model = ModelWidget(structure, scissorStack)
+//        }
     }
 
-    override fun render(mouseX: Int, mouseY: Int, selected: Boolean, context: MatrixStack) {
+    override fun render(
+        mouseX: Int,
+        mouseY: Int,
+        selected: Boolean,
+        context: /*? if <1.20 {*/net.minecraft.client.util.math.MatrixStack/*?} else {*//*net.minecraft.client.gui.DrawContext,*//*?} */
+    ) {
         RenderUtils.drawOutlinedBox(x, y, width, height, Colors.guiBackground.intValue, Colors.guiBorder.intValue)
         drawMetadataWidget(mouseX, mouseY, selected, context)
     }
 
-    private fun drawMetadataWidget(mouseX: Int, mouseY: Int, selected: Boolean, context: MatrixStack) {
+    private fun drawMetadataWidget(
+        mouseX: Int,
+        mouseY: Int,
+        selected: Boolean,
+        context: /*? if <1.20 {*/net.minecraft.client.util.math.MatrixStack/*?} else {*//*net.minecraft.client.gui.DrawContext,*//*?} */
+    ) {
         val lx = x + 4
         val ly = y + 4
         val lw = width - 8
@@ -66,8 +75,14 @@ class MetadataWidget(
         model?.onMouseReleased(mouseX, mouseY, mouseButton)
     }
 
-    override fun onMouseScrolledImpl(mouseX: Int, mouseY: Int, mouseWheelDelta: Double): Boolean {
-        if (model?.onMouseScrolled(mouseX, mouseY, mouseWheelDelta) == true) return true
+    override fun onMouseScrolledImpl(
+        mouseX: Int,
+        mouseY: Int,
+        /*? if >=1.20.2 */
+        /*ignored: Double,*/
+        mouseWheelDelta: Double,
+    ): Boolean {
+        if (model?.onMouseScrolled(mouseX, mouseY, /*? if >=1.20.2 {*//*ignored,*//*?} */ mouseWheelDelta) == true) return true
         scroll += sign(-mouseWheelDelta).toInt()
         scroll = scroll.coerceAtMost(translations.size - 1)
         return true

@@ -1,7 +1,7 @@
 plugins {
     `maven-publish`
     kotlin("jvm") version "1.9.21"
-    id("fabric-loom") version "1.4-SNAPSHOT"
+    id("fabric-loom") version "1.5-SNAPSHOT"
     id("me.fallenbreath.yamlang") version "1.3.1"
 }
 
@@ -14,6 +14,11 @@ val flkVersion = property("deps.flk").toString()
 val modmenuVersion = property("deps.modmenu").toString()
 val malilibVersion = property("deps.malilib").toString()
 val litematicaVersion = property("deps.litematica").toString()
+
+base {
+    archivesName = modId
+    version="$modVersion+$mcVersion"
+}
 
 val target = ">=${project.property("mod.min_target")}- <=${project.property("mod.max_target")}"
 
@@ -47,14 +52,15 @@ repositories {
 }
 
 dependencies {
+    fun Dependency?.include() = include(this!!)
     minecraft("com.mojang:minecraft:$mcVersion")
     mappings("net.fabricmc:yarn:${property("deps.yarn")}:v2")
     modImplementation("net.fabricmc:fabric-loader:${property("deps.fabric_loader")}")
     modImplementation("net.fabricmc:fabric-language-kotlin:${property("deps.flk")}+kotlin.$kotlinVersion")
 
     modImplementation("com.terraformersmc:modmenu:${property("deps.modmenu")}")
-    modImplementation("dev.kikugie.worldrenderer:${property("deps.worldrenderer")}:$mcVersion")
-    modImplementation("dev.kikugie.malilib_extras:${property("deps.malilib_extras")}:$mcVersion")
+    modImplementation("dev.kikugie.worldrenderer:${property("deps.worldrenderer")}:$mcVersion").include()
+    modImplementation("dev.kikugie.malilib_extras:${property("deps.malilib_extras")}:$mcVersion").include()
 
     modImplementation("fi.dy.masa:litematica:${property("deps.litematica")}+$mcVersion")
     testImplementation("net.fabricmc:fabric-loader-junit:${property("deps.fabric_loader")}")
@@ -80,7 +86,6 @@ loom {
 tasks.processResources {
     inputs.property("version", modVersion)
     inputs.property("minecraft", target)
-    inputs.property("flk", flkVersion)
     inputs.property("malilib", malilibVersion)
     inputs.property("litematica", litematicaVersion)
 
@@ -88,7 +93,6 @@ tasks.processResources {
         expand(
             "version" to modVersion,
             "minecraft" to target,
-            "flk" to flkVersion,
             "malilib" to malilibVersion,
             "litematica" to litematicaVersion
         )
@@ -98,4 +102,21 @@ tasks.processResources {
 yamlang {
     targetSourceSets = listOf(sourceSets.main.get())
     inputDir = "assets/$modId/lang"
+}
+
+java {
+    withSourcesJar()
+
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+
+kotlin {
+    jvmToolchain(17)
+}
+
+tasks.jar {
+    from("LICENSE") {
+        rename { "${it}_${project.base.archivesName.get()}" }
+    }
 }

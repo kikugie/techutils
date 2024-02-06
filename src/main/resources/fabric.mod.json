@@ -32,6 +32,6 @@
     "minecraft": "${minecraft}",
     "malilib": "~${malilib}",
     "litematica": "~${litematica}",
-    "fabric-language-kotlin": ">=${flk}"
+    "fabric-language-kotlin": ">=1.10"
   }
 }

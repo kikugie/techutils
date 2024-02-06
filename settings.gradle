@@ -22,10 +22,9 @@ plugins {
     id "dev.kikugie.stonecutter" version "0.3.2"
 }
 
-def vers = ["1.19.4", "1.20.1", "1.20.2"]
 stonecutter {
     centralScript "build.gradle.kts"
-    shared { versions "1.19.4", "1.20.1", "1.20.2" }
+    shared { versions "1.19.4", "1.20.1" }
     create rootProject
 }
 

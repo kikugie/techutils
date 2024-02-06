@@ -82,7 +82,10 @@ private fun writeData(
 private fun spawnEntities(entity: Entity, world: WorldWriter) {
     world.addEntity(entity)
     entity.passengerList.forEach {
+        /*? if <1.20.2 */
         it.setPosition(entity.x, entity.y + entity.mountedHeightOffset + it.heightOffset, entity.z)
+        /*? if >=1.20.2 */
+        /*it.setPosition(entity.x, entity.y + entity.method_52536(it), entity.z)*/
         spawnEntities(it, world)
     }
 }

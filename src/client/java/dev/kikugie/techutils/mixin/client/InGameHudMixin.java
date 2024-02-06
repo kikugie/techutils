@@ -35,7 +35,14 @@ public class InGameHudMixin {
         return IntMath.pow(10, formatter.format(value).length() - 1);
     }
 
-    @Inject(method = "renderScoreboardSidebar", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/InGameHud;fill(Lnet/minecraft/client/util/math/MatrixStack;IIIII)V", ordinal = 0))
+    @Inject(method = "renderScoreboardSidebar", at = @At(
+            value = "INVOKE",
+            /*? if <1.20 */
+            target = "Lnet/minecraft/client/gui/hud/InGameHud;fill(Lnet/minecraft/client/util/math/MatrixStack;IIIII)V",
+            /*? if >=1.20 */
+            /*target = "Lnet/minecraft/client/gui/DrawContext;fill(IIIII)V",*/
+            ordinal = 0
+    ))
     private void shortenScore(CallbackInfo ci, @Local LocalRef<String> score) {
         if (!GeneralMisc.INSTANCE.getCompactScoreboard().getBooleanValue()) return;
         try {

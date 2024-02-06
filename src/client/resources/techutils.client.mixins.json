@@ -10,7 +10,6 @@
     "ClientPlayNetworkHandlerMixin",
     "InGameHudMixin",
     "fapi.ClientPlayNetworkAddonMixin",
-    "litematica.GuiPlacementConfigurationMixin",
     "litematica.GuiSchematicBrowserBaseMixin",
     "litematica.GuiSchematicManagerMixin",
     "litematica.RayTraceUtilsMixin",
