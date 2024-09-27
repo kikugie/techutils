@@ -22,28 +22,28 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
  */
 @Mixin(value = FluidRenderer.class, priority = 1100)
 public class PostFluidRendererMixin {
-    @SuppressWarnings("MixinAnnotationTarget")
-    @Shadow(remap = false)
-    @Final
-    private ThreadLocal<Boolean> fabric_customRendering;
+	@SuppressWarnings("MixinAnnotationTarget")
+	@Shadow(remap = false)
+	@Final
+	private ThreadLocal<Boolean> fabric_customRendering;
 
-    @SuppressWarnings({"UnresolvedMixinReference", "MixinAnnotationTarget", "CancellableInjectionUsage", "ConstantConditions"})
-    @Inject(method = "tessellateViaHandler", at = @At("HEAD"), cancellable = true, remap = false)
-    private void noNotMyJays(BlockRenderView view,
-                             BlockPos pos,
-                             VertexConsumer vertexConsumer,
-                             BlockState blockState,
-                             FluidState fluidState,
-                             //#if MC > 11802
-                             CallbackInfo delegateInfo,
-                             //#else
-                             //$$ CallbackInfoReturnable<Boolean> delegateInfo,
-                             //#endif
-                             CallbackInfo info) {
-        if ((Object) this instanceof PreviewFluidRenderer) {
-            this.fabric_customRendering.set(true);
-            info.cancel();
-        }
-    }
+	@SuppressWarnings({"UnresolvedMixinReference", "MixinAnnotationTarget", "CancellableInjectionUsage", "ConstantConditions"})
+	@Inject(method = "tessellateViaHandler", at = @At("HEAD"), cancellable = true, remap = false)
+	private void noNotMyJays(BlockRenderView view,
+							 BlockPos pos,
+							 VertexConsumer vertexConsumer,
+							 BlockState blockState,
+							 FluidState fluidState,
+							 //#if MC > 11802
+							 CallbackInfo delegateInfo,
+							 //#else
+							 //$$ CallbackInfoReturnable<Boolean> delegateInfo,
+							 //#endif
+							 CallbackInfo info) {
+		if ((Object) this instanceof PreviewFluidRenderer) {
+			this.fabric_customRendering.set(true);
+			info.cancel();
+		}
+	}
 
 }

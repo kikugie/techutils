@@ -13,8 +13,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ClientPlayerInteractionManager.class)
 public class ClientPlayerInteractionManagerMixin {
-    @Inject(method = "interactBlock", at = @At(value = "RETURN", ordinal = 1))
-    private void recordContainer(ClientPlayerEntity player, Hand hand, BlockHitResult hitResult, CallbackInfoReturnable<ActionResult> cir) {
-        InventoryOverlay.onContainerClick(hitResult);
-    }
+	@Inject(method = "interactBlock", at = @At(value = "RETURN", ordinal = 1))
+	private void recordContainer(ClientPlayerEntity player, Hand hand, BlockHitResult hitResult, CallbackInfoReturnable<ActionResult> cir) {
+		InventoryOverlay.onContainerClick(hitResult);
+	}
 }

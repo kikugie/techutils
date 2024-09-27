@@ -18,29 +18,29 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class TechUtilsMod implements ClientModInitializer {
-    public static final Logger LOGGER = LoggerFactory.getLogger(Reference.MOD_ID);
+	public static final Logger LOGGER = LoggerFactory.getLogger(Reference.MOD_ID);
 
-    @Override
-    public void onInitializeClient() {
-        InitializationHandler.getInstance().registerInitializationHandler(new InitHandler());
+	@Override
+	public void onInitializeClient() {
+		InitializationHandler.getInstance().registerInitializationHandler(new InitHandler());
 
-        registerCommands();
-        registerWorldEditSync();
+		registerCommands();
+		registerWorldEditSync();
 
-        ClientTickEvents.START_WORLD_TICK.register(world -> InteractionHandler.tick(world.getTime()));
-        ClientTickEvents.START_WORLD_TICK.register(world -> ScannerManager.tick());
-        WorldRenderEvents.END.register(OutlineRenderer::render);
+		ClientTickEvents.START_WORLD_TICK.register(world -> InteractionHandler.tick(world.getTime()));
+		ClientTickEvents.START_WORLD_TICK.register(world -> ScannerManager.tick());
+		WorldRenderEvents.END.register(OutlineRenderer::render);
 //        WorldRenderEvents.END.register(Remderer::onRender);
-    }
+	}
 
-    private void registerCommands() {
-        ClientCommandRegistrationCallback.EVENT.register(IsorenderSelectionCommand::register);
-    }
+	private void registerCommands() {
+		ClientCommandRegistrationCallback.EVENT.register(IsorenderSelectionCommand::register);
+	}
 
-    private void registerWorldEditSync() {
-        ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> WorldEditSync.init());
-        ClientTickEvents.START_WORLD_TICK.register(tick -> WorldEditSync.getInstance().ifPresent(WorldEditSync::onTick));
-        ClientReceiveMessageEvents.ALLOW_GAME.register((message, overlay) -> !ResponseMuffler.test(message.getString()));
-    }
+	private void registerWorldEditSync() {
+		ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> WorldEditSync.init());
+		ClientTickEvents.START_WORLD_TICK.register(tick -> WorldEditSync.getInstance().ifPresent(WorldEditSync::onTick));
+		ClientReceiveMessageEvents.ALLOW_GAME.register((message, overlay) -> !ResponseMuffler.test(message.getString()));
+	}
 
 }

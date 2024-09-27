@@ -10,6 +10,6 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 @Environment(EnvType.CLIENT)
 @Mixin(ScreenHandler.class)
 public interface ScreenHandlerAccessor {
-    @Accessor("type")
-    ScreenHandlerType<?> getNullableType();
+	@Accessor("type")
+	ScreenHandlerType<?> getNullableType();
 }

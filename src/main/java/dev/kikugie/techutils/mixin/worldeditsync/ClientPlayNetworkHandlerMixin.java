@@ -16,11 +16,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Environment(EnvType.CLIENT)
 @Mixin(ClientPlayNetworkHandler.class)
 public class ClientPlayNetworkHandlerMixin {
-    @Shadow
-    private CommandDispatcher<CommandSource> commandDispatcher;
+	@Shadow
+	private CommandDispatcher<CommandSource> commandDispatcher;
 
-    @Inject(method = "onCommandTree", at = @At("RETURN"))
-    private void registerWorldEdit(CommandTreeS2CPacket packet, CallbackInfo ci) {
-        WorldEditSync.getInstance().ifPresent(instance -> instance.onCommandTreePacket(this.commandDispatcher));
-    }
+	@Inject(method = "onCommandTree", at = @At("RETURN"))
+	private void registerWorldEdit(CommandTreeS2CPacket packet, CallbackInfo ci) {
+		WorldEditSync.getInstance().ifPresent(instance -> instance.onCommandTreePacket(this.commandDispatcher));
+	}
 }

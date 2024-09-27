@@ -10,6 +10,6 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 @Mixin(BlockEntity.class)
 @Environment(EnvType.CLIENT)
 public interface BlockEntityAccessor {
-    @Accessor("cachedState")
-    void setCachedState(BlockState state);
+	@Accessor("cachedState")
+	void setCachedState(BlockState state);
 }

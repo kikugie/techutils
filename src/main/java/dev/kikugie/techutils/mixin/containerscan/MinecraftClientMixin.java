@@ -15,17 +15,17 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Environment(EnvType.CLIENT)
 @Mixin(MinecraftClient.class)
 public class MinecraftClientMixin {
-    @Inject(method = "onResolutionChanged", at = @At("RETURN"))
-    private void resizeDisplay(CallbackInfo ci) {
-        TransparencyBuffer.resizeDisplay();
-    }
+	@Inject(method = "onResolutionChanged", at = @At("RETURN"))
+	private void resizeDisplay(CallbackInfo ci) {
+		TransparencyBuffer.resizeDisplay();
+	}
 
-    @Inject(method = "setScreen", at = @At("HEAD"), cancellable = true)
-    private void onScreen(Screen screen, CallbackInfo ci) {
-        if (!(screen instanceof ScreenHandlerProvider<?>))
-            return;
+	@Inject(method = "setScreen", at = @At("HEAD"), cancellable = true)
+	private void onScreen(Screen screen, CallbackInfo ci) {
+		if (!(screen instanceof ScreenHandlerProvider<?>))
+			return;
 
-        if (!InteractionHandler.onScreen(screen))
-            ci.cancel();
-    }
+		if (!InteractionHandler.onScreen(screen))
+			ci.cancel();
+	}
 }

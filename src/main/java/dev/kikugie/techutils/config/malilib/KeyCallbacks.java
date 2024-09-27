@@ -18,46 +18,46 @@ import java.util.function.Function;
 
 
 public class KeyCallbacks {
-    public static void init() {
-        ConditionalCallback.set(MiscConfigs.GIVE_FULL_INV, action -> GiveFullIInv.onKeybind());
+	public static void init() {
+		ConditionalCallback.set(MiscConfigs.GIVE_FULL_INV, action -> GiveFullIInv.onKeybind());
 
-        ConditionalCallback.set(LitematicConfigs.ROTATE_PLACEMENT, action -> {
-            SchematicPlacement placement = DataManager.getSchematicPlacementManager().getSelectedSchematicPlacement();
-            if (placement == null)
-                return false;
-            placement.setRotation(placement.getRotation().rotate(BlockRotation.CLOCKWISE_90), InGameNotifier.INSTANCE);
-            return true;
-        });
-        ConditionalCallback.set(LitematicConfigs.MIRROR_PLACEMENT, action -> {
-            SchematicPlacement placement = DataManager.getSchematicPlacementManager().getSelectedSchematicPlacement();
-            if (placement == null)
-                return false;
-            BlockMirror mirror = switch (placement.getMirror()) {
-                case NONE -> BlockMirror.LEFT_RIGHT;
-                case LEFT_RIGHT -> BlockMirror.FRONT_BACK;
-                case FRONT_BACK -> BlockMirror.NONE;
-            };
-            placement.setMirror(mirror, InGameNotifier.INSTANCE);
-            return true;
-        });
-        ConditionalCallback.set(MiscConfigs.OPEN_CONFIG, action -> {
-            MinecraftClient.getInstance().setScreen(new ConfigGui());
-            return true;
-        });
-        ConditionalCallback.set(MiscConfigs.GIVE_FULL_INV, action -> GiveFullIInv.onKeybind());
-    }
+		ConditionalCallback.set(LitematicConfigs.ROTATE_PLACEMENT, action -> {
+			SchematicPlacement placement = DataManager.getSchematicPlacementManager().getSelectedSchematicPlacement();
+			if (placement == null)
+				return false;
+			placement.setRotation(placement.getRotation().rotate(BlockRotation.CLOCKWISE_90), InGameNotifier.INSTANCE);
+			return true;
+		});
+		ConditionalCallback.set(LitematicConfigs.MIRROR_PLACEMENT, action -> {
+			SchematicPlacement placement = DataManager.getSchematicPlacementManager().getSelectedSchematicPlacement();
+			if (placement == null)
+				return false;
+			BlockMirror mirror = switch (placement.getMirror()) {
+				case NONE -> BlockMirror.LEFT_RIGHT;
+				case LEFT_RIGHT -> BlockMirror.FRONT_BACK;
+				case FRONT_BACK -> BlockMirror.NONE;
+			};
+			placement.setMirror(mirror, InGameNotifier.INSTANCE);
+			return true;
+		});
+		ConditionalCallback.set(MiscConfigs.OPEN_CONFIG, action -> {
+			MinecraftClient.getInstance().setScreen(new ConfigGui());
+			return true;
+		});
+		ConditionalCallback.set(MiscConfigs.GIVE_FULL_INV, action -> GiveFullIInv.onKeybind());
+	}
 
-    private record ConditionalCallback(IKeybind keybind, Function<KeyAction, Boolean> callback)
-            implements IHotkeyCallback {
-        public static void set(IHotkey option, Function<KeyAction, Boolean> callback) {
-            option.getKeybind().setCallback(new ConditionalCallback(option.getKeybind(), callback));
-        }
+	private record ConditionalCallback(IKeybind keybind, Function<KeyAction, Boolean> callback)
+		implements IHotkeyCallback {
+		public static void set(IHotkey option, Function<KeyAction, Boolean> callback) {
+			option.getKeybind().setCallback(new ConditionalCallback(option.getKeybind(), callback));
+		}
 
-        @Override
-        public boolean onKeyAction(KeyAction action, IKeybind key) {
-            if (key != this.keybind)
-                return false;
-            return this.callback.apply(action);
-        }
-    }
+		@Override
+		public boolean onKeyAction(KeyAction action, IKeybind key) {
+			if (key != this.keybind)
+				return false;
+			return this.callback.apply(action);
+		}
+	}
 }

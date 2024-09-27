@@ -9,9 +9,9 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 @Mixin(WorldRenderer.class)
 public interface WorldRendererAccessor {
 
-    @Accessor
-    PostEffectProcessor getEntityOutlinePostProcessor();
+	@Accessor
+	PostEffectProcessor getEntityOutlinePostProcessor();
 
-    @Accessor
-    BufferBuilderStorage getBufferBuilders();
+	@Accessor
+	BufferBuilderStorage getBufferBuilders();
 }

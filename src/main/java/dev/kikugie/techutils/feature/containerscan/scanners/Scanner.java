@@ -1,11 +1,11 @@
 package dev.kikugie.techutils.feature.containerscan.scanners;
 
 public interface Scanner {
-    void tick();
+	void tick();
 
-    void start();
+	void start();
 
-    void stop();
+	void stop();
 
-    void update();
+	void update();
 }

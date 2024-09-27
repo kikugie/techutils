@@ -14,9 +14,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
  */
 @Mixin(value = FluidRenderer.class, priority = 900)
 public class PreFluidRendererMixin {
-    @SuppressWarnings("ConstantConditions")
-    @Inject(method = "onResourceReload", at = @At("RETURN"), cancellable = true)
-    private void imGonnaCreaseYourJaysFabric(CallbackInfo ci) {
-        if ((Object) this instanceof PreviewFluidRenderer) ci.cancel();
-    }
+	@SuppressWarnings("ConstantConditions")
+	@Inject(method = "onResourceReload", at = @At("RETURN"), cancellable = true)
+	private void imGonnaCreaseYourJaysFabric(CallbackInfo ci) {
+		if ((Object) this instanceof PreviewFluidRenderer) ci.cancel();
+	}
 }

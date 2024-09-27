@@ -16,19 +16,19 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(value = HandledScreen.class)
 public class HandledScreenMixin {
 
-    @Shadow
-    protected int x;
+	@Shadow
+	protected int x;
 
-    @Shadow
-    protected int y;
+	@Shadow
+	protected int y;
 
-    @ModifyExpressionValue(method = "drawSlot", at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/slot/Slot;getStack()Lnet/minecraft/item/ItemStack;", ordinal = 0))
-    private ItemStack setTransparency(ItemStack stack, @Local(argsOnly = true) DrawContext context, @Local(argsOnly = true) Slot slot) {
-        return InventoryOverlay.drawStack(context, slot, stack);
-    }
+	@ModifyExpressionValue(method = "drawSlot", at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/slot/Slot;getStack()Lnet/minecraft/item/ItemStack;", ordinal = 0))
+	private ItemStack setTransparency(ItemStack stack, @Local(argsOnly = true) DrawContext context, @Local(argsOnly = true) Slot slot) {
+		return InventoryOverlay.drawStack(context, slot, stack);
+	}
 
-    @Inject(method = "drawSlot", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/math/MatrixStack;pop()V"))
-    private void restoreTransparency(DrawContext context, Slot slot, CallbackInfo ci) {
-        InventoryOverlay.drawTransparencyBuffer(context, this.x, this.y);
-    }
+	@Inject(method = "drawSlot", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/math/MatrixStack;pop()V"))
+	private void restoreTransparency(DrawContext context, Slot slot, CallbackInfo ci) {
+		InventoryOverlay.drawTransparencyBuffer(context, this.x, this.y);
+	}
 }

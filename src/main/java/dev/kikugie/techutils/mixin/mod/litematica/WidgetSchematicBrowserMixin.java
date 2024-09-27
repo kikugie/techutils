@@ -13,20 +13,20 @@ import org.spongepowered.asm.mixin.injection.At;
 
 @Mixin(value = WidgetSchematicBrowser.class, remap = false)
 public abstract class WidgetSchematicBrowserMixin {
-    @ModifyExpressionValue(method = "drawSelectedSchematicInfo", at = @At(value = "INVOKE", target = "Ljava/util/Map;get(Ljava/lang/Object;)Ljava/lang/Object;"))
-    private Object drawPreview(
-            Object original,
-            @Local(argsOnly = true) @Nullable WidgetFileBrowserBase.DirectoryEntry entry,
-            @Local(argsOnly = true) DrawContext drawContext,
-            @Local(ordinal = 0) int x,
-            @Local(ordinal = 1) int y,
-            @Local(ordinal = 2) int height
-    ) {
-        if (!LitematicConfigs.RENDER_PREVIEW.getBooleanValue())
-            return original;
-        if (!LitematicConfigs.OVERRIDE_PREVIEW.getBooleanValue() && original != null)
-            return original;
-        PreviewRenderManager.getInstance().ifPresent(manager -> manager.getOrCreateRenderer(entry).render(drawContext, x + 4, y + 14, height - y - 2));
-        return null;
-    }
+	@ModifyExpressionValue(method = "drawSelectedSchematicInfo", at = @At(value = "INVOKE", target = "Ljava/util/Map;get(Ljava/lang/Object;)Ljava/lang/Object;"))
+	private Object drawPreview(
+		Object original,
+		@Local(argsOnly = true) @Nullable WidgetFileBrowserBase.DirectoryEntry entry,
+		@Local(argsOnly = true) DrawContext drawContext,
+		@Local(ordinal = 0) int x,
+		@Local(ordinal = 1) int y,
+		@Local(ordinal = 2) int height
+	) {
+		if (!LitematicConfigs.RENDER_PREVIEW.getBooleanValue())
+			return original;
+		if (!LitematicConfigs.OVERRIDE_PREVIEW.getBooleanValue() && original != null)
+			return original;
+		PreviewRenderManager.getInstance().ifPresent(manager -> manager.getOrCreateRenderer(entry).render(drawContext, x + 4, y + 14, height - y - 2));
+		return null;
+	}
 }

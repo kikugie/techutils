@@ -18,58 +18,58 @@ import net.minecraft.world.chunk.light.LightingProvider;
 import org.jetbrains.annotations.Nullable;
 
 public class RegionBlockView implements BlockRenderView {
-    public final ValidBox box;
-    private final LitematicaBlockStateContainer blockStateContainer;
-    private final MinecraftClient client = MinecraftClient.getInstance();
-    private final LightingProvider lightingProvider = new FakeLightingProvider(new ChunkCacheSchematic(this.client.world, this.client.world, new BlockPos(0, 0, 0), 0));
+	public final ValidBox box;
+	private final LitematicaBlockStateContainer blockStateContainer;
+	private final MinecraftClient client = MinecraftClient.getInstance();
+	private final LightingProvider lightingProvider = new FakeLightingProvider(new ChunkCacheSchematic(this.client.world, this.client.world, new BlockPos(0, 0, 0), 0));
 
-    public RegionBlockView(LitematicaBlockStateContainer container, Box area) {
-        this.blockStateContainer = container;
-        this.box = ValidBox.of(area);
-    }
+	public RegionBlockView(LitematicaBlockStateContainer container, Box area) {
+		this.blockStateContainer = container;
+		this.box = ValidBox.of(area);
+	}
 
-    @Override
-    public float getBrightness(Direction direction, boolean shaded) {
-        assert this.client.world != null;
-        return this.client.world.getBrightness(direction, shaded);
-    }
+	@Override
+	public float getBrightness(Direction direction, boolean shaded) {
+		assert this.client.world != null;
+		return this.client.world.getBrightness(direction, shaded);
+	}
 
-    @Override
-    public LightingProvider getLightingProvider() {
-        return this.lightingProvider;
-    }
+	@Override
+	public LightingProvider getLightingProvider() {
+		return this.lightingProvider;
+	}
 
-    @Override
-    public int getColor(BlockPos pos, ColorResolver colorResolver) {
-        return this.client.world.getColor(pos, colorResolver);
-    }
+	@Override
+	public int getColor(BlockPos pos, ColorResolver colorResolver) {
+		return this.client.world.getColor(pos, colorResolver);
+	}
 
-    @Nullable
-    @Override
-    public BlockEntity getBlockEntity(BlockPos pos) {
-        return null;
-    }
+	@Nullable
+	@Override
+	public BlockEntity getBlockEntity(BlockPos pos) {
+		return null;
+	}
 
-    @Override
-    public BlockState getBlockState(BlockPos pos) {
-        if (!PositionUtils.isPositionInsideArea(pos, this.box.getMin(), this.box.getMax()))
-            return LitematicaBlockStateContainer.AIR_BLOCK_STATE;
-        BlockPos local = pos.subtract(this.box.getMin());
-        return this.blockStateContainer.get(local.getX(), local.getY(), local.getZ());
-    }
+	@Override
+	public BlockState getBlockState(BlockPos pos) {
+		if (!PositionUtils.isPositionInsideArea(pos, this.box.getMin(), this.box.getMax()))
+			return LitematicaBlockStateContainer.AIR_BLOCK_STATE;
+		BlockPos local = pos.subtract(this.box.getMin());
+		return this.blockStateContainer.get(local.getX(), local.getY(), local.getZ());
+	}
 
-    @Override
-    public FluidState getFluidState(BlockPos pos) {
-        return getBlockState(pos).getFluidState();
-    }
+	@Override
+	public FluidState getFluidState(BlockPos pos) {
+		return getBlockState(pos).getFluidState();
+	}
 
-    @Override
-    public int getHeight() {
-        return this.box.getSize().getY();
-    }
+	@Override
+	public int getHeight() {
+		return this.box.getSize().getY();
+	}
 
-    @Override
-    public int getBottomY() {
-        return 0;
-    }
+	@Override
+	public int getBottomY() {
+		return 0;
+	}
 }
