@@ -23,12 +23,12 @@ public class InGameHudMixin {
 		FORMATTER.setMaximumFractionDigits(1);
 	}
 
+	@SuppressWarnings("unchecked")
 	@ModifyArg(method = "renderScoreboardSidebar(Lnet/minecraft/client/gui/DrawContext;Lnet/minecraft/scoreboard/ScoreboardObjective;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/scoreboard/ScoreboardObjective;getNumberFormatOr(Lnet/minecraft/scoreboard/number/NumberFormat;)Lnet/minecraft/scoreboard/number/NumberFormat;"))
 	private <T extends net.minecraft.scoreboard.number.NumberFormat> T replaceWithCompactFormat(T format) {
 		if (!MiscConfigs.COMPACT_SCOREBOARD.getBooleanValue())
 			return format;
 
-		//noinspection unchecked
 		return (T) new net.minecraft.scoreboard.number.NumberFormat() {
 			@Override
 			public MutableText format(int number) {
