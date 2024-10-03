@@ -41,8 +41,11 @@ To access mod config open [Mod Menu](https://modrinth.com/mod/modmenu) and selec
   - 1000000 -> 1M
   - 1000000000 -> 1B
 - Disable WorldEdit neighbor updates on log-in - `autoDisableUpdates`.
-- Hotkeys for litematic placement rotation & mirror - `rotatePlacement` and `mirrorPlacement`
-- `/isorender selection` shortcut for rendering current Litematica selection in [Isometric Renders](https://modrinth.com/mod/isometric-renders)
+- Hotkeys for litematic placement rotation & mirror - `rotatePlacement` and `mirrorPlacement`.
+- `/isorender selection` shortcut for rendering current Litematica selection in [Isometric Renders](https://modrinth.com/mod/isometric-renders).
+- A hotkey to give yourself a container full of the item you're holding - `giveFullInv`. Supports boxes, chests, and bundles. Nesting them is possible.
+- A hotkey to refresh the material list - `refreshMaterialList`.
+- Make easy place act as if all blocks are full blocks. Useful for placing blocks with small hit boxes.
 - *And more to come!*
 
 ## Dependencies
