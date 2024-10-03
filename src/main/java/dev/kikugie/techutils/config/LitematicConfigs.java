@@ -30,6 +30,12 @@ public class LitematicConfigs extends Configs.BaseConfigs {
 		- Orange: mismatched amount or nbt data;
 		- Magenta: extra item that shouldn't be present;
 		- Red: wrong item type.""");
+	public static final ConfigHotkey REFRESH_MATERIAL_LIST = new ConfigHotkey("refreshMaterialList", "", """
+		Refreshes active Litematica material list.
+		§7This can be used in combination with layered lists to update the HUD when changing the active layer.""");
+	public static final ConfigBooleanHotkeyed EASY_PLACE_FULL_BLOCKS = new ConfigBooleanHotkeyed("easyPlaceFullBlocks", false, "", """
+		Treat all blocks as full cubes when using Litematica's easy place feature.
+		§7Useful for placing blocks with small hitboxes like buttons, chains, fences, etc.""");
 
 	public LitematicConfigs() {
 		super(ImmutableList.of(
@@ -40,7 +46,9 @@ public class LitematicConfigs extends Configs.BaseConfigs {
 			RENDER_SLANT,
 			ROTATE_PLACEMENT,
 			MIRROR_PLACEMENT,
-			INVENTORY_SCREEN_OVERLAY
+			INVENTORY_SCREEN_OVERLAY,
+			REFRESH_MATERIAL_LIST,
+			EASY_PLACE_FULL_BLOCKS
 		));
 	}
 }

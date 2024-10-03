@@ -40,6 +40,13 @@ public class KeyCallbacks {
 			placement.setMirror(mirror, InGameNotifier.INSTANCE);
 			return true;
 		});
+		ConditionalCallback.set(LitematicConfigs.REFRESH_MATERIAL_LIST, action -> {
+			var materialList = DataManager.getMaterialList();
+			if (materialList == null)
+				return false;
+			materialList.reCreateMaterialList();
+			return true;
+		});
 		ConditionalCallback.set(MiscConfigs.OPEN_CONFIG, action -> {
 			MinecraftClient.getInstance().setScreen(new ConfigGui());
 			return true;

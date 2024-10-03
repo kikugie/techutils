@@ -15,7 +15,7 @@ public class ConfigGui extends GuiConfigsBase {
 	private static GuiTabs tab = GuiTabs.LITEMATICA;
 
 	public ConfigGui() {
-		super(10, 50, Reference.MOD_ID, null, "techutils.config", Reference.MOD_VERSION);
+		super(10, 50, Reference.MOD_ID, null, "techutils.config.title", Reference.MOD_VERSION);
 	}
 
 	@Override
