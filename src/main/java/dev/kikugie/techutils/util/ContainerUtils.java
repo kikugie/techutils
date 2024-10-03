@@ -43,10 +43,10 @@ public class ContainerUtils {
 		assert state.getBlock() instanceof ShulkerBoxBlock;
 		ShulkerBoxBlockEntity box = (ShulkerBoxBlockEntity) world.getBlockEntity(pos);
 		if (box == null || box.getAnimationStage() != ShulkerBoxBlockEntity.AnimationStage.CLOSED)
-			return false;
+			return true;
 
 		return world.isSpaceEmpty(ShulkerEntity
-			.calculateBoundingBox(state.get(ShulkerBoxBlock.FACING), 0.0F, 0.5F)
+			.calculateBoundingBox(1.0F, state.get(ShulkerBoxBlock.FACING), 0.0F, 0.5F)
 			.offset(pos).contract(1.0E-6D));
 	}
 }

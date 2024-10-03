@@ -16,6 +16,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gl.VertexBuffer;
 import net.minecraft.client.render.*;
 import net.minecraft.client.render.block.BlockRenderManager;
+import net.minecraft.client.render.chunk.BlockBufferAllocatorStorage;
 import net.minecraft.client.render.model.BakedModel;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
@@ -61,6 +62,8 @@ public class LitematicMesh {
 	}
 
 	private void build() {
+		var allocatorStorage = new BlockBufferAllocatorStorage();
+
 		MatrixStack matrices = new MatrixStack();
 		Random random = Random.createLocal();
 
@@ -77,22 +80,28 @@ public class LitematicMesh {
 			CompletableFuture<List<EntityEntry>> entitiesFuture = new CompletableFuture<>();
 			this.client.execute(() -> entitiesFuture.complete(readEntities()));
 
-			this.schematic.getAreas().keySet().forEach(region -> buildRegion(matrices, region, random));
-
-			if (this.initializedLayers.containsKey(RenderLayer.getTranslucent())) {
-				var translucentBuilder = this.initializedLayers.get(RenderLayer.getTranslucent());
-				translucentBuilder.setSorter(VertexSorter.byDistance(0, 0, 1000));
-			}
+			this.schematic.getAreas().keySet().forEach(region -> buildRegion(matrices, region, random, allocatorStorage));
 
 			var future = new CompletableFuture<Void>();
 			RenderSystem.recordRenderCall(() -> {
 				this.initializedLayers.forEach((renderLayer, bufferBuilder) -> {
 					final var vertexBuffer = new VertexBuffer(VertexBuffer.Usage.STATIC);
 
-					vertexBuffer.bind();
-					vertexBuffer.upload(bufferBuilder.end());
+					var built = bufferBuilder.endNullable();
+					if (built == null)
+						return;
 
-					this.bufferStorage.put(renderLayer, vertexBuffer);
+					if (renderLayer == RenderLayer.getTranslucent()) {
+						built.sortQuads(allocatorStorage.get(renderLayer), VertexSorter.byDistance(0, 0, 1000));
+					}
+
+					vertexBuffer.bind();
+					vertexBuffer.upload(built);
+
+					var discardedBuffer = this.bufferStorage.put(renderLayer, vertexBuffer);
+					if (discardedBuffer != null) {
+						discardedBuffer.close();
+					}
 				});
 
 				future.complete(null);
@@ -109,6 +118,8 @@ public class LitematicMesh {
 			this.done = true;
 		} catch (Exception e) {
 			TechUtilsMod.LOGGER.error("Rendering gone wrong:\n", e);
+		} finally {
+			allocatorStorage.close();
 		}
 	}
 
@@ -118,14 +129,21 @@ public class LitematicMesh {
 			List<LitematicaSchematic.EntityInfo> schematicEntities = this.schematic.getEntityListForRegion(region);
 			assert schematicEntities != null;
 
-			schematicEntities.forEach(entityInfo -> entities.add(new EntityEntry(
-				EntityUtils.createEntityAndPassengersFromNBT(entityInfo.nbt, this.client.world),
-				0xFF00FF)));
+			schematicEntities.forEach(entityInfo -> {
+				Entity origEntity = EntityUtils.createEntityAndPassengersFromNBT(entityInfo.nbt, this.client.world);
+				var entity = origEntity.getType().create(this.client.world);
+				entity.copyFrom(origEntity);
+				entity.copyPositionAndRotation(origEntity);
+				entity.tick();
+				entities.add(new EntityEntry(
+					entity,
+					0xFF00FF));
+			});
 		});
 		return entities;
 	}
 
-	private void buildRegion(MatrixStack matrices, String region, Random random) {
+	private void buildRegion(MatrixStack matrices, String region, Random random, BlockBufferAllocatorStorage allocatorStorage) {
 		Box box = this.schematic.getAreas().get(region);
 		RegionBlockView view = new RegionBlockView(
 			Objects.requireNonNull(this.schematic.getSubRegionContainer(region)),
@@ -136,7 +154,6 @@ public class LitematicMesh {
 		assert this.client.player != null;
 
 		BlockRenderManager manager = this.client.getBlockRenderManager();
-		PreviewFluidRenderer fluidRenderer = new PreviewFluidRenderer();
 
 		for (BlockPos pos : BlockPos.iterate(view.box.getPos1(), view.box.getPos2())) {
 			BlockState state = view.getBlockState(pos);
@@ -148,7 +165,7 @@ public class LitematicMesh {
 
 				if (blockEntity != null) {
 					((BlockEntityAccessor) blockEntity).setCachedState(state);
-					blockEntity.readNbt(schematicBlockEntities.getOrDefault(pos, new NbtCompound()));
+					blockEntity.read(schematicBlockEntities.getOrDefault(pos, new NbtCompound()), MinecraftClient.getInstance().world.getRegistryManager());
 					blockEntity.setWorld(this.client.world);
 					this.blockEntities.put(pos.toImmutable(), blockEntity);
 				}
@@ -156,15 +173,15 @@ public class LitematicMesh {
 
 			if (!state.getFluidState().isEmpty()) {
 				FluidState fluidState = state.getFluidState();
-
 				RenderLayer fluidLayer = RenderLayers.getFluidLayer(fluidState);
 
 				matrices.push();
 				matrices.translate(-(pos.getX() & 15), -(pos.getY() & 15), -(pos.getZ() & 15));
 				matrices.translate(pos.getX(), pos.getY(), pos.getZ());
 
-				fluidRenderer.setMatrix(matrices.peek().getPositionMatrix());
-				fluidRenderer.render(view, pos, getOrCreateBuffer(fluidLayer), state, fluidState);
+				BufferBuilder bufferBuilder = this.getOrCreateBuffer(allocatorStorage, fluidLayer);
+				manager.renderFluid(pos, view, new FluidVertexConsumer(bufferBuilder, matrices.peek().getPositionMatrix()), state, fluidState);
+
 				matrices.pop();
 			}
 
@@ -175,7 +192,7 @@ public class LitematicMesh {
 			RenderLayer renderLayer = RenderLayers.getBlockLayer(state);
 
 			if (state.getRenderType() == BlockRenderType.MODEL) {
-				manager.getModelRenderer().render(view, model, state, pos, matrices, getOrCreateBuffer(renderLayer), true, random, state.getRenderingSeed(pos), OverlayTexture.DEFAULT_UV);
+				manager.getModelRenderer().render(view, model, state, pos, matrices, getOrCreateBuffer(allocatorStorage, renderLayer), true, random, state.getRenderingSeed(pos), OverlayTexture.DEFAULT_UV);
 			}
 
 			matrices.pop();
@@ -183,13 +200,10 @@ public class LitematicMesh {
 		}
 	}
 
-	private VertexConsumer getOrCreateBuffer(RenderLayer layer) {
-		if (!this.initializedLayers.containsKey(layer)) {
-			BufferBuilder builder = new BufferBuilder(layer.getExpectedBufferSize());
-			this.initializedLayers.put(layer, builder);
-			builder.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR_TEXTURE_LIGHT_NORMAL);
-		}
-		return this.initializedLayers.get(layer);
+	private BufferBuilder getOrCreateBuffer(BlockBufferAllocatorStorage allocatorStorage, RenderLayer layer) {
+		return this.initializedLayers.computeIfAbsent(layer, renderLayer ->
+			new BufferBuilder(allocatorStorage.get(renderLayer), VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR_TEXTURE_LIGHT_NORMAL)
+		);
 	}
 
 	public void render(MatrixStack matrices) {

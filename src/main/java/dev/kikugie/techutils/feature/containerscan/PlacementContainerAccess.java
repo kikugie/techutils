@@ -133,7 +133,7 @@ public final class PlacementContainerAccess {
 				sendError("Schematic item slot %d is outside of the allowed size %d".formatted(slot, size));
 				return null;
 			}
-			inventory.setStack(slot, ItemStack.fromNbt(item));
+			inventory.setStack(slot, ItemStack.fromNbtOrEmpty(MinecraftClient.getInstance().world.getRegistryManager(), item));
 		}
 		return inventory;
 	}

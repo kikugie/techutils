@@ -102,7 +102,7 @@ public class InteractionScanner implements Scanner {
 	 */
 	private Set<BlockPos> getNearbyContainers() {
 		Vec3d camera = getEyesPos(this.player);
-		float reach = this.interactionManager.getReachDistance();
+		double reach = this.player.getBlockInteractionRange();
 		List<BlockPos> positions = this.placement != null ? getPlacementContainers(camera, reach) : getWorldContainers(camera, reach);
 		Set<BlockPos> result = new HashSet<>();
 		for (BlockPos pos : positions)
@@ -113,7 +113,7 @@ public class InteractionScanner implements Scanner {
 	/**
 	 * @return All containers in player's reach
 	 */
-	private List<BlockPos> getWorldContainers(Vec3d camera, float reach) {
+	private List<BlockPos> getWorldContainers(Vec3d camera, double reach) {
 		BlockPos corner1 = BlockPos.ofFloored(camera.add(reach, reach, reach));
 		BlockPos corner2 = BlockPos.ofFloored(camera.subtract(reach, reach, reach));
 		return getAvailable(camera, reach, BlockPos.iterate(corner1, corner2));
@@ -122,14 +122,14 @@ public class InteractionScanner implements Scanner {
 	/**
 	 * @return Containers matching entries in {@link InteractionScanner#waiting} list within player's reach
 	 */
-	private List<BlockPos> getPlacementContainers(Vec3d camera, float reach) {
+	private List<BlockPos> getPlacementContainers(Vec3d camera, double reach) {
 		BlockPos corner1 = BlockPos.ofFloored(camera.add(reach, reach, reach));
 		BlockPos corner2 = BlockPos.ofFloored(camera.subtract(reach, reach, reach));
 		ValidBox box = new ValidBox(corner1, corner2);
 		return getAvailable(camera, reach, Iterables.filter(this.waiting, box::contains));
 	}
 
-	private List<BlockPos> getAvailable(Vec3d camera, float reach, Iterable<BlockPos> positions) {
+	private List<BlockPos> getAvailable(Vec3d camera, double reach, Iterable<BlockPos> positions) {
 		List<BlockPos> result = new ArrayList<>();
 		for (BlockPos pos : positions) {
 			if (isInReach(pos, camera, reach))

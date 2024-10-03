@@ -28,7 +28,7 @@ public class MousePosProfile implements InteractionProfile {
 	}
 
 	@Override
-	public void scrolled(double x, double y, double amount) {
+	public void scrolled(double x, double y, double horizontalAmount, double verticalAmount) {
 
 	}
 

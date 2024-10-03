@@ -37,10 +37,10 @@ public class DragProfile implements InteractionProfile {
 	}
 
 	@Override
-	public void scrolled(double x, double y, double amount) {
+	public void scrolled(double x, double y, double horizontalAmount, double verticalAmount) {
 		if (!inViewport(x, y))
 			return;
-		this.scaleMod += amount * 0.5;
+		this.scaleMod += (float) (verticalAmount * 0.5);
 		this.scale = (float) Math.exp(this.scaleMod);
 	}
 

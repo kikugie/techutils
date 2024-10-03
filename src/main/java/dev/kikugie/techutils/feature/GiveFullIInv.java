@@ -12,11 +12,10 @@ import net.minecraft.block.entity.LootableContainerBlockEntity;
 import net.minecraft.block.entity.ShulkerBoxBlockEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.BundleContentsComponent;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.*;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
-import net.minecraft.nbt.NbtList;
 import net.minecraft.text.Text;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Formatting;
@@ -76,33 +75,33 @@ public class GiveFullIInv {
 			lootable.setStack(i, stack);
 		}
 		ItemStack container = item.getDefaultStack();
-		lootable.setStackNbt(container);
+		lootable.setStackNbt(container, MinecraftClient.getInstance().world.getRegistryManager());
 		return container;
 	}
 
 	public static ItemStack fillBundle(ItemStack stack) {
 		ItemStack bundle = Items.BUNDLE.getDefaultStack();
-		NbtCompound nbtCompound = bundle.getOrCreateNbt();
-		if (!nbtCompound.contains("Items")) {
-			nbtCompound.put("Items", new NbtList());
+		BundleContentsComponent contents = stack.get(DataComponentTypes.BUNDLE_CONTENTS);
+		if (contents == null) {
+			return bundle;
 		}
-		NbtList nbtList = nbtCompound.getList("Items", NbtElement.COMPOUND_TYPE);
-		NbtCompound nbt = new NbtCompound();
-		stack.writeNbt(nbt);
+		BundleContentsComponent.Builder builder = new BundleContentsComponent.Builder(contents);
 		for (int i = 0; i < MiscConfigs.BUNDLE_FILL.getIntegerValue(); i++) {
-			nbtList.add(nbt.copy());
+			builder.add(stack.copy());
 		}
+		bundle.set(DataComponentTypes.BUNDLE_CONTENTS, builder.build());
 		return bundle;
 	}
 
 	@SuppressWarnings("DataFlowIssue")
 	public static boolean containerHasItems(ItemStack container) {
 		if (container.getItem() instanceof BlockItem blockItem && blockItem.getBlock() instanceof BlockEntityProvider provider) {
-			if (!container.getOrCreateNbt().contains("BlockEntityTag", NbtElement.COMPOUND_TYPE))
+			var container_data = container.get(DataComponentTypes.CONTAINER);
+			if (container_data == null)
 				return false;
 
 			BlockEntity blockEntity = provider.createBlockEntity(BlockPos.ORIGIN, blockItem.getBlock().getDefaultState());
-			blockEntity.readNbt(container.getSubNbt("BlockEntityTag"));
+			blockEntity.readComponents(container);
 			if (blockEntity instanceof Inventory inventory)
 				return !inventory.isEmpty();
 		}
@@ -110,10 +109,7 @@ public class GiveFullIInv {
 	}
 
 	public static boolean bundleHasItems(ItemStack bundle) {
-		NbtCompound nbtCompound = bundle.getOrCreateNbt();
-		if (!nbtCompound.contains("Items"))
-			return false;
-		return !nbtCompound.getList("Items", NbtElement.COMPOUND_TYPE).isEmpty();
+		return BundleItem.getAmountFilled(bundle) > 0;
 	}
 
 	private static String generateCommand(ItemStack stack, int slot) {
@@ -149,9 +145,6 @@ public class GiveFullIInv {
 	}
 
 	private boolean recursionCheck(ItemStack mainHand) {
-		if (!mainHand.hasNbt())
-			return true;
-
 		if (mainHand.getItem() instanceof BundleItem)
 			return !bundleHasItems(mainHand);
 		return !containerHasItems(mainHand);

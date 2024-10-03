@@ -1,0 +1,16 @@
+{
+    "techutils.config.title": "Technical Utilities Configs - %s",
+    "techutils.config.category.litematica": "Litematica",
+    "techutils.config.category.worldedit": "WorldEdit",
+    "techutils.config.category.misc": "Miscellaneous",
+    "techutils.config.preview.profile.drag": "DRAG",
+    "techutils.config.preview.profile.pos": "POSITION",
+    "techutils.config.preview.profile.spin": "SPIN",
+    "techutils.feature.worldeditsync.success": "Synced WorldEdit region",
+    "techutils.feature.givefullinv.nested_stack": "Cannot nest non-empty container!",
+    "techutils.feature.givefullinv.nested_box": "Cannot nest shulker boxes!",
+    "techutils.feature.givefullinv.no_item": "Main hand is empty, nothing to insert!",
+    "techutils.feature.givefullinv.not_creative_enough": "Must be in creative mode!",
+
+    "litematica.info.schematic_manager.preview.right_click_to_cancel": "- Right click the button to cancel a pending preview operation\n- Ctrl + click to select a preview image."
+}

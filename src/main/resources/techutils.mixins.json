@@ -1,27 +1,28 @@
 {
-  "required": true,
-  "minVersion": "0.8",
-  "package": "dev.kikugie.techutils.mixin",
-  "compatibilityLevel": "JAVA_8",
-  "mixins": [
-  ],
-  "client": [
-    "containerscan.ClientPlayerInteractionManagerMixin",
-    "containerscan.HandledScreenMixin",
-    "containerscan.MinecraftClientMixin",
-    "containerscan.ScreenHandlerAccessor",
-    "containerscan.WorldRendererAccessor",
-    "containerscan.WorldRendererMixin",
-    "mod.fapi.ClientPlayNetworkAddonMixin",
-    "mod.litematica.GuiSchematicBrowserBaseMixin",
-    "mod.litematica.GuiSchematicManagerMixin",
-    "mod.litematica.WidgetSchematicBrowserMixin",
-    "preview.BlockEntityAccessor",
-    "preview.PostFluidRendererMixin",
-    "preview.PreFluidRendererMixin",
-    "worldeditsync.ClientPlayNetworkHandlerMixin"
-  ],
-  "injectors": {
-    "defaultRequire": 1
+    "required": true,
+    "minVersion": "0.8",
+    "package": "dev.kikugie.techutils.mixin",
+    "compatibilityLevel": "JAVA_21",
+    "mixins": [
+        "mod.litematica.RayTraceUtilsMixin"
+    ],
+    "client": [
+        "compactscoreboard.InGameHudMixin",
+        "containerscan.ClientPlayerInteractionManagerMixin",
+        "containerscan.HandledScreenMixin",
+        "containerscan.MinecraftClientMixin",
+        "containerscan.ScreenHandlerAccessor",
+        "containerscan.WorldRendererAccessor",
+        "containerscan.WorldRendererMixin",
+        "mod.fapi.ClientPlayNetworkAddonMixin",
+        "mod.litematica.GuiSchematicBrowserBaseMixin",
+        "mod.litematica.GuiSchematicManagerMixin",
+        "mod.litematica.WidgetSchematicBrowserMixin",
+        "preview.BlockEntityAccessor",
+        "worldeditsync.ClientPlayNetworkHandlerMixin",
+        "worldeditsync.WECUIPacketHandlerMixin"
+    ],
+    "injectors": {
+        "defaultRequire": 1
   }
 }

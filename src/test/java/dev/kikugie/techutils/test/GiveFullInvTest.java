@@ -7,11 +7,10 @@ import net.minecraft.block.Blocks;
 import net.minecraft.block.ShulkerBoxBlock;
 import net.minecraft.block.entity.ChestBlockEntity;
 import net.minecraft.block.entity.ShulkerBoxBlockEntity;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.BundleContentsComponent;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
-import net.minecraft.nbt.NbtList;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
@@ -263,39 +262,34 @@ public class GiveFullInvTest {
         Assertions.assertFalse(fullBundle.isPresent(), "Should return no item");
     }
 
-    @SuppressWarnings("DataFlowIssue")
     private void boxOf(ItemStack stack, ItemStack box, @Nullable DyeColor color) {
         Assertions.assertEquals(color, ShulkerBoxBlock.getColor(box.getItem()), "Shulker box color '%s' doesn't match expected '%s'".formatted(ShulkerBoxBlock.getColor(box.getItem()), color));
-        Assertions.assertTrue(box.hasNbt(), "Shulker box has no NBT");
-        Assertions.assertTrue(box.getNbt().contains("BlockEntityTag", NbtElement.COMPOUND_TYPE), "Shulker box has no BlockEntityTag");
+		Assertions.assertNotNull(box.get(DataComponentTypes.CONTAINER), "Shulker box has no container component");
 
-        ShulkerBoxBlockEntity shulker = (ShulkerBoxBlockEntity) ShulkerBoxBlockEntity.createFromNbt(BlockPos.ORIGIN, ShulkerBoxBlock.get(color).getDefaultState(), box.getSubNbt("BlockEntityTag"));
+		ShulkerBoxBlockEntity shulker = new ShulkerBoxBlockEntity(color, BlockPos.ORIGIN, ShulkerBoxBlock.get(color).getDefaultState());
+        shulker.readComponents(stack);
         for (int i = 0; i < shulker.size(); i++) {
             Assertions.assertTrue(ItemStack.areEqual(stack, shulker.getStack(i)), "Shulker box item '%s' doesn't match expected '%s'".formatted(shulker.getStack(i), stack));
         }
     }
 
-    @SuppressWarnings("DataFlowIssue")
     private void chestOf(ItemStack stack, ItemStack chest) {
-        Assertions.assertTrue(chest.hasNbt(), "Chest has no NBT");
-        Assertions.assertTrue(chest.getNbt().contains("BlockEntityTag", NbtElement.COMPOUND_TYPE), "Chest has no BlockEntityTag");
+		Assertions.assertNotNull(chest.get(DataComponentTypes.CONTAINER), "Chest has no container component");
 
-        ChestBlockEntity container = (ChestBlockEntity) ChestBlockEntity.createFromNbt(BlockPos.ORIGIN, Blocks.CHEST.getDefaultState(), chest.getSubNbt("BlockEntityTag"));
+        ChestBlockEntity container = new ChestBlockEntity(BlockPos.ORIGIN, Blocks.CHEST.getDefaultState());
+        container.readComponents(chest);
         for (int i = 0; i < container.size(); i++) {
             Assertions.assertTrue(ItemStack.areEqual(stack, container.getStack(i)), "Chest item '%s' doesn't match expected '%s'".formatted(container.getStack(i), stack));
         }
     }
 
     private void bundleOf(ItemStack stack, ItemStack bundle) {
-        Assertions.assertTrue(bundle.hasNbt(), "Bundle has no NBT");
-        NbtCompound nbtCompound = bundle.getOrCreateNbt();
-        Assertions.assertTrue(nbtCompound.contains("Items", NbtElement.LIST_TYPE), "Bundle has no Items tag");
+        BundleContentsComponent contents = bundle.get(DataComponentTypes.BUNDLE_CONTENTS);
+        Assertions.assertNotNull(contents, "Bundle has no contents component");
 
-        NbtList items = nbtCompound.getList("Items", NbtElement.COMPOUND_TYPE);
-        Assertions.assertFalse(items.isEmpty(), "Bundle is empty");
+        Assertions.assertFalse(contents.isEmpty(), "Bundle is empty");
 
-        for (NbtElement element : items) {
-            ItemStack item = ItemStack.fromNbt((NbtCompound) element);
+        for (ItemStack item : contents.iterate()) {
             Assertions.assertTrue(ItemStack.areEqual(stack, item), "Bundle item '%s' doesn't match expected '%s'".formatted(item, stack));
         }
     }

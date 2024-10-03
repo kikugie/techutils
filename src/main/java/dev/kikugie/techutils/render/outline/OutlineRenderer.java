@@ -20,7 +20,7 @@ import java.util.*;
 import java.util.function.Predicate;
 
 public class OutlineRenderer {
-	private static final RenderLayer OUTLINE_LAYER = RenderLayer.getOutline(new Identifier("textures/misc/white.png"));
+	private static final RenderLayer OUTLINE_LAYER = RenderLayer.getOutline(Identifier.of("textures/misc/white.png"));
 	private static final Map<BlockPos, RenderEntry> entries = new Hashtable<>();
 	private static final Map<Box, Cuboid> compiledShapes = new Hashtable<>();
 	public static boolean isRendering = false;
@@ -44,7 +44,7 @@ public class OutlineRenderer {
 			WorldRendererAccessor worldRenderer = (WorldRendererAccessor) context.worldRenderer();
 
 			if (!isRendering) {
-				worldRenderer.getEntityOutlinePostProcessor().render(context.tickDelta());
+				worldRenderer.getEntityOutlinePostProcessor().render(context.tickCounter().getTickDelta(false));
 				MinecraftClient.getInstance().getFramebuffer().beginWrite(false);
 			}
 
@@ -66,7 +66,7 @@ public class OutlineRenderer {
 			matrices.push();
 			matrices.translate(entry.pos.getX(), entry.pos.getY(), entry.pos.getZ());
 			for (Cuboid cuboid : entry.model)
-				cuboid.renderCuboid(matrices.peek(), consumers.getBuffer(OUTLINE_LAYER), 0, OverlayTexture.field_32955, 1, 1, 1, 1);
+				cuboid.renderCuboid(matrices.peek(), consumers.getBuffer(OUTLINE_LAYER), 0, OverlayTexture.field_32955, 0xFFFFFFFF);
 			matrices.pop();
 		}
 	}

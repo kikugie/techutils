@@ -5,4 +5,4 @@ accessible class net/minecraft/client/gui/screen/ingame/CreativeInventoryScreen$
 accessible class net/minecraft/client/gui/screen/ingame/CreativeInventoryScreen$LockableSlot
 accessible class net/minecraft/client/render/RenderLayer$MultiPhaseParameters
 accessible class net/minecraft/client/render/RenderPhase$LineWidth
-extendable method net/minecraft/client/render/block/FluidRenderer vertex (Lnet/minecraft/client/render/VertexConsumer;DDDFFFFFI)V
+extendable method net/minecraft/client/render/block/FluidRenderer vertex (Lnet/minecraft/client/render/VertexConsumer;FFFFFFFFI)V

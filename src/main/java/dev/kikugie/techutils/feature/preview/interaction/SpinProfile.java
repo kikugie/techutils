@@ -27,12 +27,12 @@ public class SpinProfile implements InteractionProfile {
 		if (this.holding)
 			return;
 
-		float delta = this.client.getTickDelta();
 		this.angle += delta * LitematicConfigs.ROTATION_FACTOR.getDoubleValue();
+		float delta = this.client.getRenderTickCounter().getLastDuration();
 	}
 
 	@Override
-	public void scrolled(double x, double y, double amount) {
+	public void scrolled(double x, double y, double horizontalAmount, double verticalAmount) {
 
 	}
 

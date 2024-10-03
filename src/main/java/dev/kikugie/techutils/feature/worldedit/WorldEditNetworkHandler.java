@@ -1,18 +1,13 @@
 package dev.kikugie.techutils.feature.worldedit;
 
+import com.sk89q.worldedit.fabric.net.handler.WECUIPacketHandler;
 import dev.kikugie.techutils.TechUtilsMod;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
+import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
 /**
@@ -21,7 +16,7 @@ import java.util.Optional;
  * If channel has already been registered by another mod, it leeches packets from it instead.
  */
 public class WorldEditNetworkHandler {
-	public static final Identifier CHANNEL = new Identifier("worldedit", "cui");
+	public static final Identifier CHANNEL = Identifier.of("worldedit", "cui");
 	private static final int PROTOCOL = 4;
 	private static WorldEditNetworkHandler instance;
 	public final WorldEditStorage storage;
@@ -35,7 +30,7 @@ public class WorldEditNetworkHandler {
 			this.yoinkPackets = true;
 			return;
 		}
-		ClientPlayNetworking.registerReceiver(CHANNEL, this::onPacket);
+		ClientPlayNetworking.registerReceiver(WECUIPacketHandler.CuiPacket.TYPE, (payload, context) -> this.onPacket(payload.text()));
 		handshake();
 	}
 
@@ -51,23 +46,21 @@ public class WorldEditNetworkHandler {
 		return Optional.ofNullable(instance);
 	}
 
-	public void onYoinkedPacket(CustomPayloadS2CPacket packet) {
+	public void onYoinkedPacket(CustomPayload payload) {
 		if (!this.yoinkPackets) return;
-		onPacket(MinecraftClient.getInstance(), MinecraftClient.getInstance().getNetworkHandler(), packet.getData(), ClientPlayNetworking.getSender());
+		onPacket(((WECUIPacketHandler.CuiPacket) payload).text());
 	}
 
-	private void onPacket(MinecraftClient minecraftClient, ClientPlayNetworkHandler clientPlayNetworkHandler, PacketByteBuf data, PacketSender packetSender) {
+	private void onPacket(String message) {
 		if (!this.worldEditConnected) {
 			this.worldEditConnected = true;
 			TechUtilsMod.LOGGER.info("WorldEdit connected");
 			WorldEditSync.getInstance().ifPresent(WorldEditSync::onWorldEditConnected);
 		}
-		int bytes = data.readableBytes();
-		if (bytes == 0) {
+		if (message.isEmpty()) {
 			TechUtilsMod.LOGGER.warn("WorldEditNetworkHandler#onPacket(): Received CUI packet of length zero");
 			return;
 		}
-		String message = data.toString(0, data.readableBytes(), StandardCharsets.UTF_8);
 		String[] split = message.split("\\|", -1);
 		boolean multi = split[0].startsWith("+");
 		String type = split[0].substring(multi ? 1 : 0);
@@ -95,7 +88,6 @@ public class WorldEditNetworkHandler {
 
 	private void handshake() {
 		String message = "v|" + PROTOCOL;
-		ByteBuf buf = Unpooled.copiedBuffer(message, StandardCharsets.UTF_8);
-		ClientPlayNetworking.send(CHANNEL, new PacketByteBuf(buf));
+		ClientPlayNetworking.send(new WECUIPacketHandler.CuiPacket(message));
 	}
 }

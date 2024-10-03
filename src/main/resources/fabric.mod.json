@@ -1,36 +1,41 @@
 {
-  "schemaVersion": 1,
-  "id": "${id}",
-  "version": "${version}",
-  "name": "${name}",
-  "description": "",
-  "authors": [
-    "KikuGie"
-  ],
-  "contact": {
-  },
-  "license": "LGPL-3.0",
-  "icon": "assets/techutils/icon.png",
-  "environment": "client",
-  "entrypoints": {
-    "client": [
-      "dev.kikugie.techutils.TechUtilsMod"
+    "schemaVersion": 1,
+    "id": "${id}",
+    "version": "${version}",
+    "name": "${name}",
+    "description": "",
+    "authors": [
+        "KikuGie"
     ],
-    "modmenu": [
-      "dev.kikugie.techutils.config.modmenu.ModMenuIntegration"
+    "contributors": [
+        "VelizarBG"
     ],
-    "preLaunch": [
-      "com.llamalad7.mixinextras.MixinExtrasBootstrap::init"
-    ]
-  },
-  "mixins": [
-    "techutils.mixins.json"
-  ],
-  "depends": {
-    "fabricloader": ">=0.11.4",
-    "minecraft": "${minecraft_dependency}",
-    "malilib": "${malilib_dependency}",
-    "litematica": "${litematica_dependency}"
-  },
-  "accessWidener": "techutils.accesswidener"
+    "contact": {
+        "sources": "https://github.com/Kikugie/techutils",
+        "issues": "https://github.com/Kikugie/techutils/issues"
+    },
+    "license": "Unlicense",
+    "icon": "assets/techutils/icon.png",
+    "environment": "client",
+    "entrypoints": {
+        "client": [
+            "dev.kikugie.techutils.TechUtilsMod"
+        ],
+        "modmenu": [
+            "dev.kikugie.techutils.config.modmenu.ModMenuIntegration"
+        ],
+        "preLaunch": [
+            "com.llamalad7.mixinextras.MixinExtrasBootstrap::init"
+        ]
+    },
+    "mixins": [
+        "techutils.mixins.json"
+    ],
+    "depends": {
+        "fabricloader": ">=0.15.0",
+        "minecraft": "${minecraft_dependency}",
+        "malilib": "${malilib_dependency}",
+        "litematica": "${litematica_dependency}"
+    },
+    "accessWidener": "techutils.accesswidener"
 }
