@@ -31,6 +31,9 @@
     "mixins": [
         "techutils.mixins.json"
     ],
+    "custom": {
+        "fabric_api_build_version": "${fabric_api_version}"
+    },
     "depends": {
         "fabricloader": ">=0.15.0",
         "minecraft": "${minecraft_dependency}",

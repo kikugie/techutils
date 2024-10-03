@@ -103,6 +103,7 @@ processResources {
 	inputs.property "minecraft_dependency", project.minecraft_dependency
 	inputs.property "malilib_dependency", project.malilib_dependency
 	inputs.property "litematica_dependency", project.litematica_dependency
+	inputs.property "fabric_api_version", project.fabric_api_version
 	filteringCharset "UTF-8"
 
 	filesMatching("fabric.mod.json") {
@@ -113,6 +114,7 @@ processResources {
 				"minecraft_dependency"	: project.minecraft_dependency,
 				"malilib_dependency"	: project.malilib_dependency,
 				"litematica_dependency"	: project.litematica_dependency,
+				"fabric_api_version"	: project.fabric_api_version,
 		]
 		expand valueMap
 	}

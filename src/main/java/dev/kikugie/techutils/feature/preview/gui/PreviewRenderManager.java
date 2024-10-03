@@ -1,5 +1,6 @@
 package dev.kikugie.techutils.feature.preview.gui;
 
+import dev.kikugie.techutils.config.LitematicConfigs;
 import dev.kikugie.techutils.feature.preview.interaction.InteractionProfile;
 import dev.kikugie.techutils.feature.preview.interaction.InteractionProfiles;
 import dev.kikugie.techutils.feature.preview.model.PreviewRenderer;
@@ -26,7 +27,7 @@ public class PreviewRenderManager {
 
 	private PreviewRenderManager(GuiSchematicBrowserBase gui) {
 		this.gui = gui;
-		this.profile = InteractionProfiles.get(InteractionProfiles.DRAG, this);
+		this.profile = InteractionProfiles.get(InteractionProfiles.fromStringStatic(LitematicConfigs.RENDER_ROTATION_MODE.getStringValue()), this);
 	}
 
 	public static PreviewRenderManager init(GuiSchematicBrowserBase gui) {

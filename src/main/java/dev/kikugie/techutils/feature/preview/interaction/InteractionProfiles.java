@@ -46,6 +46,10 @@ public enum InteractionProfiles implements IConfigOptionListEntry {
 
 	@Override
 	public IConfigOptionListEntry fromString(String value) {
+		return fromStringStatic(value);
+	}
+
+	public static InteractionProfiles fromStringStatic(String value) {
 		try {
 			return InteractionProfiles.valueOf(value.toUpperCase());
 		} catch (NoSuchElementException e) {
