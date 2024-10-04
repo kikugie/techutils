@@ -23,9 +23,6 @@
         ],
         "modmenu": [
             "dev.kikugie.techutils.config.modmenu.ModMenuIntegration"
-        ],
-        "preLaunch": [
-            "com.llamalad7.mixinextras.MixinExtrasBootstrap::init"
         ]
     },
     "mixins": [
