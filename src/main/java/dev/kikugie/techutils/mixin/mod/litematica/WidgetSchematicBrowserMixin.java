@@ -22,10 +22,11 @@ public abstract class WidgetSchematicBrowserMixin {
 		@Local(ordinal = 1) int y,
 		@Local(ordinal = 2) int height
 	) {
-		if (!LitematicConfigs.RENDER_PREVIEW.getBooleanValue())
+		if (!LitematicConfigs.RENDER_PREVIEW.getBooleanValue()
+			|| (!LitematicConfigs.OVERRIDE_PREVIEW.getBooleanValue() && original != null)
+			|| !entry.getFullPath().exists()) {
 			return original;
-		if (!LitematicConfigs.OVERRIDE_PREVIEW.getBooleanValue() && original != null)
-			return original;
+		}
 		PreviewRenderManager.getInstance().ifPresent(manager -> manager.getOrCreateRenderer(entry).render(drawContext, x + 4, y + 14, height - y - 2));
 		return null;
 	}
