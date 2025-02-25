@@ -65,11 +65,15 @@ repositories {
 
 afterEvaluate {
 	loom.runs.configureEach {
-		// JRE with DCEVM required https://github.com/JetBrains/JetBrainsRuntime/releases
-		vmArg "-XX:+AllowEnhancedClassRedefinition"
-
-		// https://gist.github.com/maityyy/3dbcd558d58a6412c3a2a38c72706e8e
-		vmArg "-javaagent:${ configurations.compileClasspath.find { it.name.contains("sponge-mixin") } }"
+		vmArgs(
+				"-Xmx4G",
+				// JRE with DCEVM required https://github.com/JetBrains/JetBrainsRuntime/releases
+				"-XX:+AllowEnhancedClassRedefinition",
+				// Useful for hotswaps https://stackoverflow.com/a/46495011
+				"-XX:ReservedCodeCacheSize=1G",
+				// https://gist.github.com/maityyy/3dbcd558d58a6412c3a2a38c72706e8e
+				"-javaagent:${ configurations.compileClasspath.find { it.name.contains("sponge-mixin") } }"
+		)
 
 		// https://github.com/SpongePowered/Mixin/wiki/Mixin-Java-System-Properties
 		property "mixin.debug.export=true" // export classes with all mixin changes to run/.mixin.out
@@ -79,7 +83,7 @@ afterEvaluate {
 }
 
 dependencies {
-	vineflowerDecompilerClasspath "org.vineflower:vineflower:1.11.0-20240911.205325-50"
+	vineflowerDecompilerClasspath "org.vineflower:vineflower:1.11.0"
 
 	// To change the versions see the gradle.properties file
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
