@@ -2,6 +2,7 @@ package dev.kikugie.techutils.feature;
 
 import dev.kikugie.techutils.TechUtilsMod;
 import dev.kikugie.techutils.config.MiscConfigs;
+import fi.dy.masa.malilib.util.game.BlockUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockEntityProvider;
 import net.minecraft.block.Blocks;
@@ -22,6 +23,8 @@ import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
@@ -45,12 +48,13 @@ public class GiveFullIInv {
 		ItemStack mainHand = player.getMainHandStack();
 		ItemStack offHand = player.getOffHandStack();
 
-		String key = mainHand.getTranslationKey();
-
 		Optional<ItemStack> result = get(mainHand, offHand);
 		if (result.isEmpty())
 			return false;
-		Objects.requireNonNull(MinecraftClient.getInstance().interactionManager).clickCreativeStack(result.get(), 36 + player.getInventory().selectedSlot);
+		int selectedSlot = player.getInventory().selectedSlot;
+		player.getInventory().setStack(selectedSlot, result.get());
+		Objects.requireNonNull(MinecraftClient.getInstance().interactionManager).clickCreativeStack(result.get(), 36 + selectedSlot);
+		player.playerScreenHandler.sendContentUpdates();
 		return true;
 	}
 
@@ -75,20 +79,17 @@ public class GiveFullIInv {
 			lootable.setStack(i, stack);
 		}
 		ItemStack container = item.getDefaultStack();
-		lootable.setStackNbt(container, MinecraftClient.getInstance().world.getRegistryManager());
+		BlockUtils.setStackNbt(container, lootable, MinecraftClient.getInstance().world.getRegistryManager());
 		return container;
 	}
 
 	public static ItemStack fillBundle(ItemStack stack) {
-		ItemStack bundle = Items.BUNDLE.getDefaultStack();
-		BundleContentsComponent contents = stack.get(DataComponentTypes.BUNDLE_CONTENTS);
-		if (contents == null) {
-			return bundle;
-		}
-		BundleContentsComponent.Builder builder = new BundleContentsComponent.Builder(contents);
+		List<ItemStack> stacks = new ArrayList<>();
 		for (int i = 0; i < MiscConfigs.BUNDLE_FILL.getIntegerValue(); i++) {
-			builder.add(stack.copy());
+			stacks.add(stack.copy());
 		}
+		ItemStack bundle = Items.BUNDLE.getDefaultStack();
+		BundleContentsComponent.Builder builder = new BundleContentsComponent.Builder(new BundleContentsComponent(stacks));
 		bundle.set(DataComponentTypes.BUNDLE_CONTENTS, builder.build());
 		return bundle;
 	}

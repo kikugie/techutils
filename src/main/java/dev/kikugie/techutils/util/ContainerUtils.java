@@ -23,6 +23,7 @@ import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 
@@ -70,7 +71,7 @@ public class ContainerUtils {
 			return true;
 
 		return world.isSpaceEmpty(ShulkerEntity
-			.calculateBoundingBox(1.0F, state.get(ShulkerBoxBlock.FACING), 0.0F, 0.5F)
+			.calculateBoundingBox(1.0F, state.get(ShulkerBoxBlock.FACING), 0.0F, new Vec3d(0.5, 0.0, 0.5))
 			.offset(pos).contract(1.0E-6D));
 	}
 

@@ -172,6 +172,7 @@ public class InventoryOverlay {
 		int x = slot.x;
 		int y = slot.y;
 		context.fill(x, y, x + 16, y + 16, color);
+		context.draw();
 	}
 
 	public void drawTransparencyBufferInternal(DrawContext context, int x, int y) {

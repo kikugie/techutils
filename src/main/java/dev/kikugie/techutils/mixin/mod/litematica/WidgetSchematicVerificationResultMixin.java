@@ -1,7 +1,6 @@
 package dev.kikugie.techutils.mixin.mod.litematica;
 
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
-import com.mojang.blaze3d.systems.RenderSystem;
 import dev.kikugie.techutils.feature.containerscan.LinkedStorageEntry;
 import dev.kikugie.techutils.feature.containerscan.verifier.BlockMismatchExtension;
 import fi.dy.masa.litematica.gui.GuiSchematicVerifier;
@@ -22,7 +21,6 @@ import net.minecraft.inventory.Inventory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
-import org.joml.Matrix4fStack;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -72,12 +70,6 @@ public abstract class WidgetSchematicVerificationResultMixin<InventoryBE extends
 			infoOverlay = new dev.kikugie.techutils.feature.containerscan.verifier.InventoryOverlay(new LinkedStorageEntry(BlockPos.ORIGIN, right, left));
 		}
 
-		Matrix4fStack modelViewStack = RenderSystem.getModelViewStack();
-
-		modelViewStack.pushMatrix();
-
-		modelViewStack.translate(0, 0, 256);
-
 		delayRenderingHoveredStack = true;
 
 		renderInventoryOverlay(BlockInfoAlignment.CENTER, LeftRight.LEFT, 0, mc, drawContext, left, mouseX, mouseY);
@@ -92,8 +84,6 @@ public abstract class WidgetSchematicVerificationResultMixin<InventoryBE extends
 			InventoryOverlay.renderStackToolTipStyled(mouseX, mouseY, hoveredStackToRender, mc, drawContext);
 			hoveredStackToRender = null;
 		}
-
-		modelViewStack.popMatrix();
 
 		return false;
 	}
