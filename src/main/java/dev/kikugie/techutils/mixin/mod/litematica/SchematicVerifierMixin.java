@@ -224,12 +224,12 @@ public abstract class SchematicVerifierMixin<InventoryBE extends BlockEntity & I
 				expectedStack.set(DataComponentTypes.CUSTOM_NAME, Text.literal("Item Predicate")
 					.styled(style -> style.withColor(Formatting.WHITE).withItalic(false))
 				);
-				STACK_INFO_TOOLTIPS.put(foundStack.encodeAllowEmpty(lookup), ItemPredicateUtils.getErrorLines(foundStack, predicate));
+				STACK_INFO_TOOLTIPS.put(foundStack.toNbtAllowEmpty(lookup), ItemPredicateUtils.getErrorLines(foundStack, predicate));
 				continue;
 			}
 
 			if (verifyItemComponents && !ItemStack.areItemsAndComponentsEqual(expectedStack, foundStack)) {
-				STACK_INFO_TOOLTIPS.put(foundStack.encodeAllowEmpty(lookup), List.of(Text.literal("Item components don't match!")
+				STACK_INFO_TOOLTIPS.put(foundStack.toNbtAllowEmpty(lookup), List.of(Text.literal("Item components don't match!")
 					.styled(style -> style.withColor(Formatting.RED).withItalic(false))));
 			}
 		}

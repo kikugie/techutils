@@ -123,7 +123,7 @@ public final class ItemPredicateUtils {
 		if (ItemPredicateUtils.getPlaceholder(predicateStack) instanceof ItemStack placeholder) {
 			var nbt = new NbtCompound();
 			var lookup = MinecraftClient.getInstance().world.getRegistryManager();
-			nbt.put("placeholder", placeholder.encodeAllowEmpty(lookup));
+			nbt.put("placeholder", placeholder.toNbtAllowEmpty(lookup));
 			var lines = new ArrayList<>(PRETTIFIED_PREDICATES.get(predicate));
 			lines.addAll(ContainerUtils.prettifyNbt(nbt));
 			return lines;

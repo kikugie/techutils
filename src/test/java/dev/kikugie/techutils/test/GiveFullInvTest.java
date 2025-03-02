@@ -3,12 +3,14 @@ package dev.kikugie.techutils.test;
 import dev.kikugie.techutils.feature.GiveFullIInv;
 import net.minecraft.Bootstrap;
 import net.minecraft.SharedConstants;
+import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.ShulkerBoxBlock;
 import net.minecraft.block.entity.ChestBlockEntity;
 import net.minecraft.block.entity.ShulkerBoxBlockEntity;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.BundleContentsComponent;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.DyeColor;
@@ -263,7 +265,7 @@ public class GiveFullInvTest {
     }
 
     private void boxOf(ItemStack stack, ItemStack box, @Nullable DyeColor color) {
-        Assertions.assertEquals(color, ShulkerBoxBlock.getColor(box.getItem()), "Shulker box color '%s' doesn't match expected '%s'".formatted(ShulkerBoxBlock.getColor(box.getItem()), color));
+        Assertions.assertEquals(color, getBoxColor(box.getItem()), "Shulker box color '%s' doesn't match expected '%s'".formatted(getBoxColor(box.getItem()), color));
 		Assertions.assertNotNull(box.get(DataComponentTypes.CONTAINER), "Shulker box has no container component");
 
 		ShulkerBoxBlockEntity shulker = new ShulkerBoxBlockEntity(color, BlockPos.ORIGIN, ShulkerBoxBlock.get(color).getDefaultState());
@@ -312,5 +314,15 @@ public class GiveFullInvTest {
 
     private ItemStack getEmptyBundle() {
         return Items.BUNDLE.getDefaultStack();
+    }
+
+    @Nullable
+    private static DyeColor getBoxColor(Item item) {
+        return getBoxColor(Block.getBlockFromItem(item));
+    }
+
+    @Nullable
+    private static DyeColor getBoxColor(Block block) {
+        return block instanceof ShulkerBoxBlock box ? box.getColor() : null;
     }
 }

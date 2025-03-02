@@ -68,8 +68,9 @@ public class ItemPredicateCommand {
 						}
 
 						ItemPredicateUtils.setPlaceholder(mainHandStack, offHandStack);
-
-						source.getClient().interactionManager.clickCreativeStack(mainHandStack, 36 + player.getInventory().selectedSlot);
+						int selectedSlot = player.getInventory().selectedSlot;
+						player.getInventory().setStack(selectedSlot, mainHandStack);
+						source.getClient().interactionManager.clickCreativeStack(mainHandStack, 36 + selectedSlot);
 						player.playerScreenHandler.sendContentUpdates();
 
 						source.sendFeedback(Text.translatable("commands.itempredicate.placeholder.set.success"));
@@ -94,6 +95,7 @@ public class ItemPredicateCommand {
 							throw NO_PLACEHOLDER_FOUND_EXCEPTION.create();
 						}
 
+						player.getInventory().offHand.set(0, placeholder);
 						source.getClient().interactionManager.clickCreativeStack(placeholder, 45);
 						player.playerScreenHandler.sendContentUpdates();
 

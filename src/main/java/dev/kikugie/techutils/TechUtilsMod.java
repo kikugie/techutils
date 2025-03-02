@@ -5,10 +5,8 @@ import dev.kikugie.techutils.command.ItemPredicateCommand;
 import dev.kikugie.techutils.config.LitematicConfigs;
 import dev.kikugie.techutils.config.malilib.InitHandler;
 import dev.kikugie.techutils.feature.containerscan.handlers.InteractionHandler;
-import dev.kikugie.techutils.feature.containerscan.scanners.ScannerManager;
 import dev.kikugie.techutils.feature.containerscan.verifier.SchematicVerifierExtension;
 import dev.kikugie.techutils.feature.worldedit.WorldEditSync;
-import dev.kikugie.techutils.render.outline.OutlineRenderer;
 import dev.kikugie.techutils.util.ContainerUtils;
 import dev.kikugie.techutils.util.ItemPredicateUtils;
 import dev.kikugie.techutils.util.ResponseMuffler;
@@ -19,9 +17,9 @@ import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallba
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
-import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.registry.DynamicRegistryManager;
+import net.minecraft.text.TranslatableTextContent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,18 +39,17 @@ public class TechUtilsMod implements ClientModInitializer {
 		registerWorldEditSync();
 
 		ClientTickEvents.START_WORLD_TICK.register(world -> InteractionHandler.tick(world.getTime()));
-		ClientTickEvents.START_WORLD_TICK.register(world -> ScannerManager.tick());
-		WorldRenderEvents.END.register(OutlineRenderer::render);
 //        WorldRenderEvents.END.register(Remderer::onRender);
 		ItemTooltipCallback.EVENT.register((stack, tooltipContext, tooltipType, lines) -> {
 			if (ItemPredicateUtils.isPredicate(stack)) {
+				lines.removeIf(text -> text.getContent() instanceof TranslatableTextContent ttc && ttc.getKey().contains("op_warning"));
 				lines.addAll(ItemPredicateUtils.getPrettyPredicate(stack));
 				return;
 			}
 			MinecraftClient client = MinecraftClient.getInstance();
 			if (client.currentScreen instanceof GuiSchematicVerifier) {
 				DynamicRegistryManager lookup = client.world.getRegistryManager();
-				var infoTooltip = SchematicVerifierExtension.STACK_INFO_TOOLTIPS.get(stack.encodeAllowEmpty(lookup));
+				var infoTooltip = SchematicVerifierExtension.STACK_INFO_TOOLTIPS.get(stack.toNbtAllowEmpty(lookup));
 				if (infoTooltip != null) {
 					lines.addAll(infoTooltip);
 				}
