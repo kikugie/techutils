@@ -1,6 +1,7 @@
 package dev.kikugie.techutils.mixin.containerscan;
 
 import dev.kikugie.techutils.feature.containerscan.handlers.InteractionHandler;
+import dev.kikugie.techutils.feature.containerscan.verifier.InventoryOverlay;
 import dev.kikugie.techutils.render.TransparencyBuffer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -22,6 +23,11 @@ public class MinecraftClientMixin {
 
 	@Inject(method = "setScreen", at = @At("HEAD"), cancellable = true)
 	private void onScreen(Screen screen, CallbackInfo ci) {
+		if (screen == null) {
+			InventoryOverlay.clearOverlay();
+			return;
+		}
+
 		if (!(screen instanceof ScreenHandlerProvider<?>))
 			return;
 

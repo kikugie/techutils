@@ -90,11 +90,13 @@ dependencies {
 	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
+	modImplementation include("com.github.Chocohead:Fabric-ASM:v${project.fabric_asm_version}")
+
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
 	modApi("com.terraformersmc:modmenu:${project.modmenu_version}")
-	modImplementation("fi.dy.masa.malilib:malilib-fabric-${project.malilib_version}")
-	modImplementation("curse.maven:litematica-308892:${project.litematica_file}")
-	modImplementation("curse.maven:tweakeroo-297344:${project.tweakeroo_file}")
+	modImplementation("com.github.sakura-ryoko:malilib:${project.malilib_version}")
+	modImplementation("com.github.sakura-ryoko:litematica:${project.litematica_version}")
+	modImplementation("com.github.sakura-ryoko:tweakeroo:${project.tweakeroo_version}")
 
 	modImplementation "com.sk89q.worldedit:worldedit-fabric-mc${project.worldedit_version}"
 	testImplementation "net.fabricmc:fabric-loader-junit:${project.loader_version}"

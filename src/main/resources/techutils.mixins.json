@@ -4,7 +4,6 @@
     "package": "dev.kikugie.techutils.mixin",
     "compatibilityLevel": "JAVA_21",
     "mixins": [
-        "mod.litematica.RayTraceUtilsMixin"
     ],
     "client": [
         "compactscoreboard.InGameHudMixin",
@@ -15,14 +14,29 @@
         "containerscan.WorldRendererAccessor",
         "containerscan.WorldRendererMixin",
         "mod.fapi.ClientPlayNetworkAddonMixin",
+        "mod.litematica.BlockMismatchMixin",
         "mod.litematica.GuiSchematicBrowserBaseMixin",
+        "mod.litematica.GuiSchematicLoad$ButtonListenerMixin",
         "mod.litematica.GuiSchematicManagerMixin",
+        "mod.litematica.GuiSchematicVerifierAccessor",
+        "mod.litematica.GuiSchematicVerifierMixin",
+        "mod.litematica.GuiSchematicVerifierMixin$ButtonListenerMixin",
+        "mod.litematica.InventoryOverlayMixin",
+        "mod.litematica.ItemUtilsAccessor",
+        "mod.litematica.LitematicaSchematicAccessor",
+        "mod.litematica.OverlayRendererMixin",
+        "mod.litematica.RayTraceUtilsMixin",
+        "mod.litematica.RenderUtilsMixin",
+        "mod.litematica.SchematicVerifierMixin",
+        "mod.litematica.WidgetListSchematicVerificationResultsMixin",
         "mod.litematica.WidgetSchematicBrowserMixin",
+        "mod.litematica.WidgetSchematicVerificationResultMixin",
         "preview.BlockEntityAccessor",
         "worldeditsync.ClientPlayNetworkHandlerMixin",
         "worldeditsync.WECUIPacketHandlerMixin"
     ],
     "injectors": {
-        "defaultRequire": 1
-  }
+        "defaultRequire": 1,
+        "maxShiftBy": 5
+    }
 }

@@ -36,6 +36,11 @@ public class LitematicConfigs extends Configs.BaseConfigs {
 	public static final ConfigBooleanHotkeyed EASY_PLACE_FULL_BLOCKS = new ConfigBooleanHotkeyed("easyPlaceFullBlocks", false, "", """
 		Treat all blocks as full cubes when using Litematica's easy place feature.
 		§7Useful for placing blocks with small hitboxes like buttons, chains, fences, etc.""");
+	public static final ConfigBooleanHotkeyed VERIFY_ITEM_COMPONENTS = new ConfigBooleanHotkeyed("verifyItemComponents", false, "", """
+		Make the inventory verifier enforce exact item component matches.
+		§7Also adds the present components to the lore!""");
+	public static final ConfigBooleanHotkeyed REPLACE_ITEM_PREDICATES_WITH_PLACEHOLDERS = new ConfigBooleanHotkeyed("replaceItemPredicatesWithPlaceholders", false, "", """
+		When loading a schematic, replaces each Item Predicate with its stored placeholder, if present.""");
 
 	public LitematicConfigs() {
 		super(ImmutableList.of(
@@ -48,7 +53,9 @@ public class LitematicConfigs extends Configs.BaseConfigs {
 			MIRROR_PLACEMENT,
 			INVENTORY_SCREEN_OVERLAY,
 			REFRESH_MATERIAL_LIST,
-			EASY_PLACE_FULL_BLOCKS
+			EASY_PLACE_FULL_BLOCKS,
+			VERIFY_ITEM_COMPONENTS,
+			REPLACE_ITEM_PREDICATES_WITH_PLACEHOLDERS
 		));
 	}
 }
