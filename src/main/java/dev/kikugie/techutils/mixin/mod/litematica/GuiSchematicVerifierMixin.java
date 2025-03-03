@@ -55,6 +55,25 @@ public abstract class GuiSchematicVerifierMixin {
 	@WrapOperation(
 		method = "initGui",
 		slice = @Slice(
+			from = @At(value = "CONSTANT", args = "stringValue=litematica.gui.label.schematic_verifier.status.done_errors.no_diff")
+		),
+		at = @At(
+			value = "INVOKE",
+			target = "Lfi/dy/masa/malilib/util/StringUtils;translate(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;",
+			ordinal = 0
+		)
+	)
+	private String provideEnglishTranslationForWrongInventoriesWithoutDiff(String key, Object[] args, Operation<String> original) {
+		if (MinecraftClient.getInstance().getLanguageManager().getLanguage().startsWith("en_")) {
+			return "Wrong: §4Inventory: %s§r, §cBlock: %s§r, §6State: %s§r, §bMissing: %s§r, §dExtra: %s§r"
+				.formatted(ObjectArrays.concat(((SchematicVerifierExtension) verifier).getWrongInventoriesCount$techutils(), args));
+		}
+		return original.call(key, args);
+	}
+
+	@WrapOperation(
+		method = "initGui",
+		slice = @Slice(
 			from = @At(value = "CONSTANT", args = "stringValue=litematica.gui.label.schematic_verifier.status.done_errors")
 		),
 		at = @At(
@@ -63,9 +82,9 @@ public abstract class GuiSchematicVerifierMixin {
 			ordinal = 0
 		)
 	)
-	private String provideEnglishTranslationForWrongInventories(String key, Object[] args, Operation<String> original) {
+	private String provideEnglishTranslationForWrongInventoriesWithDiff(String key, Object[] args, Operation<String> original) {
 		if (MinecraftClient.getInstance().getLanguageManager().getLanguage().startsWith("en_")) {
-			return "Wrong: §4Inventory: %s§r, §cBlock: %s§r, §6State: %s§r, §bMissing: %s§r, §dExtra: %s§r"
+			return "Wrong: §4Inventory: %s§r, §cBlock: %s§r, §6State: %s§r, §bMissing: %s§r, §dExtra: %s§r, §eDifferent: %s§r"
 				.formatted(ObjectArrays.concat(((SchematicVerifierExtension) verifier).getWrongInventoriesCount$techutils(), args));
 		}
 		return original.call(key, args);
