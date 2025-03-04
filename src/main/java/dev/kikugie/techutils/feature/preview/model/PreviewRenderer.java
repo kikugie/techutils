@@ -37,7 +37,7 @@ public class PreviewRenderer {
 	public PreviewRenderer(LitematicaSchematic schematic, InteractionProfile profile) {
 		this.profile = profile;
 		this.mesh = new LitematicMesh(Objects.requireNonNull(schematic,
-			"Failed to load schematic: " + schematic.getFile()));
+			"No available schematic to load"));
 		final var dimensions = mesh.dimensions();
 		this.xSize = (int) dimensions.getLengthX();
 		this.ySize = (int) dimensions.getLengthY();
