@@ -39,12 +39,14 @@ public final class ItemPredicateUtils {
 
 	private ItemPredicateUtils() {}
 
-	public static ItemStack createPredicateStack(String rawPredicate) {
+	public static ItemStack createPredicateStack(String rawPredicate, ItemStack placeholder) {
 		var nbt = new NbtCompound();
 		ItemStack stack = Items.COMMAND_BLOCK.getDefaultStack();
 
 		nbt.putString("Command", rawPredicate);
 		BlockItem.setBlockEntityData(stack, BlockEntityType.COMMAND_BLOCK, nbt);
+
+		setPlaceholder(stack, placeholder);
 
 		stack.apply(
 			DataComponentTypes.CUSTOM_DATA,
@@ -210,7 +212,7 @@ public final class ItemPredicateUtils {
 	}
 
 	public static void setPlaceholder(ItemStack predicateStack, ItemStack placeholder) {
-		if (placeholder.isEmpty()) {
+		if (placeholder == null || placeholder.isEmpty()) {
 			predicateStack.remove(DataComponentTypes.CONTAINER);
 		} else {
 			predicateStack.set(
