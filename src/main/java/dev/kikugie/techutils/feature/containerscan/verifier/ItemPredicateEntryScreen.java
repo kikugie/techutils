@@ -8,6 +8,7 @@ import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.util.NarratorManager;
+import net.minecraft.item.ItemStack;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
 import org.lwjgl.glfw.GLFW;
@@ -16,6 +17,7 @@ public class ItemPredicateEntryScreen extends Screen {
 	private static final Text TITLE = Text.translatable("item_predicate_entry_screen.title");
 	private static final Text INPUT_TEXT = Text.translatable("item_predicate_entry_screen.input");
 	private final ClientPlayerEntity player;
+	private ItemStack placeholder;
 	private String initInput;
 	protected TextFieldWidget consoleCommandTextField;
 	protected ButtonWidget doneButton;
@@ -26,14 +28,23 @@ public class ItemPredicateEntryScreen extends Screen {
 		this.player = player;
 	}
 
+	public ItemPredicateEntryScreen(ClientPlayerEntity player, ItemStack placeholder) {
+		this(player);
+		this.placeholder = placeholder;
+	}
+
 	public ItemPredicateEntryScreen(ClientPlayerEntity player, String input) {
-		super(NarratorManager.EMPTY);
-		this.player = player;
+		this(player);
 		this.initInput = input;
 	}
 
+	public ItemPredicateEntryScreen(ClientPlayerEntity player, String input, ItemStack placeholder) {
+		this(player, input);
+		this.placeholder = placeholder;
+	}
+
 	protected void commitAndClose() {
-		var stack = ItemPredicateUtils.createPredicateStack(consoleCommandTextField.getText());
+		var stack = ItemPredicateUtils.createPredicateStack(consoleCommandTextField.getText(), placeholder);
 
 		this.client.interactionManager.clickCreativeStack(stack, 36 + player.getInventory().selectedSlot);
 		this.player.playerScreenHandler.sendContentUpdates();

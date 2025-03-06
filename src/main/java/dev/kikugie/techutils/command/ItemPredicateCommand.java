@@ -20,7 +20,9 @@ public class ItemPredicateCommand {
 		dispatcher.register(literal("itempredicate")
 			.then(literal("give")
 				.executes(context -> {
-					TechUtilsMod.QUEUED_END_CLIENT_TICK_TASKS.add(client -> client.setScreen(new ItemPredicateEntryScreen(context.getSource().getPlayer())));
+					var player = context.getSource().getPlayer();
+					var offHandStack = player.getOffHandStack().copy();
+					TechUtilsMod.QUEUED_END_CLIENT_TICK_TASKS.add(client -> client.setScreen(new ItemPredicateEntryScreen(player, offHandStack)));
 					return 1;
 				})
 			)
@@ -35,8 +37,9 @@ public class ItemPredicateCommand {
 					}
 
 					var rawPredicate = ItemPredicateUtils.getRawPredicate(mainHandStack);
+					var placeholder = ItemPredicateUtils.getPlaceholder(mainHandStack);
 
-					TechUtilsMod.QUEUED_END_CLIENT_TICK_TASKS.add(client -> client.setScreen(new ItemPredicateEntryScreen(context.getSource().getPlayer(), rawPredicate)));
+					TechUtilsMod.QUEUED_END_CLIENT_TICK_TASKS.add(client -> client.setScreen(new ItemPredicateEntryScreen(context.getSource().getPlayer(), rawPredicate, placeholder)));
 					return 1;
 				})
 			)
