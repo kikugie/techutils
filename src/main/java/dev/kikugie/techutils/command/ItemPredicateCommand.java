@@ -1,11 +1,13 @@
 package dev.kikugie.techutils.command;
 
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import dev.kikugie.techutils.TechUtilsMod;
 import dev.kikugie.techutils.feature.containerscan.verifier.ItemPredicateEntryScreen;
 import dev.kikugie.techutils.util.ItemPredicateUtils;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
+import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
@@ -15,12 +17,16 @@ import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.lit
 public class ItemPredicateCommand {
 	private static final SimpleCommandExceptionType WRONG_MAIN_HAND_EXCEPTION = new SimpleCommandExceptionType(Text.translatable("commands.itempredicate.placeholder.wrong_main_hand"));
 	private static final SimpleCommandExceptionType NO_PLACEHOLDER_FOUND_EXCEPTION = new SimpleCommandExceptionType(Text.translatable("commands.itempredicate.placeholder.get.not_found"));
+	private static final SimpleCommandExceptionType NOT_IN_CREATIVE_MODE_EXCEPTION = new SimpleCommandExceptionType(Text.translatable("commands.itempredicate.not_in_creative_mode"));
 
 	public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess ignoredAccess) {
 		dispatcher.register(literal("itempredicate")
 			.then(literal("give")
 				.executes(context -> {
 					var player = context.getSource().getPlayer();
+
+					enforceCreativeMode(player);
+
 					var offHandStack = player.getOffHandStack().copy();
 					TechUtilsMod.QUEUED_END_CLIENT_TICK_TASKS.add(client -> client.setScreen(new ItemPredicateEntryScreen(player, offHandStack)));
 					return 1;
@@ -30,6 +36,9 @@ public class ItemPredicateCommand {
 				.executes(context -> {
 					var source = context.getSource();
 					var player = source.getPlayer();
+
+					enforceCreativeMode(player);
+
 					var mainHandStack = player.getMainHandStack().copy();
 
 					if (!ItemPredicateUtils.isPredicate(mainHandStack)) {
@@ -48,6 +57,9 @@ public class ItemPredicateCommand {
 					.executes(context -> {
 						var source = context.getSource();
 						var player = source.getPlayer();
+
+						enforceCreativeMode(player);
+
 						var mainHandStack = player.getMainHandStack().copy();
 						var offHandStack = player.getOffHandStack().copy();
 
@@ -69,6 +81,9 @@ public class ItemPredicateCommand {
 					.executes(context -> {
 						var source = context.getSource();
 						var player = source.getPlayer();
+
+						enforceCreativeMode(player);
+
 						var mainHandStack = player.getMainHandStack().copy();
 
 						if (!ItemPredicateUtils.isPredicate(mainHandStack)) {
@@ -89,5 +104,10 @@ public class ItemPredicateCommand {
 				)
 			)
 		);
+	}
+
+	private static void enforceCreativeMode(ClientPlayerEntity player) throws CommandSyntaxException {
+		if (!player.isCreative())
+			throw NOT_IN_CREATIVE_MODE_EXCEPTION.create();
 	}
 }
