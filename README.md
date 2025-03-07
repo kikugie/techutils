@@ -27,12 +27,6 @@ To access mod config open [Mod Menu](https://modrinth.com/mod/modmenu) and selec
 
   ![](https://github.com/Kikugie/techutils/raw/main/files/wesync.gif)
 
-- Litematic preview  
-  Show 3D render of selected litematic in Load Schematics menu - `renderPreview`.  
-  *This only works for .litematic files.*
-
-  ![](https://github.com/Kikugie/techutils/raw/main/files/preview.gif)
-
 - Image selection dialog for litematica preview:  
   Set litematic preview image to one you select, which unlike the 3D preview feature will be shown to any player, even without this mod.  
   *In main Litematica menu go to Schematic Manager, select a litematic and ctrl + click on Set Preview button to open the prompt.*
