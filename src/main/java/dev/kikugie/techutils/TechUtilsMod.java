@@ -12,6 +12,7 @@ import dev.kikugie.techutils.render.outline.OutlineRenderer;
 import dev.kikugie.techutils.util.ContainerUtils;
 import dev.kikugie.techutils.util.ItemPredicateUtils;
 import dev.kikugie.techutils.util.ResponseMuffler;
+import fi.dy.masa.litematica.gui.GuiSchematicVerifier;
 import fi.dy.masa.malilib.event.InitializationHandler;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
@@ -44,14 +45,17 @@ public class TechUtilsMod implements ClientModInitializer {
 		WorldRenderEvents.END.register(OutlineRenderer::render);
 //        WorldRenderEvents.END.register(Remderer::onRender);
 		ItemTooltipCallback.EVENT.register((stack, tooltipContext, tooltipType, lines) -> {
-			DynamicRegistryManager lookup = MinecraftClient.getInstance().world.getRegistryManager();
 			if (ItemPredicateUtils.isPredicate(stack)) {
 				lines.addAll(ItemPredicateUtils.getPrettyPredicate(stack));
 				return;
 			}
-			var infoTooltip = SchematicVerifierExtension.STACK_INFO_TOOLTIPS.get(stack.encodeAllowEmpty(lookup));
-			if (infoTooltip != null) {
-				lines.addAll(infoTooltip);
+			MinecraftClient client = MinecraftClient.getInstance();
+			if (client.currentScreen instanceof GuiSchematicVerifier) {
+				DynamicRegistryManager lookup = client.world.getRegistryManager();
+				var infoTooltip = SchematicVerifierExtension.STACK_INFO_TOOLTIPS.get(stack.encodeAllowEmpty(lookup));
+				if (infoTooltip != null) {
+					lines.addAll(infoTooltip);
+				}
 			}
 			if (LitematicConfigs.VERIFY_ITEM_COMPONENTS.getBooleanValue()) {
 				lines.addAll(ContainerUtils.getFormattedComponents(stack));
