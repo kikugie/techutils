@@ -8,6 +8,7 @@
     "client": [
         "compactscoreboard.InGameHudMixin",
         "containerscan.ClientPlayerInteractionManagerMixin",
+        "containerscan.CrafterScreenMixin",
         "containerscan.HandledScreenMixin",
         "containerscan.MinecraftClientMixin",
         "containerscan.ScreenHandlerAccessor",
