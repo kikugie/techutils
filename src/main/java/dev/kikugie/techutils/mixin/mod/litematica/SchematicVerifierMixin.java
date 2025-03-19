@@ -23,8 +23,10 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.NbtComponent;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.predicate.item.ItemPredicate;
 import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.state.property.BooleanProperty;
@@ -181,7 +183,7 @@ public abstract class SchematicVerifierMixin<InventoryBE extends BlockEntity & I
 				: expectedStack.getItem() != foundStack.getItem()
 					|| expectedStack.getCount() != foundStack.getCount()
 					|| verifyItemComponents
-					&& !ItemStack.areItemsAndComponentsEqual(expectedStack, foundStack)
+					&& !Objects.equals(expectedStack.getComponents(), foundStack.getComponents())
 			) {
 				var pos = MUTABLE_POS.toImmutable();
 				//noinspection unchecked
@@ -224,13 +226,23 @@ public abstract class SchematicVerifierMixin<InventoryBE extends BlockEntity & I
 				expectedStack.set(DataComponentTypes.CUSTOM_NAME, Text.literal("Item Predicate")
 					.styled(style -> style.withColor(Formatting.WHITE).withItalic(false))
 				);
-				STACK_INFO_TOOLTIPS.put(foundStack.encodeAllowEmpty(lookup), ItemPredicateUtils.getErrorLines(foundStack, predicate));
+				foundStack.apply(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT, nbtComponent ->
+					nbtComponent.apply(nbt ->
+						nbt.put(ERROR_LINES_ID, ERROR_LINES_CODEC
+							.encodeStart(NbtOps.INSTANCE, ItemPredicateUtils.getErrorLines(foundStack, predicate)).getOrThrow())
+					)
+				);
 				continue;
 			}
 
-			if (verifyItemComponents && !ItemStack.areItemsAndComponentsEqual(expectedStack, foundStack)) {
-				STACK_INFO_TOOLTIPS.put(foundStack.encodeAllowEmpty(lookup), List.of(Text.literal("Item components don't match!")
-					.styled(style -> style.withColor(Formatting.RED).withItalic(false))));
+			if (verifyItemComponents && !Objects.equals(expectedStack.getComponents(), foundStack.getComponents())) {
+				foundStack.apply(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT, nbtComponent ->
+					nbtComponent.apply(nbt ->
+						nbt.put(ERROR_LINES_ID, ERROR_LINES_CODEC
+							.encodeStart(NbtOps.INSTANCE, List.of(Text.literal("Item components don't match!")
+								.styled(style -> style.withColor(Formatting.RED).withItalic(false)))).getOrThrow())
+					)
+				);
 			}
 		}
 		return Pair.of(expectedNew, foundNew);
@@ -323,7 +335,6 @@ public abstract class SchematicVerifierMixin<InventoryBE extends BlockEntity & I
 		wrongInventories.clear();
 		wrongInventoriesPositions.clear();
 		selectedInventoryMismatches.clear();
-		STACK_INFO_TOOLTIPS.clear();
 		EntitiesDataStorage.getInstance().reset(false);
 	}
 }

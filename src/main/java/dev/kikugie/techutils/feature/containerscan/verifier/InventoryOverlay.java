@@ -154,7 +154,7 @@ public class InventoryOverlay {
 		} else if (stack.getCount() != schematicStack.getCount()) {
 			color = this.MISMATCHED_COLOR;
 		} else if (LitematicConfigs.VERIFY_ITEM_COMPONENTS.getBooleanValue()
-			&& !ItemStack.areItemsAndComponentsEqual(schematicStack, stack)) {
+			&& !Objects.equals(schematicStack.getComponents(), stack.getComponents())) {
 			color = WRONG_COLOR;
 		}
 

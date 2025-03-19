@@ -21,7 +21,6 @@ import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.registry.DynamicRegistryManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,11 +50,7 @@ public class TechUtilsMod implements ClientModInitializer {
 			}
 			MinecraftClient client = MinecraftClient.getInstance();
 			if (client.currentScreen instanceof GuiSchematicVerifier) {
-				DynamicRegistryManager lookup = client.world.getRegistryManager();
-				var infoTooltip = SchematicVerifierExtension.STACK_INFO_TOOLTIPS.get(stack.encodeAllowEmpty(lookup));
-				if (infoTooltip != null) {
-					lines.addAll(infoTooltip);
-				}
+				stack = SchematicVerifierExtension.addErrorLines(stack, lines);
 			}
 			if (LitematicConfigs.VERIFY_ITEM_COMPONENTS.getBooleanValue()) {
 				lines.addAll(ContainerUtils.getFormattedComponents(stack));
