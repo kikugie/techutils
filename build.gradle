@@ -171,7 +171,7 @@ unifiedPublishing {
 	project {
 		displayName.set "Technical Utilities $project.version"
 		releaseType.set "release"
-		gameVersions.set(["1.21", "1.21.1"])
+		gameVersions.set(["1.21.4"])
 		gameLoaders.set(["fabric"])
 
 		relations {
