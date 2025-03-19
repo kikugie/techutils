@@ -1,5 +1,6 @@
 plugins {
 	id 'fabric-loom'
+	id 'me.shedaniel.unified-publishing' version '0.1.+'
 	id 'maven-publish'
 }
 
@@ -163,5 +164,38 @@ publishing {
 		// Notice: This block does NOT have the same function as the block in the top level.
 		// The repositories here will be used for publishing your artifact, not for
 		// retrieving dependencies.
+	}
+}
+
+unifiedPublishing {
+	project {
+		displayName.set "Technical Utilities $project.version"
+		releaseType.set "release"
+		gameVersions.set(["1.21", "1.21.1"])
+		gameLoaders.set(["fabric"])
+
+		relations {
+			depends {
+				modrinth = "litematica"
+			}
+			depends {
+				modrinth = "malilib"
+			}
+		}
+
+		System.getenv("changelog")?.with { String changelogg ->
+			changelog.set changelogg
+		}
+
+		mainPublication tasks.remapJar
+		secondaryPublications.builtBy tasks.remapSourcesJar
+
+		System.getenv("modrinth_key")?.with { String key ->
+			modrinth {
+				token.set key
+				id.set project.modrinth_id
+				version = "$project.version"
+			}
+		}
 	}
 }
