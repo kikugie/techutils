@@ -188,7 +188,7 @@ unifiedPublishing {
 		}
 
 		mainPublication tasks.remapJar
-		secondaryPublications.builtBy tasks.remapSourcesJar
+		secondaryPublication tasks.remapSourcesJar.getArchiveFile()
 
 		System.getenv("modrinth_key")?.with { String key ->
 			modrinth {
