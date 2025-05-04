@@ -1,6 +1,6 @@
 plugins {
 	id 'fabric-loom'
-	id 'io.github.juuxel.loom-quiltflower' version '1.8.0'
+	id 'me.shedaniel.unified-publishing' version '0.1.+'
 	id 'maven-publish'
 }
 
@@ -8,12 +8,12 @@ loom {
 	accessWidenerPath = file("src/main/resources/techutils.accesswidener")
 }
 
-sourceCompatibility = JavaVersion.VERSION_17
-targetCompatibility = JavaVersion.VERSION_17
-
-archivesBaseName = project.archives_base_name
-version = project.mod_version
+version = project.mod_version + '+' + project.minecraft_version
 group = project.maven_group
+
+base {
+	archivesName = project.archives_base_name
+}
 
 repositories {
 	maven {
@@ -58,22 +58,59 @@ repositories {
 		name = "WorldEdit Maven"
 		url = "https://maven.enginehub.org/repo/"
 	}
+	maven { // Vineflower
+		name = "sonatype-oss-snapshots1"
+		url = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
+	}
+	maven { // MagicLib
+		name = "NyanMaven Release"
+		url = "https://maven.hendrixshen.top/releases"
+	}
+}
+
+afterEvaluate {
+	loom.runs.configureEach {
+		vmArgs(
+				"-Xmx4G",
+				// JRE with DCEVM required https://github.com/JetBrains/JetBrainsRuntime/releases
+				"-XX:+AllowEnhancedClassRedefinition",
+				// Useful for hotswaps https://stackoverflow.com/a/46495011
+				"-XX:ReservedCodeCacheSize=1G",
+				// https://gist.github.com/maityyy/3dbcd558d58a6412c3a2a38c72706e8e
+				"-javaagent:${ configurations.compileClasspath.find { it.name.contains("sponge-mixin") } }"
+		)
+
+		// https://github.com/SpongePowered/Mixin/wiki/Mixin-Java-System-Properties
+		property "mixin.debug.export=true" // export classes with all mixin changes to run/.mixin.out
+
+		//programArgs "--username=VelizarBG", "--uuid=2990d3e0-928c-49a8-a1f0-3c6931f931fb"
+	}
 }
 
 dependencies {
+//	vineflowerDecompilerClasspath "org.vineflower:vineflower:1.11.1"
+
 	// To change the versions see the gradle.properties file
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
 	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
+	modImplementation include("com.github.Chocohead:Fabric-ASM:v${project.fabric_asm_version}")
+
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
 	modApi("com.terraformersmc:modmenu:${project.modmenu_version}")
-	modImplementation("fi.dy.masa.malilib:malilib-fabric-${project.malilib_version}")
+	modImplementation("fi.dy.masa.malilib:malilib-fabric-${project.minecraft_version}:${project.malilib_version}")
 	modImplementation("curse.maven:litematica-308892:${project.litematica_file}")
 	modImplementation("curse.maven:tweakeroo-297344:${project.tweakeroo_file}")
-	include api(annotationProcessor("com.github.LlamaLad7.mixinextras:mixinextras-fabric:${project.mixin_extras_version}"))
 
-	modRuntimeOnly "com.sk89q.worldedit:worldedit-fabric-mc${project.worldedit_version}"
+	modImplementation("maven.modrinth:masa-gadget:v4.0.395-mc1.20.1-fabric") {
+		transitive = false
+	}
+	modImplementation(annotationProcessor("top.hendrixshen.magiclib:magiclib-all-1.20.1-fabric:0.8.693")) {
+		exclude group: "top.hendrixshen.magiclib", module: "magiclib-better-dev-1.20.1-fabric"
+	}
+
+	modImplementation "com.sk89q.worldedit:worldedit-fabric-mc${project.worldedit_version}"
 	testImplementation "net.fabricmc:fabric-loader-junit:${project.loader_version}"
 }
 
@@ -84,32 +121,42 @@ processResources {
 	inputs.property "minecraft_dependency", project.minecraft_dependency
 	inputs.property "malilib_dependency", project.malilib_dependency
 	inputs.property "litematica_dependency", project.litematica_dependency
+	inputs.property "fabric_api_version", project.fabric_api_version
+	filteringCharset "UTF-8"
 
 	filesMatching("fabric.mod.json") {
 		def valueMap = [
-				"id"                   : project.mod_id,
-				"name"                 : project.mod_name,
-				"version"              : project.mod_version,
-				"minecraft_dependency" : project.minecraft_dependency,
-				"malilib_dependency"   : project.malilib_dependency,
-				"litematica_dependency": project.litematica_dependency
+				"id"					: project.mod_id,
+				"name"					: project.mod_name,
+				"version"				: project.mod_version,
+				"minecraft_dependency"	: project.minecraft_dependency,
+				"malilib_dependency"	: project.malilib_dependency,
+				"litematica_dependency"	: project.litematica_dependency,
+				"fabric_api_version"	: project.fabric_api_version,
 		]
 		expand valueMap
 	}
 }
 
+// Minecraft 1.18 (1.18-pre2) upwards uses Java 17.
+def targetJavaVersion = 17
 tasks.withType(JavaCompile).configureEach {
-	// Minecraft 1.18 (1.18-pre2) upwards uses Java 17.
-	it.options.release = 17
+	it.options.encoding = "UTF-8"
+	it.options.release.set(targetJavaVersion)
 }
 
 java {
+	def javaVersion = JavaVersion.toVersion(targetJavaVersion)
+	if (JavaVersion.current() < javaVersion) {
+		toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
+	}
+
 	withSourcesJar()
 }
 
 jar {
 	from("LICENSE") {
-		rename { "${it}_${project.archivesBaseName}"}
+		rename { "${it}_${project.base.archivesName.get()}"}
 	}
 }
 
@@ -117,6 +164,7 @@ jar {
 publishing {
 	publications {
 		mavenJava(MavenPublication) {
+			artifactId = project.archives_base_name
 			from components.java
 		}
 	}
@@ -127,5 +175,41 @@ publishing {
 		// Notice: This block does NOT have the same function as the block in the top level.
 		// The repositories here will be used for publishing your artifact, not for
 		// retrieving dependencies.
+	}
+}
+
+unifiedPublishing {
+	project {
+		displayName.set "Technical Utilities $project.version"
+		releaseType.set "beta"
+		gameVersions.set(["1.20", "1.20.1"])
+		gameLoaders.set(["fabric"])
+
+		relations {
+			depends {
+				modrinth = "litematica"
+			}
+			depends {
+				modrinth = "malilib"
+			}
+			depends {
+				modrinth = "masa-gadget"
+			}
+		}
+
+		System.getenv("changelog")?.with { String changelogg ->
+			changelog.set changelogg
+		}
+
+		mainPublication tasks.remapJar
+		secondaryPublication tasks.remapSourcesJar.getArchiveFile()
+
+		System.getenv("modrinth_key")?.with { String key ->
+			modrinth {
+				token.set key
+				id.set project.modrinth_id
+				version = "$project.version"
+			}
+		}
 	}
 }

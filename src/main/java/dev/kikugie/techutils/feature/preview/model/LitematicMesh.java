@@ -1,225 +1,119 @@
 package dev.kikugie.techutils.feature.preview.model;
 
+import com.google.common.collect.HashMultimap;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.systems.VertexSorter;
-import dev.kikugie.techutils.TechUtilsMod;
+import dev.kikugie.techutils.Reference;
 import dev.kikugie.techutils.mixin.preview.BlockEntityAccessor;
 import dev.kikugie.techutils.util.ValidBox;
 import fi.dy.masa.litematica.schematic.LitematicaSchematic;
-import fi.dy.masa.litematica.selection.Box;
 import fi.dy.masa.litematica.util.EntityUtils;
+import net.fabricmc.fabric.api.renderer.v1.RendererAccess;
+import net.fabricmc.fabric.impl.client.indigo.renderer.IndigoRenderer;
+import net.fabricmc.fabric.impl.client.indigo.renderer.render.WorldMesherRenderContext;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.BlockEntityProvider;
 import net.minecraft.block.BlockRenderType;
-import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gl.VertexBuffer;
-import net.minecraft.client.render.*;
+import net.minecraft.client.render.BufferBuilder;
+import net.minecraft.client.render.OverlayTexture;
+import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.render.RenderLayers;
+import net.minecraft.client.render.VertexConsumer;
+import net.minecraft.client.render.VertexFormat;
+import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.render.block.BlockRenderManager;
-import net.minecraft.client.render.model.BakedModel;
+import net.minecraft.client.render.chunk.BlockBufferBuilderStorage;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
-import net.minecraft.fluid.FluidState;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.math.Vec3i;
 import net.minecraft.util.math.random.Random;
+import net.minecraft.world.BlockRenderView;
+import org.apache.commons.lang3.function.TriFunction;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
+import java.util.function.Function;
 
 public class LitematicMesh {
+	private static final Logger LOGGER = LoggerFactory.getLogger(LitematicMesh.class);
+
+	// Render setup data
 	private final LitematicaSchematic schematic;
 	private final MinecraftClient client;
-
-	private final Map<RenderLayer, VertexBuffer> bufferStorage;
-	private final Map<RenderLayer, BufferBuilder> initializedLayers;
-
-	private final Map<BlockPos, BlockEntity> blockEntities = new HashMap<>();
-	private final List<EntityEntry> entities = new ArrayList<>();
+	private final DummyWorld dummyWorld;
+	private final BlockPos from, to;
 	private final ValidBox fullBox;
-	private final int totalBlocks;
-	private int processed = 0;
-	private boolean done = false;
+
+	private final boolean cull;
+
+	private final TriFunction<PlayerEntity, BlockPos, BlockPos, List<Entity>> entitySupplier;
+	private DynamicRenderInfo renderInfo = DynamicRenderInfo.EMPTY;
+
+	// Build process data
+	private MeshState state = MeshState.NEW;
+
+	private float buildProgress = 0;
+	private @Nullable CompletableFuture<Void> buildFuture = null;
+
+	// Vertex storage
+	private final Map<RenderLayer, VertexBuffer> bufferStorage = new HashMap<>();
 
 	public LitematicMesh(LitematicaSchematic schematic) {
 		this.schematic = schematic;
 		this.client = MinecraftClient.getInstance();
-		this.bufferStorage = new HashMap<>();
-		this.initializedLayers = new HashMap<>();
-		this.totalBlocks = schematic.getMetadata().getTotalBlocks();
+		this.dummyWorld = DummyWorld.fromWorld(this.client.world);
 		this.fullBox = fullBox(schematic.getAreas().values());
 
-		CompletableFuture.runAsync(this::build, Util.getMainWorkerExecutor()).whenComplete((unused, throwable) -> {
-			if (throwable != null) {
-				throw new RuntimeException(throwable);
-			}
-		});
+		this.from = fullBox.getMin();
+		this.to = fullBox.getMax();
+
+		this.cull = true;
+		this.entitySupplier = (playerEntity, blockPos, blockPos2) -> readEntities();
+
+//		this.renderStartAction = renderStartAction;
+//		this.renderEndAction = renderEndAction;
+
+		this.scheduleRebuild();
 	}
 
-	private void build() {
-		MatrixStack matrices = new MatrixStack();
-		Random random = Random.createLocal();
-
-		Vec3i corner = this.fullBox.getMin();
-		Vec3i size = this.schematic.getTotalSize();
-
-		Vec3d offset = new Vec3d(
-			-corner.getX() - (double) size.getX() / 2d,
-			-corner.getY() - (double) size.getY() / 2d,
-			-corner.getZ() - (double) size.getZ() / 2d);
-		matrices.translate(offset.x, offset.y, offset.z);
-
-		try {
-			CompletableFuture<List<EntityEntry>> entitiesFuture = new CompletableFuture<>();
-			this.client.execute(() -> entitiesFuture.complete(readEntities()));
-
-			this.schematic.getAreas().keySet().forEach(region -> buildRegion(matrices, region, random));
-
-			if (this.initializedLayers.containsKey(RenderLayer.getTranslucent())) {
-				var translucentBuilder = this.initializedLayers.get(RenderLayer.getTranslucent());
-				translucentBuilder.setSorter(VertexSorter.byDistance(0, 0, 1000));
-			}
-
-			var future = new CompletableFuture<Void>();
-			RenderSystem.recordRenderCall(() -> {
-				this.initializedLayers.forEach((renderLayer, bufferBuilder) -> {
-					final var vertexBuffer = new VertexBuffer(VertexBuffer.Usage.STATIC);
-
-					vertexBuffer.bind();
-					vertexBuffer.upload(bufferBuilder.end());
-
-					this.bufferStorage.put(renderLayer, vertexBuffer);
-				});
-
-				future.complete(null);
-			});
-			future.join();
-
-			entitiesFuture.join().forEach(entry -> {
-				Vec3d newPos = entry.entity.getPos().add(offset);
-				entry.entity().updatePosition(newPos.x, newPos.y, newPos.z);
-				this.entities.add(entry);
-			});
-
-			this.entities.addAll(entitiesFuture.join());
-			this.done = true;
-		} catch (Exception e) {
-			TechUtilsMod.LOGGER.error("Rendering gone wrong:\n", e);
-		}
-	}
-
-	private List<EntityEntry> readEntities() {
-		ArrayList<EntityEntry> entities = new ArrayList<>();
+	private List<Entity> readEntities() {
+		ArrayList<Entity> entities = new ArrayList<>();
 		this.schematic.getAreas().keySet().forEach(region -> {
 			List<LitematicaSchematic.EntityInfo> schematicEntities = this.schematic.getEntityListForRegion(region);
+			var offset = this.schematic.getSubRegionPosition(region);
 			assert schematicEntities != null;
 
-			schematicEntities.forEach(entityInfo -> entities.add(new EntityEntry(
-				EntityUtils.createEntityAndPassengersFromNBT(entityInfo.nbt, this.client.world),
-				0xFF00FF)));
+			schematicEntities.forEach(entityInfo -> {
+				var entity = EntityUtils.createEntityAndPassengersFromNBT(entityInfo.nbt, this.dummyWorld);
+				entity.setPosition(
+					entity.getPos()
+						.add(Math.max(offset.getX(), 0), Math.max(offset.getY(), 0), Math.max(offset.getZ(), 0)));
+				entities.add(entity);
+			});
 		});
 		return entities;
 	}
 
-	private void buildRegion(MatrixStack matrices, String region, Random random) {
-		Box box = this.schematic.getAreas().get(region);
-		RegionBlockView view = new RegionBlockView(
-			Objects.requireNonNull(this.schematic.getSubRegionContainer(region)),
-			box);
-		Map<BlockPos, NbtCompound> schematicBlockEntities = this.schematic.getBlockEntityMapForRegion(region);
-
-		assert schematicBlockEntities != null;
-		assert this.client.player != null;
-
-		BlockRenderManager manager = this.client.getBlockRenderManager();
-		PreviewFluidRenderer fluidRenderer = new PreviewFluidRenderer();
-
-		for (BlockPos pos : BlockPos.iterate(view.box.getPos1(), view.box.getPos2())) {
-			BlockState state = view.getBlockState(pos);
-			if (state.isAir())
-				continue;
-
-			if (state.getBlock() instanceof BlockEntityProvider provider) {
-				BlockEntity blockEntity = provider.createBlockEntity(this.client.getCameraEntity().getBlockPos(), state);
-
-				if (blockEntity != null) {
-					((BlockEntityAccessor) blockEntity).setCachedState(state);
-					blockEntity.readNbt(schematicBlockEntities.getOrDefault(pos, new NbtCompound()));
-					blockEntity.setWorld(this.client.world);
-					this.blockEntities.put(pos.toImmutable(), blockEntity);
-				}
-			}
-
-			if (!state.getFluidState().isEmpty()) {
-				FluidState fluidState = state.getFluidState();
-
-				RenderLayer fluidLayer = RenderLayers.getFluidLayer(fluidState);
-
-				matrices.push();
-				matrices.translate(-(pos.getX() & 15), -(pos.getY() & 15), -(pos.getZ() & 15));
-				matrices.translate(pos.getX(), pos.getY(), pos.getZ());
-
-				fluidRenderer.setMatrix(matrices.peek().getPositionMatrix());
-				fluidRenderer.render(view, pos, getOrCreateBuffer(fluidLayer), state, fluidState);
-				matrices.pop();
-			}
-
-			matrices.push();
-			matrices.translate(pos.getX(), pos.getY(), pos.getZ());
-
-			BakedModel model = manager.getModel(state);
-			RenderLayer renderLayer = RenderLayers.getBlockLayer(state);
-
-			if (state.getRenderType() == BlockRenderType.MODEL) {
-				manager.getModelRenderer().render(view, model, state, pos, matrices, getOrCreateBuffer(renderLayer), true, random, state.getRenderingSeed(pos), OverlayTexture.DEFAULT_UV);
-			}
-
-			matrices.pop();
-			this.processed++;
-		}
-	}
-
-	private VertexConsumer getOrCreateBuffer(RenderLayer layer) {
-		if (!this.initializedLayers.containsKey(layer)) {
-			BufferBuilder builder = new BufferBuilder(layer.getExpectedBufferSize());
-			this.initializedLayers.put(layer, builder);
-			builder.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR_TEXTURE_LIGHT_NORMAL);
-		}
-		return this.initializedLayers.get(layer);
-	}
-
-	public void render(MatrixStack matrices) {
-		final var matrix = matrices.peek().getPositionMatrix();
-
-		final RenderLayer translucent = RenderLayer.getTranslucent();
-		this.bufferStorage.forEach((renderLayer, vertexBuffer) -> {
-			if (renderLayer == translucent) return;
-			draw(renderLayer, vertexBuffer, matrix);
-		});
-
-		if (this.bufferStorage.containsKey(translucent)) {
-			draw(translucent, this.bufferStorage.get(translucent), matrix);
-		}
-
-		VertexBuffer.unbind();
-	}
-
-	private void draw(RenderLayer renderLayer, VertexBuffer vertexBuffer, Matrix4f matrix) {
-		renderLayer.startDrawing();
-
-		vertexBuffer.bind();
-		vertexBuffer.draw(matrix, RenderSystem.getProjectionMatrix(), RenderSystem.getShader());
-
-		renderLayer.endDrawing();
-	}
-
-	private ValidBox fullBox(Collection<Box> boxes) {
+	private ValidBox fullBox(Collection<fi.dy.masa.litematica.selection.Box> boxes) {
 		int[] corners = {0, 0, 0, 0, 0, 0};
-		for (Box box : boxes) {
+		for (fi.dy.masa.litematica.selection.Box box : boxes) {
 			ValidBox validBox = ValidBox.of(box);
 			BlockPos min = validBox.getMin();
 			BlockPos max = validBox.getMax();
@@ -234,30 +128,409 @@ public class LitematicMesh {
 		return new ValidBox(corners);
 	}
 
-	public Map<BlockPos, BlockEntity> blockEntities() {
-		return this.blockEntities;
+	/**
+	 * Renders this world mesh into the current framebuffer, translated using the given matrix
+	 *
+	 * @param matrices The translation matrices. This is applied to the entire mesh
+	 */
+	public void render(MatrixStack matrices) {
+		if (!this.canRender()) {
+			throw new IllegalStateException("World mesh not prepared!");
+		}
+
+		var matrix = matrices.peek().getPositionMatrix();
+		var translucent = RenderLayer.getTranslucent();
+
+		this.bufferStorage.forEach((renderLayer, vertexBuffer) -> {
+			if (renderLayer == translucent) return;
+			this.drawBuffer(vertexBuffer, renderLayer, matrix);
+		});
+
+		if (this.bufferStorage.containsKey(translucent)) {
+			this.drawBuffer(bufferStorage.get(translucent), translucent, matrix);
+		}
+
+		VertexBuffer.unbind();
 	}
 
-	public List<EntityEntry> entities() {
-		return this.entities;
+	private void drawBuffer(VertexBuffer vertexBuffer, RenderLayer renderLayer, Matrix4f matrix) {
+		renderLayer.startDrawing();
+//		renderStartAction.run();
+
+		vertexBuffer.bind();
+		vertexBuffer.draw(matrix, RenderSystem.getProjectionMatrix(), RenderSystem.getShader());
+
+//		renderEndAction.run();
+		renderLayer.endDrawing();
 	}
 
-	public Vec3i size() {
-		return this.schematic.getTotalSize();
+	/**
+	 * Checks whether this mesh is ready for rendering
+	 */
+	public boolean canRender() {
+		return this.state.canRender;
 	}
 
-	public boolean complete() {
-		return this.done;
+	/**
+	 * Returns the current state of this mesh, used to indicate building progress and rendering availability
+	 *
+	 * @return The current {@code MeshState} constant
+	 */
+	public MeshState state() {
+		return this.state;
 	}
 
-	public float progress() {
-		return this.processed / (float) this.totalBlocks;
+	/**
+	 * Renamed to {@link #state()}
+	 */
+	@Deprecated(forRemoval = true)
+	public MeshState getState() {
+		return this.state();
 	}
 
+	/**
+	 * How much of this mesh is built
+	 *
+	 * @return The build progress of this mesh
+	 */
+	public float buildProgress() {
+		return this.buildProgress;
+	}
+
+	/**
+	 * Renamed to {@link #buildProgress()}
+	 */
+	@Deprecated(forRemoval = true)
+	public float getBuildProgress() {
+		return this.buildProgress();
+	}
+
+	/**
+	 * @return An object describing the entities and block
+	 * entities in the area this mesh is covering, with positions
+	 * relative to the mesh
+	 */
+	public DynamicRenderInfo renderInfo() {
+		return this.renderInfo;
+	}
+
+	/**
+	 * Renamed to {@link #renderInfo()}
+	 */
+	@Deprecated(forRemoval = true)
+	public DynamicRenderInfo getRenderInfo() {
+		return this.renderInfo();
+	}
+
+	/**
+	 * @return The origin position of this mesh's area
+	 */
+	public BlockPos startPos() {
+		return this.from;
+	}
+
+	/**
+	 * @return The end position of this mesh's area
+	 */
+	public BlockPos endPos() {
+		return this.to;
+	}
+
+	/**
+	 * @return The dimensions of this mesh's entire area
+	 */
 	public ValidBox getFullBox() {
-		return this.fullBox;
+		return fullBox;
 	}
 
-	public record EntityEntry(Entity entity, int light) {
+	/**
+	 * Reset this mesh to {@link MeshState#NEW}, releasing
+	 * all vertex buffers in the process
+	 */
+	public void reset() {
+		this.bufferStorage.forEach((renderLayer, vertexBuffer) -> vertexBuffer.close());
+		this.bufferStorage.clear();
+
+		this.state = MeshState.NEW;
 	}
+
+	/**
+	 * Renamed to {@link #reset()}
+	 */
+	@Deprecated(forRemoval = true)
+	public void clear() {
+		this.reset();
+	}
+
+	/**
+	 * Schedule a rebuild of this mesh on
+	 * the main worker executor
+	 */
+	public synchronized void scheduleRebuild() {
+		this.scheduleRebuild(Util.getMainWorkerExecutor());
+	}
+
+	/**
+	 * Schedule a rebuild of this mesh,
+	 * on the supplied executor
+	 *
+	 * @return A future completing when the build process is finished,
+	 * or {@code null} if this mesh is already building
+	 */
+	public synchronized CompletableFuture<Void> scheduleRebuild(Executor executor) {
+		if (this.buildFuture != null) return this.buildFuture;
+
+		this.buildProgress = 0;
+		this.state = this.state != MeshState.NEW
+			? MeshState.REBUILDING
+			: MeshState.BUILDING;
+
+		this.buildFuture = CompletableFuture.runAsync(this::build, executor).whenComplete((unused, throwable) -> {
+			this.buildFuture = null;
+
+			if (throwable == null) {
+				state = MeshState.READY;
+			} else {
+				LOGGER.warn("World mesh building failed", throwable);
+				state = MeshState.CORRUPT;
+			}
+		});
+
+		return this.buildFuture;
+	}
+
+	private void build() {
+		var allocatorStorage = new BlockBufferBuilderStorage();
+
+		var blockRenderManager = this.client.getBlockRenderManager();
+
+		var matrices = new MatrixStack();
+		var builderStorage = new HashMap<RenderLayer, BufferBuilder>();
+		var random = Random.createLocal();
+
+		WorldMesherRenderContext renderContext = null;
+		try {
+			//noinspection UnstableApiUsage
+			renderContext = RendererAccess.INSTANCE.getRenderer() instanceof IndigoRenderer
+				? new WorldMesherRenderContext(this.dummyWorld, layer -> this.getOrCreateBuilder(allocatorStorage, builderStorage, layer))
+				: null;
+		} catch (Throwable throwable) {
+			var fabricApiVersion = FabricLoader.getInstance().getModContainer(Reference.MOD_ID).get().getMetadata().getCustomValue("fabric_api_build_version").getAsString();
+			LOGGER.error(
+				"Could not create a context for rendering Fabric API models. This is most likely due to an incompatible Fabric API version - this build of {} was compiled against '{}', try that instead",
+				Reference.MOD_NAME,
+				fabricApiVersion,
+				throwable
+			);
+		}
+
+		var entitiesFuture = new CompletableFuture<List<DynamicRenderInfo.EntityEntry>>();
+		this.client.execute(() ->
+			entitiesFuture.complete(this.entitySupplier.apply(this.client.player, this.from, this.to.add(1, 1, 1))
+				.stream()
+				.map(entity -> {
+					entity.tick();
+					return new DynamicRenderInfo.EntityEntry(
+						entity,
+						this.client.getEntityRenderDispatcher().getLight(entity, 0)
+					);
+				}).toList()
+			)
+		);
+
+		var blockEntities = new HashMap<BlockPos, BlockEntity>();
+
+		WorldMesherRenderContext finalRenderContext = renderContext;
+		this.schematic.getAreas().keySet().forEach(region -> buildRegion(region, blockEntities, matrices, blockRenderManager, allocatorStorage, builderStorage, finalRenderContext, random));
+
+		var future = new CompletableFuture<Void>();
+		RenderSystem.recordRenderCall(() -> {
+			this.bufferStorage.forEach((renderLayer, vertexBuffer) -> vertexBuffer.close());
+			this.bufferStorage.clear();
+
+			builderStorage.forEach((renderLayer, bufferBuilder) -> {
+				var newBuffer = new VertexBuffer(VertexBuffer.Usage.STATIC);
+
+				if (renderLayer == RenderLayer.getTranslucent()) {
+					allocatorStorage.get(renderLayer).setSorter(VertexSorter.byDistance(0, 0, 1000));
+				}
+
+				var built = bufferBuilder.endNullable();
+				if (built == null)
+					return;
+
+				newBuffer.bind();
+				newBuffer.upload(built);
+
+				var discardedBuffer = this.bufferStorage.put(renderLayer, newBuffer);
+				if (discardedBuffer != null) {
+					discardedBuffer.close();
+				}
+			});
+
+			future.complete(null);
+		});
+		future.join();
+
+		var entities = HashMultimap.<Vec3d, DynamicRenderInfo.EntityEntry>create();
+		for (var entityEntry : entitiesFuture.join()) {
+			entities.put(
+				entityEntry.entity().getPos()/*.subtract(this.from.getX(), this.from.getY(), this.from.getZ())*/,
+				entityEntry
+			);
+		}
+
+		this.renderInfo = new DynamicRenderInfo(
+			blockEntities, entities
+		);
+	}
+
+	private void buildRegion(String region, HashMap<BlockPos, BlockEntity> blockEntities, MatrixStack matrices, BlockRenderManager blockRenderManager, BlockBufferBuilderStorage allocatorStorage, HashMap<RenderLayer, BufferBuilder> builderStorage, WorldMesherRenderContext renderContext, Random random) {
+		fi.dy.masa.litematica.selection.Box box = this.schematic.getAreas().get(region);
+		RegionBlockView view = new RegionBlockView(
+			Objects.requireNonNull(this.schematic.getSubRegionContainer(region)),
+			box);
+		Map<BlockPos, NbtCompound> schematicBlockEntities = this.schematic.getBlockEntityMapForRegion(region);
+
+		int currentBlockIndex = 0;
+		int blocksToBuild = (this.to.getX() - this.from.getX() + 1)
+			* (this.to.getY() - this.from.getY() + 1)
+			* (this.to.getZ() - this.from.getZ() + 1);
+
+
+		PreviewFluidRenderer fluidRenderer = new PreviewFluidRenderer();
+
+		for (var pos : BlockPos.iterate(this.from, this.to)) {
+			currentBlockIndex++;
+			this.buildProgress = currentBlockIndex / (float) blocksToBuild;
+
+			var state = view.getBlockState(pos);
+			if (state.isAir()) continue;
+
+			var renderPos = pos.subtract(from);
+			if (state.getBlock() instanceof BlockEntityProvider provider) {
+				BlockEntity blockEntity = provider.createBlockEntity(this.client.getCameraEntity().getBlockPos(), state);
+
+				if (blockEntity != null) {
+					((BlockEntityAccessor) blockEntity).setCachedState(state);
+					blockEntity.readNbt(schematicBlockEntities.getOrDefault(pos, new NbtCompound()));
+					blockEntity.setWorld(this.dummyWorld);
+					blockEntities.put(renderPos, blockEntity);
+				}
+			}
+
+			if (!state.getFluidState().isEmpty()) {
+				var fluidState = state.getFluidState();
+				var fluidLayer = RenderLayers.getFluidLayer(fluidState);
+
+				matrices.push();
+				matrices.translate(-(pos.getX() & 15), -(pos.getY() & 15), -(pos.getZ() & 15));
+				matrices.translate(renderPos.getX(), renderPos.getY(), renderPos.getZ());
+
+				fluidRenderer.setMatrix(matrices.peek().getPositionMatrix());
+				fluidRenderer.render(view, pos, getOrCreateBuilder(allocatorStorage, builderStorage,fluidLayer), state, fluidState);
+				matrices.pop();
+			}
+
+			matrices.push();
+			matrices.translate(renderPos.getX(), renderPos.getY(), renderPos.getZ());
+
+			var blockLayer = RenderLayers.getBlockLayer(state);
+
+			final var model = blockRenderManager.getModel(state);
+			if (renderContext != null && !model.isVanillaAdapter()) {
+				renderContext.tessellateBlock(view, state, pos, model, matrices);
+			} else if (state.getRenderType() == BlockRenderType.MODEL) {
+				blockRenderManager.getModelRenderer().render(view, model, state, pos, matrices, this.getOrCreateBuilder(allocatorStorage, builderStorage, blockLayer), cull, random, state.getRenderingSeed(pos), OverlayTexture.DEFAULT_UV);
+			}
+
+			matrices.pop();
+		}
+	}
+
+	private VertexConsumer getOrCreateBuilder(BlockBufferBuilderStorage allocatorStorage, Map<RenderLayer, BufferBuilder> builderStorage, RenderLayer layer) {
+		return builderStorage.computeIfAbsent(layer, renderLayer ->
+//			new BufferBuilder(allocatorStorage.get(layer),  VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR_TEXTURE_LIGHT_NORMAL)
+			{
+				BufferBuilder bufferBuilder = new BufferBuilder(256);
+				bufferBuilder.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR_TEXTURE_LIGHT_NORMAL);
+				return bufferBuilder;
+			}
+		);
+	}
+
+	public static class Builder {
+
+		private final BlockRenderView world;
+		private final TriFunction<PlayerEntity, BlockPos, BlockPos, List<Entity>> entitySupplier;
+
+		private final BlockPos origin;
+		private final BlockPos end;
+		private boolean cull = true;
+		private boolean useGlobalNeighbors = false;
+		private boolean freezeEntities = false;
+
+		private Runnable startAction = () -> {
+		};
+		private Runnable endAction = () -> {
+		};
+
+		@Deprecated(forRemoval = true)
+		public Builder(BlockRenderView world, BlockPos origin, BlockPos end, Function<PlayerEntity, List<Entity>> entitySupplier) {
+			this.world = world;
+			this.origin = origin;
+			this.end = end;
+			this.entitySupplier = (player, $, $$) -> entitySupplier.apply(player);
+		}
+
+		public Builder(BlockRenderView world, BlockPos origin, BlockPos end, TriFunction<PlayerEntity, BlockPos, BlockPos, List<Entity>> entitySupplier) {
+			this.world = world;
+			this.origin = origin;
+			this.end = end;
+			this.entitySupplier = entitySupplier;
+		}
+
+		public Builder(BlockRenderView world, BlockPos origin, BlockPos end) {
+			this(world, origin, end, (except) -> List.of());
+		}
+
+		public Builder disableCulling() {
+			this.cull = false;
+			return this;
+		}
+
+		public Builder useGlobalNeighbors() {
+			this.useGlobalNeighbors = true;
+			return this;
+		}
+
+		public Builder freezeEntities() {
+			this.freezeEntities = true;
+			return this;
+		}
+
+		public Builder renderActions(Runnable startAction, Runnable endAction) {
+			this.startAction = startAction;
+			this.endAction = endAction;
+			return this;
+		}
+	}
+
+	public enum MeshState {
+		NEW(false, false),
+		BUILDING(true, false),
+		REBUILDING(true, true),
+		READY(false, true),
+		CORRUPT(false, false);
+
+		public final boolean isBuildStage;
+		public final boolean canRender;
+
+		MeshState(boolean buildStage, boolean canRender) {
+			this.isBuildStage = buildStage;
+			this.canRender = canRender;
+		}
+	}
+
 }
+

@@ -5,15 +5,13 @@ import dev.kikugie.techutils.util.ContainerUtils;
 import dev.kikugie.techutils.util.LocalPlacementPos;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ChestBlock;
+import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.enums.ChestType;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.inventory.DoubleInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.SimpleInventory;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
-import net.minecraft.nbt.NbtList;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
 
@@ -74,11 +72,18 @@ public final class PlacementContainerAccess {
 			return Optional.empty();
 
 		LocalPlacementPos placementPos = optionalPos.get();
+		Optional<Inventory> schemInv = ContainerUtils.validateContainer(worldPos, placementPos.blockState());
 		// Schematic and world blocks don't match
-		if (!placementPos.blockState().equals(worldState))
+		if (schemInv.isEmpty()
+			|| dummyInv.get().size() != schemInv.get().size()
+			|| !(schemInv.get() instanceof BlockEntity schemBE)
+			|| !(dummyInv.get() instanceof BlockEntity dummyBE)
+			|| schemBE.getType() != dummyBE.getType()
+		) {
 			return Optional.empty();
+		}
 
-		return Optional.ofNullable(getItems(placementPos, (byte) dummyInv.get().size()));
+		return Optional.ofNullable(getItems(placementPos));
 	}
 
 	private static SimpleInventory merge(Inventory first, Inventory second) {
@@ -104,7 +109,7 @@ public final class PlacementContainerAccess {
 	}
 
 	@Nullable
-	private static SimpleInventory getItems(LocalPlacementPos placementPos, byte size) {
+	private static SimpleInventory getItems(LocalPlacementPos placementPos) {
 		Map<BlockPos, NbtCompound> blockEntities = placementPos.placement().getSchematic()
 			.getBlockEntityMapForRegion(placementPos.region());
 		// No block entity map for the region. Shouldn't be possible unless it was manually modified
@@ -116,25 +121,23 @@ public final class PlacementContainerAccess {
 		if (nbt == null)
 			return null;
 
-		NbtList schematicItems = nbt.getList("Items", NbtElement.COMPOUND_TYPE);
-		// Entry is not an inventory
-		if (schematicItems == null)
+		var blockEntity = BlockEntity.createFromNbt(
+			placementPos.pos(),
+			placementPos.blockState(),
+			nbt
+		);
+
+		if (!(blockEntity instanceof Inventory schematicInventory)) {
 			return null;
-
-		SimpleInventory inventory = new SimpleInventory(size);
-		// Not technically necessary, but skips the loop
-		if (schematicItems.isEmpty())
-			return inventory;
-
-		for (byte i = 0; i < schematicItems.size(); i++) {
-			NbtCompound item = schematicItems.getCompound(i);
-			byte slot = item.getByte("Slot");
-			if (slot >= size) {
-				sendError("Schematic item slot %d is outside of the allowed size %d".formatted(slot, size));
-				return null;
-			}
-			inventory.setStack(slot, ItemStack.fromNbt(item));
 		}
+
+		var inventory = new SimpleInventory(schematicInventory.size());
+
+		for (int i = 0; i < inventory.size(); i++) {
+			var stack = schematicInventory.getStack(i);
+			inventory.setStack(i, stack);
+		}
+
 		return inventory;
 	}
 }

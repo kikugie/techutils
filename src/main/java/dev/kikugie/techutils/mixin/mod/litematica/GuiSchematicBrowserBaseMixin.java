@@ -7,12 +7,14 @@ import fi.dy.masa.malilib.gui.GuiListBase;
 import fi.dy.masa.malilib.gui.widgets.WidgetDirectoryEntry;
 import fi.dy.masa.malilib.gui.widgets.WidgetFileBrowserBase;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 
 /**
  * Creates a {@link PreviewRenderManager} on opening schematic list and passes user actions to it.
  */
 @Mixin(value = GuiSchematicBrowserBase.class, remap = false)
 public abstract class GuiSchematicBrowserBaseMixin extends GuiListBase<WidgetFileBrowserBase.DirectoryEntry, WidgetDirectoryEntry, WidgetSchematicBrowser> {
+	@Unique
 	private PreviewRenderManager manager;
 
 	protected GuiSchematicBrowserBaseMixin(int listX, int listY) {

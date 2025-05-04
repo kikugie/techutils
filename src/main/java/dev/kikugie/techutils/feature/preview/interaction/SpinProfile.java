@@ -28,7 +28,11 @@ public class SpinProfile implements InteractionProfile {
 			return;
 
 		float delta = this.client.getTickDelta();
-		this.angle += delta * LitematicConfigs.ROTATION_FACTOR.getDoubleValue();
+		this.angle = wrapOnce(this.angle + delta * LitematicConfigs.ROTATION_FACTOR.getDoubleValue() * 0.1, 360.0);
+	}
+
+	private static double wrapOnce(double a, double b) {
+		return a > b ? a - b : a;
 	}
 
 	@Override

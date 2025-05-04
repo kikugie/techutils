@@ -5,6 +5,7 @@ import com.llamalad7.mixinextras.sugar.Local;
 import dev.kikugie.techutils.config.LitematicConfigs;
 import dev.kikugie.techutils.feature.preview.gui.PreviewRenderManager;
 import fi.dy.masa.litematica.gui.widgets.WidgetSchematicBrowser;
+import fi.dy.masa.litematica.util.FileType;
 import fi.dy.masa.malilib.gui.widgets.WidgetFileBrowserBase;
 import net.minecraft.client.gui.DrawContext;
 import org.jetbrains.annotations.Nullable;
@@ -22,10 +23,13 @@ public abstract class WidgetSchematicBrowserMixin {
 		@Local(ordinal = 1) int y,
 		@Local(ordinal = 2) int height
 	) {
-		if (!LitematicConfigs.RENDER_PREVIEW.getBooleanValue())
+		if (!LitematicConfigs.RENDER_PREVIEW.getBooleanValue()
+			|| (!LitematicConfigs.OVERRIDE_PREVIEW.getBooleanValue() && original != null)
+			|| !entry.getFullPath().exists()
+			|| FileType.fromFile(entry.getFullPath()) != FileType.LITEMATICA_SCHEMATIC
+		) {
 			return original;
-		if (!LitematicConfigs.OVERRIDE_PREVIEW.getBooleanValue() && original != null)
-			return original;
+		}
 		PreviewRenderManager.getInstance().ifPresent(manager -> manager.getOrCreateRenderer(entry).render(drawContext, x + 4, y + 14, height - y - 2));
 		return null;
 	}

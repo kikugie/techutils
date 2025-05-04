@@ -1,27 +1,48 @@
 {
-  "required": true,
-  "minVersion": "0.8",
-  "package": "dev.kikugie.techutils.mixin",
-  "compatibilityLevel": "JAVA_8",
-  "mixins": [
-  ],
-  "client": [
-    "containerscan.ClientPlayerInteractionManagerMixin",
-    "containerscan.HandledScreenMixin",
-    "containerscan.MinecraftClientMixin",
-    "containerscan.ScreenHandlerAccessor",
-    "containerscan.WorldRendererAccessor",
-    "containerscan.WorldRendererMixin",
-    "mod.fapi.ClientPlayNetworkAddonMixin",
-    "mod.litematica.GuiSchematicBrowserBaseMixin",
-    "mod.litematica.GuiSchematicManagerMixin",
-    "mod.litematica.WidgetSchematicBrowserMixin",
-    "preview.BlockEntityAccessor",
-    "preview.PostFluidRendererMixin",
-    "preview.PreFluidRendererMixin",
-    "worldeditsync.ClientPlayNetworkHandlerMixin"
-  ],
-  "injectors": {
-    "defaultRequire": 1
-  }
+    "required": true,
+    "minVersion": "0.8",
+    "package": "dev.kikugie.techutils.mixin",
+    "compatibilityLevel": "JAVA_17",
+    "mixins": [
+        "containerscan.EnchantmentPredicateAccessor",
+        "containerscan.ItemPredicateAccessor",
+        "containerscan.NbtPredicateAccessor",
+        "mod.masa_gadget_mod.PcaSyncProtocolMixin"
+    ],
+    "client": [
+        "compactscoreboard.InGameHudMixin",
+        "containerscan.ClientPlayerInteractionManagerMixin",
+        "containerscan.ClientPlayNetworkHandlerMixin",
+        "containerscan.DataQueryHandlerAccessor",
+        "containerscan.HandledScreenMixin",
+        "containerscan.MinecraftClientMixin",
+        "containerscan.ScreenHandlerAccessor",
+        "containerscan.WorldRendererAccessor",
+        "containerscan.WorldRendererMixin",
+        "mod.fapi.ClientPlayNetworkAddonMixin",
+        "mod.litematica.BlockMismatchMixin",
+        "mod.litematica.GuiSchematicBrowserBaseMixin",
+        "mod.litematica.GuiSchematicLoad$ButtonListenerMixin",
+        "mod.litematica.GuiSchematicManagerMixin",
+        "mod.litematica.GuiSchematicVerifierAccessor",
+        "mod.litematica.GuiSchematicVerifierMixin",
+        "mod.litematica.GuiSchematicVerifierMixin$ButtonListenerMixin",
+        "mod.malilib.InventoryOverlayMixin",
+        "mod.litematica.ItemUtilsAccessor",
+        "mod.litematica.LitematicaSchematicAccessor",
+        "mod.litematica.OverlayRendererMixin",
+        "mod.litematica.RayTraceUtilsMixin",
+        "mod.litematica.RenderUtilsMixin",
+        "mod.litematica.SchematicVerifierMixin",
+        "mod.litematica.WidgetListSchematicVerificationResultsMixin",
+        "mod.litematica.WidgetSchematicBrowserMixin",
+        "mod.litematica.WidgetSchematicVerificationResultMixin",
+        "preview.BlockEntityAccessor",
+        "worldeditsync.ClientPlayNetworkHandlerMixin",
+        "worldeditsync.WECUIPacketHandlerMixin"
+    ],
+    "injectors": {
+        "defaultRequire": 1,
+        "maxShiftBy": 5
+    }
 }

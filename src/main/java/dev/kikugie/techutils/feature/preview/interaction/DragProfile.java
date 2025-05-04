@@ -24,6 +24,7 @@ public class DragProfile implements InteractionProfile {
 	private float scaleMod = 0;
 	private float scale = 1;
 	private double angle = Math.PI / 4;
+	private double slant = Math.toRadians(LitematicConfigs.RENDER_SLANT.getIntegerValue());
 
 	DragProfile(PreviewRenderManager manager) {
 		this.manager = manager;
@@ -54,6 +55,10 @@ public class DragProfile implements InteractionProfile {
 			case 1 -> {
 				this.dx += dx;
 				this.dy += dy;
+			}
+			case 2 -> {
+				this.angle += dx * 0.1 * LitematicConfigs.ROTATION_FACTOR.getDoubleValue();
+				this.slant += dy * 0.1;
 			}
 			default -> {
 			}
@@ -94,6 +99,11 @@ public class DragProfile implements InteractionProfile {
 	@Override
 	public double angle() {
 		return this.angle;
+	}
+
+	@Override
+	public double slant() {
+		return this.slant;
 	}
 
 	@Override

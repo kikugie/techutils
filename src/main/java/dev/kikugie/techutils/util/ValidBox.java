@@ -99,6 +99,18 @@ public class ValidBox extends Box {
 		return this.maxPos;
 	}
 
+	public double getXLength() {
+		return this.maxPos.getX() - this.minPos.getX();
+	}
+
+	public double getYLength() {
+		return this.maxPos.getY() - this.minPos.getY();
+	}
+
+	public double getZLength() {
+		return this.maxPos.getZ() - this.minPos.getZ();
+	}
+
 	private void updateCorners() {
 		BlockPos pos1 = getPos1(BlockPos.ORIGIN);
 		BlockPos pos2 = getPos2(BlockPos.ORIGIN);

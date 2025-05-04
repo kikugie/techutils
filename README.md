@@ -7,6 +7,20 @@ To access mod config open [Mod Menu](https://modrinth.com/mod/modmenu) and selec
 
 ## Features
 
+- Inventory Verifier addon to Litematica's Schematic Verifier  
+  - Conveniently displays the difference between the expected and found inventory contents side-by-side.  
+  - Has semantic slot highlighting (view feature `inventoryScreenOverlay` further down).  
+  - Turning on `verifyItemComponents` will require item components to match and will also visualize them in the item tooltip for you to compare.  
+  - Enables schematic creators to use [item predicates](https://minecraft.wiki/w/Template:Nbt_inherit/conditions/item/template) - a flexible way to specify what properties items should have. [Here's](https://misode.github.io/predicate/?share=3lvOcqP7xk) an impractical but exhaustive example via Misode's handy generator.
+
+  \
+  Check out the feature's [showcase video](https://www.youtube.com/watch?v=LgeMBO1TavY):  
+  [![Tech Utils Inventory Verifier Showcase](https://github.com/user-attachments/assets/a6188e4e-8da6-4478-8f9e-aff729959863)](https://www.youtube.com/watch?v=LgeMBO1TavY)
+  \
+  \
+  *This feature only works if your server has [PCA Protocol](https://github.com/Fallen-Breath/pca-protocol/releases), or you have nbt query permissions (e.g. by being an operator or installing a permissions mod/plugin), or you're in Singleplayer.*
+
+
 - Sync WorldEdit selection  
   Snap WorldEdit region to active Litematica selection - `autoWeSync`.  
   *Region synchronizes shortly after you modify a selection, showing you a confirmation message above the hotbar.*
@@ -41,8 +55,11 @@ To access mod config open [Mod Menu](https://modrinth.com/mod/modmenu) and selec
   - 1000000 -> 1M
   - 1000000000 -> 1B
 - Disable WorldEdit neighbor updates on log-in - `autoDisableUpdates`.
-- Hotkeys for litematic placement rotation & mirror - `rotatePlacement` and `mirrorPlacement`
-- `/isorender selection` shortcut for rendering current Litematica selection in [Isometric Renders](https://modrinth.com/mod/isometric-renders)
+- Hotkeys for litematic placement rotation & mirror - `rotatePlacement` and `mirrorPlacement`.
+- `/isorender selection` shortcut for rendering current Litematica selection in [Isometric Renders](https://modrinth.com/mod/isometric-renders).
+- A hotkey to give yourself a container full of the item you're holding - `giveFullInv`. Supports boxes, chests, and bundles. Nesting them is possible.
+- A hotkey to refresh the material list - `refreshMaterialList`.
+- Make easy place act as if all blocks are full blocks. Useful for placing blocks with small hit boxes.
 - *And more to come!*
 
 ## Dependencies
