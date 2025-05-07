@@ -214,9 +214,11 @@ public abstract class SchematicVerifierMixin<InventoryBE extends BlockEntity & I
 	@SuppressWarnings("unchecked")
 	@Unique
 	private Pair<InventoryBE, InventoryBE> populateTooltipsIfNecessary(InventoryBE expected, InventoryBE found, boolean verifyItemComponents) {
-		DynamicRegistryManager lookup = worldClient.getRegistryManager();
-		final var expectedNew = (InventoryBE) BlockEntity.createFromNbt(expected.getPos(), expected.getCachedState(), expected.createNbtWithIdentifyingData(lookup), lookup);
-		final var foundNew = (InventoryBE) BlockEntity.createFromNbt(found.getPos(), found.getCachedState(), found.createNbtWithIdentifyingData(lookup), lookup);
+		DynamicRegistryManager lookupClient = worldClient.getRegistryManager();
+		DynamicRegistryManager lookupExpected = expected.getWorld().getRegistryManager();
+		final var expectedNew = (InventoryBE) BlockEntity.createFromNbt(expected.getPos(), expected.getCachedState(), expected.createNbtWithIdentifyingData(lookupExpected), lookupClient);
+		DynamicRegistryManager lookupFound = found.getWorld().getRegistryManager();
+		final var foundNew = (InventoryBE) BlockEntity.createFromNbt(found.getPos(), found.getCachedState(), found.createNbtWithIdentifyingData(lookupFound), lookupClient);
 		int size = expected.size();
 		for (int i = size - 1; i >= 0; i--) {
 			var expectedStack = expectedNew.getStack(i);
