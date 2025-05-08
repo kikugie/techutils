@@ -8,15 +8,15 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.text.Text;
+import net.minecraft.text.TextCodecs;
 import net.minecraft.text.TranslatableTextContent;
-import net.minecraft.util.dynamic.Codecs;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 public interface SchematicVerifierExtension {
 	String ERROR_LINES_ID = "techutils:error_lines";
-	Codec<List<Text>> ERROR_LINES_CODEC = Codecs.TEXT.listOf();
+	Codec<List<Text>> ERROR_LINES_CODEC = TextCodecs.CODEC.listOf();
 	MismatchType WRONG_INVENTORIES = ClassTinkerers.getEnum(MismatchType.class, "WRONG_INVENTORIES");
 
 	/**

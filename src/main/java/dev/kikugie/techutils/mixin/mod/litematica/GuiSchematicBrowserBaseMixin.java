@@ -35,9 +35,9 @@ public abstract class GuiSchematicBrowserBaseMixin extends GuiListBase<WidgetFil
 	}
 
 	@Override
-	public boolean mouseScrolled(double mouseX, double mouseY, double amount) {
-		this.manager.profile().scrolled(mouseX, mouseY, amount);
-		return super.mouseScrolled(mouseX, mouseY, amount);
+	public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
+		this.manager.profile().scrolled(mouseX, mouseY, horizontalAmount, verticalAmount);
+		return super.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount);
 	}
 
 	@Override
