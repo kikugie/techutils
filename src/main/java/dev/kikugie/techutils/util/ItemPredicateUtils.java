@@ -142,7 +142,7 @@ public final class ItemPredicateUtils {
 		var nbt = predicate.nbt();
 
 		if (tag.isPresent() && !stack.isIn(tag.get())) {
-			TagKey<Item> tagKey = tag.orElseThrow();
+			TagKey<Item> tagKey = tag.get();
 
 			var msg = Text.literal("Incorrect item type. Expected tag '%s' with items: ".formatted(tagKey.id()))
 				.styled(style -> style.withColor(Formatting.RED).withItalic(false));
@@ -154,12 +154,12 @@ public final class ItemPredicateUtils {
 		}
 
 		if (items.isPresent() && !items.get().contains(stack.getItem().getRegistryEntry())) {
-			RegistryEntryList<Item> itemsList = items.orElseThrow();
+			RegistryEntryList<Item> itemsList = items.get();
 
 			var msg = Text.literal("Incorrect item type. Expected: ")
 				.styled(style -> style.withColor(Formatting.RED).withItalic(false));
 			itemsList.stream()
-				.flatMap(i -> Stream.of(Text.of(", "), Text.of(Registries.ITEM.get(i.getKey().orElseThrow()).toString())))
+				.flatMap(i -> Stream.of(Text.of(", "), Text.of(Registries.ITEM.get(i.getKey().get()).toString())))
 				.skip(1)
 				.forEach(msg::append);
 			lines.add(msg);
@@ -219,7 +219,7 @@ public final class ItemPredicateUtils {
 				if (!enchantmentPredicate.test(enchantmentLevels)) {
 					unsatisfiedEnchantments.add(
 						Text.literal("'%s' with level %s"
-							.formatted(Registries.ENCHANTMENT.get(enchantmentPredicate.enchantment().orElseThrow().getKey().orElseThrow()),
+							.formatted(Registries.ENCHANTMENT.get(enchantmentPredicate.enchantment().get().getKey().get()),
 								intRangeToString.apply(enchantmentPredicate.levels())
 							)
 						)
@@ -235,9 +235,9 @@ public final class ItemPredicateUtils {
 		}
 
 		if (potion.isPresent() && potion.get() != PotionUtil.getPotion(stack)) {
-			RegistryEntry<Potion> potionRegistryEntry = potion.orElseThrow();
+			RegistryEntry<Potion> potionRegistryEntry = potion.get();
 
-			var msg = Text.literal("Incorrect potion. Expected '%s'".formatted(Registries.POTION.get(potionRegistryEntry.getKey().orElseThrow())))
+			var msg = Text.literal("Incorrect potion. Expected '%s'".formatted(Registries.POTION.get(potionRegistryEntry.getKey().get())))
 				.styled(style -> style.withColor(Formatting.RED).withItalic(false));
 			lines.add(msg);
 		}
