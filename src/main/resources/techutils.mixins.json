@@ -4,8 +4,6 @@
     "package": "dev.kikugie.techutils.mixin",
     "compatibilityLevel": "JAVA_17",
     "mixins": [
-        "containerscan.EnchantmentPredicateAccessor",
-        "containerscan.ItemPredicateAccessor",
         "containerscan.NbtPredicateAccessor",
         "mod.masa_gadget_mod.PcaSyncProtocolMixin"
     ],

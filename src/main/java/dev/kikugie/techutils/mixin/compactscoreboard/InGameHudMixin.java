@@ -1,17 +1,15 @@
 package dev.kikugie.techutils.mixin.compactscoreboard;
 
-import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-import com.llamalad7.mixinextras.sugar.Local;
 import dev.kikugie.techutils.config.MiscConfigs;
 import net.minecraft.client.gui.hud.InGameHud;
-import net.minecraft.scoreboard.ScoreboardPlayerScore;
+import net.minecraft.scoreboard.number.NumberFormatType;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
-import org.spongepowered.asm.mixin.injection.Slice;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 
 import java.text.NumberFormat;
 import java.util.Locale;
@@ -25,23 +23,22 @@ public class InGameHudMixin {
 		FORMATTER.setMaximumFractionDigits(1);
 	}
 
-	@WrapOperation(method = "renderScoreboardSidebar", at = @At(value = "INVOKE", target = "Ljava/lang/Integer;toString(I)Ljava/lang/String;"))
-	private String replaceWithCompactFormat$1(int score, Operation<String> original) {
-		return MiscConfigs.COMPACT_SCOREBOARD.getBooleanValue()
-			? FORMATTER.format(score)
-			: original.call(score);
-	}
+	@SuppressWarnings("unchecked")
+	@ModifyArg(method = "renderScoreboardSidebar(Lnet/minecraft/client/gui/DrawContext;Lnet/minecraft/scoreboard/ScoreboardObjective;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/scoreboard/ScoreboardObjective;getNumberFormatOr(Lnet/minecraft/scoreboard/number/NumberFormat;)Lnet/minecraft/scoreboard/number/NumberFormat;"))
+	private <T extends net.minecraft.scoreboard.number.NumberFormat> T replaceWithCompactFormat(T format) {
+		if (!MiscConfigs.COMPACT_SCOREBOARD.getBooleanValue())
+			return format;
 
-	@ModifyVariable(
-		method = "renderScoreboardSidebar",
-		slice = @Slice(
-			from = @At(value = "FIELD", target = "Lnet/minecraft/util/Formatting;RED:Lnet/minecraft/util/Formatting;")
-		),
-		at = @At(value = "STORE", ordinal = 0)
-	)
-	private String replaceWithCompactFormat$2(String original, @Local ScoreboardPlayerScore playerScore) {
-		return MiscConfigs.COMPACT_SCOREBOARD.getBooleanValue()
-			? Formatting.RED + FORMATTER.format(playerScore.getScore())
-			: original;
+		return (T) new net.minecraft.scoreboard.number.NumberFormat() {
+			@Override
+			public MutableText format(int number) {
+				return Text.literal(FORMATTER.format(number)).formatted(Formatting.RED);
+			}
+
+			@Override
+			public NumberFormatType<T> getType() {
+				return null;
+			}
+		};
 	}
 }

@@ -8,7 +8,6 @@ import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 
@@ -20,6 +19,7 @@ import java.util.Optional;
  * <p>
  * If channel has already been registered by another mod, it leeches packets from it instead.
  */
+@SuppressWarnings("UnstableApiUsage")
 public class WorldEditNetworkHandler {
 	public static final Identifier CHANNEL = new Identifier("worldedit", "cui");
 	private static final int PROTOCOL = 4;
@@ -51,9 +51,9 @@ public class WorldEditNetworkHandler {
 		return Optional.ofNullable(instance);
 	}
 
-	public void onYoinkedPacket(CustomPayloadS2CPacket packet) {
+	public void onYoinkedPacket(PacketByteBuf packet) {
 		if (!this.yoinkPackets) return;
-		onPacket(MinecraftClient.getInstance(), MinecraftClient.getInstance().getNetworkHandler(), packet.getData(), ClientPlayNetworking.getSender());
+		onPacket(MinecraftClient.getInstance(), MinecraftClient.getInstance().getNetworkHandler(), packet, ClientPlayNetworking.getSender());
 	}
 
 	private void onPacket(MinecraftClient minecraftClient, ClientPlayNetworkHandler clientPlayNetworkHandler, PacketByteBuf data, PacketSender packetSender) {

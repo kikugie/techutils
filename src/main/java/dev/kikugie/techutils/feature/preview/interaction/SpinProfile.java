@@ -36,7 +36,7 @@ public class SpinProfile implements InteractionProfile {
 	}
 
 	@Override
-	public void scrolled(double x, double y, double amount) {
+	public void scrolled(double x, double y, double horizontalAmount, double verticalAmount) {
 
 	}
 
