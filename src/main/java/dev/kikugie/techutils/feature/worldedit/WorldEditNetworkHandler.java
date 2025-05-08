@@ -1,17 +1,13 @@
 package dev.kikugie.techutils.feature.worldedit;
 
-import com.sk89q.worldedit.fabric.net.handler.WECUIPacketHandler;
 import dev.kikugie.techutils.TechUtilsMod;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
-import net.fabricmc.fabric.impl.networking.payload.ResolvablePayload;
-import net.fabricmc.fabric.impl.networking.payload.RetainedPayload;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.packet.s2c.common.CustomPayloadS2CPacket;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 
@@ -55,9 +51,9 @@ public class WorldEditNetworkHandler {
 		return Optional.ofNullable(instance);
 	}
 
-	public void onYoinkedPacket(CustomPayloadS2CPacket packet) {
+	public void onYoinkedPacket(PacketByteBuf packet) {
 		if (!this.yoinkPackets) return;
-		onPacket(MinecraftClient.getInstance(), MinecraftClient.getInstance().getNetworkHandler(), ((RetainedPayload) packet.payload()).buf(), ClientPlayNetworking.getSender());
+		onPacket(MinecraftClient.getInstance(), MinecraftClient.getInstance().getNetworkHandler(), packet, ClientPlayNetworking.getSender());
 	}
 
 	private void onPacket(MinecraftClient minecraftClient, ClientPlayNetworkHandler clientPlayNetworkHandler, PacketByteBuf data, PacketSender packetSender) {

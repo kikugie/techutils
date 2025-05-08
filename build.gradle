@@ -182,7 +182,7 @@ unifiedPublishing {
 	project {
 		displayName.set "Technical Utilities $project.version"
 		releaseType.set "beta"
-		gameVersions.set(["1.20", "1.20.1"])
+		gameVersions.set(["1.20.4"])
 		gameLoaders.set(["fabric"])
 
 		relations {

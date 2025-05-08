@@ -1,27 +1,28 @@
 package dev.kikugie.techutils.mixin.mod.fapi;
 
 import dev.kikugie.techutils.feature.worldedit.WorldEditNetworkHandler;
-import net.fabricmc.fabric.impl.networking.payload.ResolvablePayload;
-import net.fabricmc.fabric.impl.networking.payload.RetainedPayload;
-import net.minecraft.client.network.ClientCommonNetworkHandler;
-import net.minecraft.network.packet.s2c.common.CustomPayloadS2CPacket;
+import net.fabricmc.fabric.impl.networking.client.ClientPlayNetworkAddon;
+import net.fabricmc.fabric.impl.networking.payload.ResolvedPayload;
+import net.fabricmc.fabric.impl.networking.payload.UntypedPayload;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(ClientCommonNetworkHandler.class)
+@SuppressWarnings("UnstableApiUsage")
+@Mixin(ClientPlayNetworkAddon.class)
 public class ClientPlayNetworkAddonMixin {
 	/**
 	 * Prevents packet receiver collision with other WorldEdit addons, such as WorldEditCUI.
 	 */
-	@SuppressWarnings("UnstableApiUsage")
-    @Inject(method = "onCustomPayload(Lnet/minecraft/network/packet/s2c/common/CustomPayloadS2CPacket;)V", at = @At("HEAD"), cancellable = true)
-	private void yoinkWorldEditPacket(CustomPayloadS2CPacket packet, CallbackInfo cir) {
-		if (packet.payload().id().equals(WorldEditNetworkHandler.CHANNEL)) {
-			if (packet.payload() instanceof RetainedPayload) {
-				WorldEditNetworkHandler.getInstance().ifPresent(handlerInstance -> handlerInstance.onYoinkedPacket(packet));
-			}
+    @Inject(method = "receive(Lnet/fabricmc/fabric/impl/networking/client/ClientPlayNetworkAddon$Handler;Lnet/fabricmc/fabric/impl/networking/payload/ResolvedPayload;)V", at = @At("HEAD"))
+	private void yoinkWorldEditPacket(ClientPlayNetworkAddon.Handler handler, ResolvedPayload payload, CallbackInfo ci) {
+		if (payload instanceof UntypedPayload untypedPayload
+			&& payload.id().equals(WorldEditNetworkHandler.CHANNEL)
+		) {
+			WorldEditNetworkHandler.getInstance().ifPresent(handlerInstance ->
+				handlerInstance.onYoinkedPacket(untypedPayload.buffer())
+			);
 		}
 	}
 }

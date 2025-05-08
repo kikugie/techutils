@@ -1,7 +1,5 @@
 package dev.kikugie.techutils.util;
 
-import dev.kikugie.techutils.mixin.containerscan.EnchantmentPredicateAccessor;
-import dev.kikugie.techutils.mixin.containerscan.NbtPredicateAccessor;
 import it.unimi.dsi.fastutil.objects.Reference2ReferenceOpenHashMap;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.client.MinecraftClient;
@@ -147,7 +145,7 @@ public final class ItemPredicateUtils {
 			var msg = Text.literal("Incorrect item type. Expected tag '%s' with items: ".formatted(tagKey.id()))
 				.styled(style -> style.withColor(Formatting.RED).withItalic(false));
 			Registries.ITEM.getEntryList(tagKey).ifPresent(el -> el.stream()
-				.flatMap(i -> Stream.of(Text.of(", "), Text.of(Registries.ITEM.getId(i.value()).toString())))
+				.flatMap(i -> Stream.of(Text.of(", "), Text.of(getIdAsString(i))))
 				.skip(1)
 				.forEach(msg::append));
 			lines.add(msg);
@@ -159,7 +157,7 @@ public final class ItemPredicateUtils {
 			var msg = Text.literal("Incorrect item type. Expected: ")
 				.styled(style -> style.withColor(Formatting.RED).withItalic(false));
 			itemsList.stream()
-				.flatMap(i -> Stream.of(Text.of(", "), Text.of(Registries.ITEM.get(i.getKey().get()).toString())))
+				.flatMap(i -> Stream.of(Text.of(", "), Text.of(getIdAsString(i))))
 				.skip(1)
 				.forEach(msg::append);
 			lines.add(msg);
@@ -207,19 +205,20 @@ public final class ItemPredicateUtils {
 
 		var unsatisfiedEnchantments = new ArrayList<Text>();
 		var enchantmentNbt =
-			enchantments.size() > 0
+			!enchantments.isEmpty()
 				? stack.getEnchantments()
-				: (storedEnchantments.size() > 0 ? EnchantedBookItem.getEnchantmentNbt(stack) : null);
+				: (!storedEnchantments.isEmpty() ? EnchantedBookItem.getEnchantmentNbt(stack) : null);
 		if (enchantmentNbt != null) {
 			Map<Enchantment, Integer> enchantmentLevels = EnchantmentHelper.fromNbt(enchantmentNbt);
 
 			for (var enchantmentPredicate : enchantments) {
-				if (enchantmentPredicate.enchantment().isEmpty()) continue;
-
 				if (!enchantmentPredicate.test(enchantmentLevels)) {
 					unsatisfiedEnchantments.add(
-						Text.literal("'%s' with level %s"
-							.formatted(Registries.ENCHANTMENT.get(enchantmentPredicate.enchantment().get().getKey().get()),
+						Text.literal("%s with level %s"
+							.formatted(
+								enchantmentPredicate.enchantment()
+									.map(ItemPredicateUtils::getIdAsString).map("'%s'"::formatted)
+									.orElse("Any enchantment"),
 								intRangeToString.apply(enchantmentPredicate.levels())
 							)
 						)
@@ -235,14 +234,12 @@ public final class ItemPredicateUtils {
 		}
 
 		if (potion.isPresent() && potion.get() != PotionUtil.getPotion(stack)) {
-			RegistryEntry<Potion> potionRegistryEntry = potion.get();
-
-			var msg = Text.literal("Incorrect potion. Expected '%s'".formatted(Registries.POTION.get(potionRegistryEntry.getKey().get())))
+			var msg = Text.literal("Incorrect potion. Expected '%s'".formatted(getIdAsString(potion.get())))
 				.styled(style -> style.withColor(Formatting.RED).withItalic(false));
 			lines.add(msg);
 		}
 
-		if (!nbt.get().test(stack)) {
+		if (nbt.isPresent() && !nbt.get().test(stack)) {
 			var msg = Text.literal("Incorrect NBT. Expected:")
 				.styled(style -> style.withColor(Formatting.RED).withItalic(false));
 			lines.add(msg);
@@ -284,5 +281,9 @@ public final class ItemPredicateUtils {
 		}
 		PRETTIFIED_PREDICATES.put(markerPredicate, lines);
 		return markerPredicate;
+	}
+
+	private static String getIdAsString(RegistryEntry<?> entry) {
+		return entry.getKey().map(key -> key.getValue().toString()).orElse("[unregistered]");
 	}
 }
