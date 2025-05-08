@@ -43,11 +43,6 @@ public class ItemPredicateEntryScreen extends Screen {
 		this.placeholder = placeholder;
 	}
 
-	@Override
-	public void tick() {
-		this.consoleCommandTextField.tick();
-	}
-
 	protected void commitAndClose() {
 		var stack = ItemPredicateUtils.createPredicateStack(consoleCommandTextField.getText(), placeholder);
 
@@ -93,7 +88,7 @@ public class ItemPredicateEntryScreen extends Screen {
 
 	@Override
 	public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-		this.renderBackground(context);
+		this.renderBackground(context, mouseX, mouseY, delta);
 		context.drawCenteredTextWithShadow(this.textRenderer, TITLE, this.width / 2, 20, 16777215);
 		context.drawTextWithShadow(this.textRenderer, INPUT_TEXT, this.width / 2 - 150 + 1, 40, 10526880);
 		this.consoleCommandTextField.render(context, mouseX, mouseY, delta);

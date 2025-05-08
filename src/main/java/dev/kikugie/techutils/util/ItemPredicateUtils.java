@@ -1,24 +1,25 @@
 package dev.kikugie.techutils.util;
 
-import com.mojang.serialization.JsonOps;
 import dev.kikugie.techutils.mixin.containerscan.EnchantmentPredicateAccessor;
-import dev.kikugie.techutils.mixin.containerscan.ItemPredicateAccessor;
 import dev.kikugie.techutils.mixin.containerscan.NbtPredicateAccessor;
 import it.unimi.dsi.fastutil.objects.Reference2ReferenceOpenHashMap;
 import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.EnchantedBookItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
+import net.minecraft.item.*;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.StringNbtReader;
+import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionUtil;
 import net.minecraft.predicate.NumberRange;
 import net.minecraft.predicate.item.ItemPredicate;
 import net.minecraft.registry.Registries;
+import net.minecraft.registry.RegistryOps;
+import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.registry.entry.RegistryEntryList;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import org.jetbrains.annotations.Nullable;
@@ -95,13 +96,19 @@ public final class ItemPredicateUtils {
 			if (nbt.isEmpty()) {
 				throw new IllegalArgumentException("No item predicate is present!");
 			}
-			var predicate = ItemPredicate.fromJson(NbtOps.INSTANCE.convertTo(JsonOps.INSTANCE, nbt));
+		} catch (Throwable throwable) {
+			return saveFailedPredicate(rawPredicate, throwable.getMessage());
+		}
+
+		var result = ItemPredicate.CODEC.parse(RegistryOps.of(NbtOps.INSTANCE, MinecraftClient.getInstance().world.getRegistryManager()), nbt);
+		if (result.result().isPresent()) {
+			var predicate = result.result().get();
 			PREDICATE_CACHE.put(rawPredicate, predicate);
 			PRETTIFIED_PREDICATES.put(predicate, ContainerUtils.prettifyNbt(nbt));
 
 			return predicate;
-		} catch (Throwable throwable) {
-			return saveFailedPredicate(rawPredicate, throwable.getMessage());
+		} else {
+			return saveFailedPredicate(rawPredicate, result.error().get().message());
 		}
 	}
 
@@ -125,31 +132,34 @@ public final class ItemPredicateUtils {
 
 	public static List<Text> getErrorLines(ItemStack stack, ItemPredicate predicate) {
 		var lines = new ArrayList<Text>();
-		var accessedPredicate = (ItemPredicateAccessor) predicate;
-		var items = accessedPredicate.items();
-		var tag = accessedPredicate.tag();
-		var count = accessedPredicate.count();
-		var durability = accessedPredicate.durability();
-		var enchantments = accessedPredicate.enchantments();
-		var storedEnchantments = accessedPredicate.storedEnchantments();
-		var potion = accessedPredicate.potion();
-		var nbt = accessedPredicate.nbt();
+		var items = predicate.items();
+		var tag = predicate.tag();
+		var count = predicate.count();
+		var durability = predicate.durability();
+		var enchantments = predicate.enchantments();
+		var storedEnchantments = predicate.storedEnchantments();
+		var potion = predicate.potion();
+		var nbt = predicate.nbt();
 
-		if (tag != null && !stack.isIn(tag)) {
-			var msg = Text.literal("Incorrect item type. Expected tag '%s' with items: ".formatted(tag.id()))
+		if (tag.isPresent() && !stack.isIn(tag.get())) {
+			TagKey<Item> tagKey = tag.orElseThrow();
+
+			var msg = Text.literal("Incorrect item type. Expected tag '%s' with items: ".formatted(tagKey.id()))
 				.styled(style -> style.withColor(Formatting.RED).withItalic(false));
-			Registries.ITEM.getEntryList(tag).ifPresent(el -> el.stream()
+			Registries.ITEM.getEntryList(tagKey).ifPresent(el -> el.stream()
 				.flatMap(i -> Stream.of(Text.of(", "), Text.of(Registries.ITEM.getId(i.value()).toString())))
 				.skip(1)
 				.forEach(msg::append));
 			lines.add(msg);
 		}
 
-		if (items != null && !items.contains(stack.getItem())) {
+		if (items.isPresent() && !items.get().contains(stack.getItem().getRegistryEntry())) {
+			RegistryEntryList<Item> itemsList = items.orElseThrow();
+
 			var msg = Text.literal("Incorrect item type. Expected: ")
 				.styled(style -> style.withColor(Formatting.RED).withItalic(false));
-			items.stream()
-				.flatMap(i -> Stream.of(Text.of(", "), Text.of(Registries.ITEM.getId(i).toString())))
+			itemsList.stream()
+				.flatMap(i -> Stream.of(Text.of(", "), Text.of(Registries.ITEM.get(i.getKey().orElseThrow()).toString())))
 				.skip(1)
 				.forEach(msg::append);
 			lines.add(msg);
@@ -157,8 +167,8 @@ public final class ItemPredicateUtils {
 
 		Function<NumberRange.IntRange, String> intRangeToString = range -> {
 			StringBuilder sb = new StringBuilder();
-			var min = range.getMin();
-			var max = range.getMax();
+			var min = range.min();
+			var max = range.max();
 			if (min != null && min.equals(max)) {
 				sb.append(min);
 			} else {
@@ -197,19 +207,20 @@ public final class ItemPredicateUtils {
 
 		var unsatisfiedEnchantments = new ArrayList<Text>();
 		var enchantmentNbt =
-			enchantments.length > 0
+			enchantments.size() > 0
 				? stack.getEnchantments()
-				: (storedEnchantments.length > 0 ? EnchantedBookItem.getEnchantmentNbt(stack) : null);
+				: (storedEnchantments.size() > 0 ? EnchantedBookItem.getEnchantmentNbt(stack) : null);
 		if (enchantmentNbt != null) {
 			Map<Enchantment, Integer> enchantmentLevels = EnchantmentHelper.fromNbt(enchantmentNbt);
 
 			for (var enchantmentPredicate : enchantments) {
-				var accessedEnchantmentPredicate = ((EnchantmentPredicateAccessor) enchantmentPredicate);
+				if (enchantmentPredicate.enchantment().isEmpty()) continue;
+
 				if (!enchantmentPredicate.test(enchantmentLevels)) {
 					unsatisfiedEnchantments.add(
 						Text.literal("'%s' with level %s"
-							.formatted(Registries.ENCHANTMENT.getId(accessedEnchantmentPredicate.enchantment()),
-								intRangeToString.apply(accessedEnchantmentPredicate.levels())
+							.formatted(Registries.ENCHANTMENT.get(enchantmentPredicate.enchantment().orElseThrow().getKey().orElseThrow()),
+								intRangeToString.apply(enchantmentPredicate.levels())
 							)
 						)
 					);
@@ -223,17 +234,19 @@ public final class ItemPredicateUtils {
 			lines.addAll(unsatisfiedEnchantments);
 		}
 
-		if (potion != null && potion != PotionUtil.getPotion(stack)) {
-			var msg = Text.literal("Incorrect potion. Expected '%s'".formatted(Registries.POTION.getId(potion)))
+		if (potion.isPresent() && potion.get() != PotionUtil.getPotion(stack)) {
+			RegistryEntry<Potion> potionRegistryEntry = potion.orElseThrow();
+
+			var msg = Text.literal("Incorrect potion. Expected '%s'".formatted(Registries.POTION.get(potionRegistryEntry.getKey().orElseThrow())))
 				.styled(style -> style.withColor(Formatting.RED).withItalic(false));
 			lines.add(msg);
 		}
 
-		if (!nbt.test(stack)) {
+		if (!nbt.get().test(stack)) {
 			var msg = Text.literal("Incorrect NBT. Expected:")
 				.styled(style -> style.withColor(Formatting.RED).withItalic(false));
 			lines.add(msg);
-			lines.addAll(ContainerUtils.prettifyNbt(((NbtPredicateAccessor) nbt).nbt()));
+			lines.addAll(ContainerUtils.prettifyNbt(nbt.get().nbt()));
 		}
 
 		return lines;

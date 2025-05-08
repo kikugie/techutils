@@ -6,20 +6,23 @@ import net.minecraft.predicate.NbtPredicate;
 import net.minecraft.predicate.NumberRange;
 import net.minecraft.predicate.item.EnchantmentPredicate;
 import net.minecraft.predicate.item.ItemPredicate;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.tag.TagKey;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
+import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Mixin(ItemPredicate.class)
 public interface ItemPredicateAccessor {
 	@Accessor("tag")
-	@Nullable TagKey<Item> tag();
+	@Nullable Optional<TagKey<Item>> tag();
 
 	@Accessor("items")
-	@Nullable Set<Item> items();
+	@Nullable Optional<Set<Item>> items();
 
 	@Accessor("count")
 	NumberRange.IntRange count();
@@ -28,14 +31,14 @@ public interface ItemPredicateAccessor {
 	NumberRange.IntRange durability();
 
 	@Accessor("enchantments")
-	EnchantmentPredicate[] enchantments();
+	List<EnchantmentPredicate> enchantments();
 
 	@Accessor("storedEnchantments")
-	EnchantmentPredicate[] storedEnchantments();
+	List<EnchantmentPredicate> storedEnchantments();
 
 	@Accessor("potion")
-	@Nullable Potion potion();
+	@Nullable Optional<RegistryEntry<Potion>> potion();
 
 	@Accessor("nbt")
-	NbtPredicate nbt();
+	Optional<NbtPredicate> nbt();
 }
