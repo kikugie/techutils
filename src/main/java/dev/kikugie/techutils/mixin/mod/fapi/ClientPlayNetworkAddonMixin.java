@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @SuppressWarnings("UnstableApiUsage")
-@Mixin(ClientPlayNetworkAddon.class)
+@Mixin(value = ClientPlayNetworkAddon.class, remap = false)
 public class ClientPlayNetworkAddonMixin {
 	/**
 	 * Prevents packet receiver collision with other WorldEdit addons, such as WorldEditCUI.
