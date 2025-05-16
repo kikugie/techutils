@@ -179,7 +179,7 @@ public class InventoryOverlay {
 		if (LitematicConfigs.INVENTORY_SCREEN_OVERLAY.getBooleanValue() && this.renderCurrentItemTransparent) {
 			this.renderCurrentItemTransparent = false;
 			MatrixStack matrices = context.getMatrices();
-			TransparencyBuffer.preInject();
+			TransparencyBuffer.preInject(context);
 
 			// Align the matrix stack
 			matrices.push();

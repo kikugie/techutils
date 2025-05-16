@@ -32,7 +32,7 @@ public class HandledScreenMixin {
 		return InventoryOverlay.drawStack(context, slot, stack);
 	}
 
-	@Inject(method = "drawSlot", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/math/MatrixStack;pop()V"))
+	@Inject(method = "drawSlot", at = @At("RETURN"))
 	private void restoreTransparency(DrawContext context, Slot slot, CallbackInfo ci) {
 		InventoryOverlay.drawTransparencyBuffer(context, this.x, this.y);
 	}
