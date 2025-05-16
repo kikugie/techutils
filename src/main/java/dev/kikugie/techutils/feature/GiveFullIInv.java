@@ -51,7 +51,7 @@ public class GiveFullIInv {
 		Optional<ItemStack> result = get(mainHand, offHand);
 		if (result.isEmpty())
 			return false;
-		int selectedSlot = player.getInventory().selectedSlot;
+		int selectedSlot = player.getInventory().getSelectedSlot();
 		player.getInventory().setStack(selectedSlot, result.get());
 		Objects.requireNonNull(MinecraftClient.getInstance().interactionManager).clickCreativeStack(result.get(), 36 + selectedSlot);
 		player.playerScreenHandler.sendContentUpdates();

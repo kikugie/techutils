@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.Slice;
 
-import java.io.File;
+import java.nio.file.Path;
 
 /**
  * Replaces Litematica's default method of selecting custom preview image with a file selection menu.
@@ -30,8 +30,8 @@ public class GuiSchematicManagerMixin {
 	 * @see <a href="https://github.com/orange451/LWJGUI/blob/bdc10971be84157e05aa0dbc1eccb6e51c5b04ca/src/main/java/lwjgui/LWJGUIDialog.java#L85">Source</a>
 	 */
 	@Redirect(method = "actionPerformedWithButton",
-		at = @At(value = "NEW", target = "(Ljava/io/File;Ljava/lang/String;)Ljava/io/File;"))
-	private File pickCustomImage(File parent, String value, @Share("pickingCustomImage") LocalBooleanRef pickingCustomImage) {
+		at = @At(value = "INVOKE", target = "Ljava/nio/file/Path;resolve(Ljava/lang/String;)Ljava/nio/file/Path;"))
+	private Path pickCustomImage(Path parent, String value, @Share("pickingCustomImage") LocalBooleanRef pickingCustomImage) {
 		pickingCustomImage.set(true);
 		PointerBuffer filters;
 		String selectedFile;
@@ -52,9 +52,9 @@ public class GuiSchematicManagerMixin {
 
 		if (selectedFile == null) {
 			InfoUtils.showGuiAndInGameMessage(Message.MessageType.ERROR, "Image not selected");
-			return new File(parent, value);
+			return parent.resolve(value);
 		}
-		return new File(selectedFile);
+		return Path.of(selectedFile);
 	}
 
 	@Redirect(method = "actionPerformedWithButton",

@@ -5,6 +5,7 @@ import dev.kikugie.techutils.feature.containerscan.LinkedStorageEntry;
 import dev.kikugie.techutils.feature.containerscan.verifier.BlockMismatchExtension;
 import fi.dy.masa.litematica.gui.GuiSchematicVerifier;
 import fi.dy.masa.litematica.gui.widgets.WidgetSchematicVerificationResult;
+import fi.dy.masa.litematica.render.OverlayRenderer;
 import fi.dy.masa.litematica.render.RenderUtils;
 import fi.dy.masa.litematica.util.BlockInfoAlignment;
 import fi.dy.masa.malilib.gui.LeftRight;
@@ -103,7 +104,7 @@ public abstract class WidgetSchematicVerificationResultMixin<InventoryBE extends
 		{
 			final InventoryOverlay.InventoryProperties props = InventoryOverlay.getInventoryPropsTemp(ctx.type(), ctx.inv().size());
 
-			//Litematica.logger.error("render(): type [{}], inv [{}], be [{}], nbt [{}]", ctx.type().name(), ctx.inv().size(), ctx.be() != null, ctx.nbt() != null ? ctx.nbt().getString("id") : new NbtCompound());
+//            Litematica.LOGGER.error("render(): type [{}], inv [{}], be [{}], nbt [{}]", ctx.type().name(), ctx.inv().size(), ctx.be() != null, ctx.nbt() != null ? ctx.nbt().getString("id") : new NbtCompound());
 
 			// Try to draw Locked Slots on Crafter Grid
 			if (ctx.type() == InventoryOverlay.InventoryRenderType.CRAFTER)
@@ -140,6 +141,7 @@ public abstract class WidgetSchematicVerificationResultMixin<InventoryBE extends
 	{
 		int xInv = 0;
 		int yInv = 0;
+		int compatShift = OverlayRenderer.calculateCompatYShift();
 
 		switch (align)
 		{
@@ -149,7 +151,7 @@ public abstract class WidgetSchematicVerificationResultMixin<InventoryBE extends
 				break;
 			case TOP_CENTER:
 				xInv = GuiUtils.getScaledWindowWidth() / 2 - (props.width / 2);
-				yInv = offY;
+                yInv = offY + compatShift;
 				break;
 		}
 
@@ -158,9 +160,9 @@ public abstract class WidgetSchematicVerificationResultMixin<InventoryBE extends
 
 		fi.dy.masa.malilib.render.RenderUtils.color(1f, 1f, 1f, 1f);
 
-		InventoryOverlay.renderInventoryBackground(type, xInv, yInv, props.slotsPerRow, props.totalSlots, mc);
+		InventoryOverlay.renderInventoryBackground(type, xInv, yInv, props.slotsPerRow, props.totalSlots, mc, drawContext);
 		InventoryOverlay.renderInventoryStacks(type, inv, xInv + props.slotOffsetX, yInv + props.slotOffsetY, props.slotsPerRow, 0, inv.size(), disabledSlots, mc, drawContext, mouseX, mouseY);
 
-		return props.height;
+        return props.height + compatShift;
 	}
 }

@@ -1,9 +1,11 @@
 package dev.kikugie.techutils.render;
 
+import com.mojang.blaze3d.pipeline.RenderPipeline;
 import com.mojang.blaze3d.systems.ProjectionType;
 import com.mojang.blaze3d.systems.RenderSystem;
 import dev.kikugie.techutils.Reference;
 import dev.kikugie.techutils.mixin.containerscan.MinecraftClientAccessor;
+import fi.dy.masa.malilib.render.MaLiLibPipelines;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gl.Framebuffer;
 import net.minecraft.client.gl.SimpleFramebuffer;
@@ -11,9 +13,8 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.RenderPhase;
 import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.render.VertexFormat;
-import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.util.Window;
+import net.minecraft.util.Identifier;
 import org.joml.Matrix4f;
 
 /**
@@ -24,28 +25,28 @@ import org.joml.Matrix4f;
 public class TransparencyBuffer {
 	private static final Framebuffer framebuffer;
 	private static Framebuffer prevFramebuffer;
+	private static final RenderPipeline POSITION_TEX_TRANSPARENT = RenderPipeline.builder(MaLiLibPipelines.POSITION_TEX_MASA_STAGE)
+		.withLocation(Identifier.of(Reference.MOD_ID, "pipeline/position_tex/transparent"))
+		.build();
 	private static final RenderLayer POSITION_TEX_TRANSPARENT_LAYER = RenderLayer.of(
 		Reference.MOD_ID + "_transparency",
-		VertexFormats.POSITION_TEXTURE, VertexFormat.DrawMode.QUADS,
 		1536, false, true,
+		POSITION_TEX_TRANSPARENT,
 		RenderLayer.MultiPhaseParameters.builder()
 			.texture(RenderPhase.NO_TEXTURE)
-			.program(RenderPhase.POSITION_TEXTURE_PROGRAM)
-			.transparency(RenderPhase.TRANSLUCENT_TRANSPARENCY)
 			.build(false)
 	);
 
 	static {
 		var client = MinecraftClient.getInstance();
 		Window window = client.getWindow();
-		framebuffer = new SimpleFramebuffer(window.getFramebufferWidth(), window.getFramebufferHeight(), true);
-		framebuffer.setClearColor(0, 0, 0, 0);
+		framebuffer = new SimpleFramebuffer(Reference.MOD_ID + "_transparency", window.getFramebufferWidth(), window.getFramebufferHeight(), true);
 	}
 
 	public static void prepareExtraFramebuffer() {
 		prevFramebuffer = MinecraftClient.getInstance().getFramebuffer();
 		// Setup extra framebuffer to draw into
-		framebuffer.clear();
+		RenderSystem.getDevice().createCommandEncoder().clearColorAndDepthTextures(framebuffer.getColorAttachment(), 0, framebuffer.getDepthAttachment(), 1);
 		((MinecraftClientAccessor) MinecraftClient.getInstance()).setFramebuffer(framebuffer);
 	}
 

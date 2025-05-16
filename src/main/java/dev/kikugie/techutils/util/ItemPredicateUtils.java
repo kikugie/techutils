@@ -11,13 +11,15 @@ import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.StringNbtReader;
 import net.minecraft.predicate.NumberRange;
+import net.minecraft.predicate.component.ComponentPredicate;
 import net.minecraft.predicate.item.ItemPredicate;
-import net.minecraft.predicate.item.ItemSubPredicate;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.RegistryOps;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Util;
@@ -69,7 +71,7 @@ public final class ItemPredicateUtils {
 
 	public static String getRawPredicate(ItemStack stack) {
 		return stack.get(DataComponentTypes.BLOCK_ENTITY_DATA) instanceof NbtComponent nbtComponent
-			? nbtComponent.getNbt().getString("Command")
+			? nbtComponent.getNbt().getString("Command").orElse("")
 			: "";
 	}
 
@@ -95,7 +97,7 @@ public final class ItemPredicateUtils {
 
 		NbtCompound nbt;
 		try {
-			nbt = StringNbtReader.parse(rawPredicate).getCompound("predicate");
+			nbt = StringNbtReader.readCompound(rawPredicate).getCompound("predicate").orElseGet(NbtCompound::new);
 			if (nbt.isEmpty()) {
 				throw new IllegalArgumentException("No item predicate is present!");
 			}
@@ -123,7 +125,7 @@ public final class ItemPredicateUtils {
 		if (ItemPredicateUtils.getPlaceholder(predicateStack) instanceof ItemStack placeholder) {
 			var nbt = new NbtCompound();
 			var lookup = MinecraftClient.getInstance().world.getRegistryManager();
-			nbt.put("placeholder", placeholder.toNbtAllowEmpty(lookup));
+			nbt.put("placeholder", toNbtAllowEmpty(placeholder, lookup));
 			var lines = new ArrayList<>(PRETTIFIED_PREDICATES.get(predicate));
 			lines.addAll(ContainerUtils.prettifyNbt(nbt));
 			return lines;
@@ -137,7 +139,6 @@ public final class ItemPredicateUtils {
 		var items = predicate.items();
 		var count = predicate.count();
 		var components = predicate.components();
-		var subPredicates = predicate.subPredicates();
 
 		if (items.isPresent() && !stack.isIn(items.get())) {
 			var msg = Text.literal("Incorrect item type. Expected: ")
@@ -169,7 +170,7 @@ public final class ItemPredicateUtils {
 		}
 
 		var wrongComponents = new ArrayList<ComponentType<?>>();
-		for (Map.Entry<ComponentType<?>, Optional<?>> entry : components.toChanges().entrySet()) {
+		for (Map.Entry<ComponentType<?>, Optional<?>> entry : components.exact().toChanges().entrySet()) {
 			ComponentType<?> type = entry.getKey();
 			if (!Objects.equals(entry.getValue().orElse(null), stack.get(type))) {
 				wrongComponents.add(type);
@@ -185,8 +186,8 @@ public final class ItemPredicateUtils {
 			lines.add(msg);
 		}
 
-		var wrongSubPredicates = new ArrayList<ItemSubPredicate.Type<?>>();
-		for (Map.Entry<ItemSubPredicate.Type<?>, ItemSubPredicate> entry : subPredicates.entrySet()) {
+		var wrongSubPredicates = new ArrayList<ComponentPredicate.Type<?>>();
+		for (Map.Entry<ComponentPredicate.Type<?>, ComponentPredicate> entry : components.partial().entrySet()) {
 			if(!entry.getValue().test(stack)) {
 				wrongSubPredicates.add(entry.getKey());
 			}
@@ -195,7 +196,7 @@ public final class ItemPredicateUtils {
 			var msg = Text.literal("Failed sub-predicates: ")
 				.styled(style -> style.withColor(Formatting.RED).withItalic(false));
 			wrongSubPredicates.stream()
-				.flatMap(t -> Stream.of(Text.of(", "), Text.of(Util.registryValueToString(Registries.ITEM_SUB_PREDICATE_TYPE, t))))
+				.flatMap(t -> Stream.of(Text.of(", "), Text.of(Util.registryValueToString(Registries.DATA_COMPONENT_PREDICATE_TYPE, t))))
 				.skip(1)
 				.forEach(msg::append);
 			lines.add(msg);
@@ -236,5 +237,9 @@ public final class ItemPredicateUtils {
 		}
 		PRETTIFIED_PREDICATES.put(markerPredicate, lines);
 		return markerPredicate;
+	}
+
+	private static NbtElement toNbtAllowEmpty(ItemStack stack, RegistryWrapper.WrapperLookup registries) {
+		return stack.isEmpty() ? new NbtCompound() : stack.toNbt(registries, new NbtCompound());
 	}
 }

@@ -7,7 +7,6 @@ import fi.dy.masa.litematica.schematic.verifier.SchematicVerifier.MismatchType;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.NbtComponent;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.text.Text;
 import net.minecraft.text.TextCodecs;
@@ -32,7 +31,7 @@ public interface SchematicVerifierExtension {
 
 		stack = stack.copy();
 		var nbt = stack.get(DataComponentTypes.CUSTOM_DATA).copyNbt();
-		var errorLines = ERROR_LINES_CODEC.parse(NbtOps.INSTANCE, nbt.getList(ERROR_LINES_ID, NbtElement.COMPOUND_TYPE)).getOrThrow();
+		var errorLines = ERROR_LINES_CODEC.parse(NbtOps.INSTANCE, nbt.getList(ERROR_LINES_ID).orElseThrow()).getOrThrow();
 		nbt.remove(ERROR_LINES_ID);
 		if (nbt.isEmpty()) {
 			stack.remove(DataComponentTypes.CUSTOM_DATA);

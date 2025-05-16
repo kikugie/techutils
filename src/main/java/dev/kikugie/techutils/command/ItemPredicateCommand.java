@@ -9,6 +9,7 @@ import dev.kikugie.techutils.util.ItemPredicateUtils;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.command.CommandRegistryAccess;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 
@@ -68,7 +69,7 @@ public class ItemPredicateCommand {
 						}
 
 						ItemPredicateUtils.setPlaceholder(mainHandStack, offHandStack);
-						int selectedSlot = player.getInventory().selectedSlot;
+						int selectedSlot = player.getInventory().getSelectedSlot();
 						player.getInventory().setStack(selectedSlot, mainHandStack);
 						source.getClient().interactionManager.clickCreativeStack(mainHandStack, 36 + selectedSlot);
 						player.playerScreenHandler.sendContentUpdates();
@@ -95,7 +96,7 @@ public class ItemPredicateCommand {
 							throw NO_PLACEHOLDER_FOUND_EXCEPTION.create();
 						}
 
-						player.getInventory().offHand.set(0, placeholder);
+						player.getInventory().setStack(PlayerInventory.OFF_HAND_SLOT, placeholder);
 						source.getClient().interactionManager.clickCreativeStack(placeholder, 45);
 						player.playerScreenHandler.sendContentUpdates();
 

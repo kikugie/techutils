@@ -47,7 +47,7 @@ public class ItemPredicateEntryScreen extends Screen {
 		var stack = ItemPredicateUtils.createPredicateStack(consoleCommandTextField.getText(), placeholder);
 
 
-		int selectedSlot = player.getInventory().selectedSlot;
+		int selectedSlot = player.getInventory().getSelectedSlot();
 		player.getInventory().setStack(selectedSlot, stack);
 		this.client.interactionManager.clickCreativeStack(stack, 36 + selectedSlot);
 		this.player.playerScreenHandler.sendContentUpdates();

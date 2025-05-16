@@ -1,7 +1,7 @@
 package dev.kikugie.techutils.feature.containerscan;
 
 import fi.dy.masa.litematica.config.Configs;
-import fi.dy.masa.malilib.util.Color4f;
+import fi.dy.masa.malilib.util.data.Color4f;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;

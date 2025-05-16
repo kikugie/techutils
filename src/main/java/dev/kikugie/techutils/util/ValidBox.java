@@ -17,14 +17,14 @@ public class ValidBox extends Box {
 
 	public ValidBox(BlockPos pos1, BlockPos pos2) {
 		super(pos1, pos2, "");
-		Validate.notNull(pos1);
-		Validate.notNull(pos2);
+		Objects.requireNonNull(pos1);
+		Objects.requireNonNull(pos2);
 	}
 
 	public ValidBox(BlockPos pos1, BlockPos pos2, String name) {
 		super(pos1, pos2, name);
-		Validate.notNull(pos1);
-		Validate.notNull(pos2);
+		Objects.requireNonNull(pos1);
+		Objects.requireNonNull(pos2);
 	}
 
 	public ValidBox(int[] corners) {
