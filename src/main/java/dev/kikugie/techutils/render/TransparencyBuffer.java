@@ -2,6 +2,7 @@ package dev.kikugie.techutils.render;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.systems.VertexSorter;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gl.Framebuffer;
 import net.minecraft.client.gl.SimpleFramebuffer;
@@ -79,6 +80,18 @@ public class TransparencyBuffer {
 	private static void drawUntexturedQuad(DrawContext context, int x1, int x2, int y1, int y2, int z, float u1, float u2, float v1, float v2) {
 		RenderSystem.setShaderTexture(0, framebuffer.getColorAttachment());
 		RenderSystem.setShader(GameRenderer::getPositionTexProgram);
+		RenderSystem.backupProjectionMatrix();
+		Matrix4f newProjMat = new Matrix4f()
+			.setOrtho(
+				0,
+				(float) x2,
+				(float) y2,
+				0,
+				1000.0F,
+				21000.0F
+			);
+		RenderSystem.setProjectionMatrix(newProjMat, VertexSorter.BY_Z);
+
 		Matrix4f matrix4f = context.getMatrices().peek().getPositionMatrix();
 		BufferBuilder bufferBuilder = Tessellator.getInstance().getBuffer();
 		bufferBuilder.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_TEXTURE);
@@ -86,6 +99,8 @@ public class TransparencyBuffer {
 		bufferBuilder.vertex(matrix4f, (float) x1, (float) y2, (float) z).texture(u1, v2).next();
 		bufferBuilder.vertex(matrix4f, (float) x2, (float) y2, (float) z).texture(u2, v2).next();
 		bufferBuilder.vertex(matrix4f, (float) x2, (float) y1, (float) z).texture(u2, v1).next();
+
 		BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
+		RenderSystem.restoreProjectionMatrix();
 	}
 }
