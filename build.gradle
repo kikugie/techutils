@@ -181,7 +181,7 @@ publishing {
 unifiedPublishing {
 	project {
 		displayName.set "Technical Utilities $project.version"
-		releaseType.set "beta"
+		releaseType.set "release"
 		gameVersions.set(["1.20", "1.20.1"])
 		gameLoaders.set(["fabric"])
 
