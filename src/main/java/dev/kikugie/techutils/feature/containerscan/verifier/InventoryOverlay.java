@@ -103,17 +103,15 @@ public class InventoryOverlay {
 	}
 
 	public static boolean setSlotToSchematicItem(Slot slot) {
-		if (instance == null || slot.inventory instanceof PlayerInventory)
+		if (!LitematicConfigs.INVENTORY_SCREEN_OVERLAY.getBooleanValue()
+			|| instance == null || slot.inventory instanceof PlayerInventory
+		)
 			return false;
 
 		var schematicItem = instance.entry.getPlacementInventory().get().getStack(slot.getIndex());
-		if (schematicItem.isEmpty()) {
-			return false;
-		} else {
-			var placeholder = ItemPredicateUtils.getPlaceholder(schematicItem);
-			slot.setStack(placeholder != null ? placeholder : schematicItem);
-			return true;
-		}
+		var placeholder = ItemPredicateUtils.getPlaceholder(schematicItem);
+		slot.setStack(placeholder != null ? placeholder : schematicItem);
+		return true;
 	}
 
 	public ItemStack drawStackInternal(DrawContext context, Slot slot, ItemStack stack) {
@@ -123,6 +121,9 @@ public class InventoryOverlay {
 			|| this.entry.getWorldInventory().isEmpty()
 		)
 			return stack;
+
+		if (LitematicConfigs.FORCE_SCHEMATIC_ITEM_OVERLAY.getBooleanValue())
+			stack = ItemStack.EMPTY;
 
 		ItemStack schematicStack = this.entry.getPlacementInventory().get().getStack(slot.getIndex());
 		if (schematicStack == null) {

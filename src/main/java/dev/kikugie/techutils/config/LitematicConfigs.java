@@ -3,6 +3,8 @@ package dev.kikugie.techutils.config;
 import com.google.common.collect.ImmutableList;
 import dev.kikugie.techutils.feature.preview.interaction.InteractionProfiles;
 import fi.dy.masa.malilib.config.options.*;
+import fi.dy.masa.malilib.hotkeys.KeybindSettings;
+import fi.dy.masa.malilib.util.StringUtils;
 
 public class LitematicConfigs extends Configs.BaseConfigs {
 	public static final ConfigBoolean RENDER_PREVIEW = new ConfigBoolean("renderPreview", true,
@@ -23,7 +25,7 @@ public class LitematicConfigs extends Configs.BaseConfigs {
 		"Rotate selected placement clockwise");
 	public static final ConfigHotkey MIRROR_PLACEMENT = new ConfigHotkey("mirrorPlacement", "Y",
 		"Cycle through selected placement's mirroring options");
-	public static final ConfigBooleanHotkeyed INVENTORY_SCREEN_OVERLAY = new ConfigBooleanHotkeyed("inventoryScreenOverlay", true, "I, O", """
+	public static final ConfigBooleanHotkeyed INVENTORY_SCREEN_OVERLAY = newConfigBooleanHotkeyed("inventoryScreenOverlay", true, "I, O", KeybindSettings.GUI, """
 		Show layout of the container according to the litematic placement.
 		Item colors match your placement block colors. By default its:
 		- Light blue: missing item;
@@ -36,11 +38,13 @@ public class LitematicConfigs extends Configs.BaseConfigs {
 	public static final ConfigBooleanHotkeyed EASY_PLACE_FULL_BLOCKS = new ConfigBooleanHotkeyed("easyPlaceFullBlocks", false, "", """
 		Treat all blocks as full cubes when using Litematica's easy place feature.
 		§7Useful for placing blocks with small hitboxes like buttons, chains, fences, etc.""");
-	public static final ConfigBooleanHotkeyed VERIFY_ITEM_NBT = new ConfigBooleanHotkeyed("verifyItemNbt", false, "", """
+	public static final ConfigBooleanHotkeyed VERIFY_ITEM_NBT = newConfigBooleanHotkeyed("verifyItemNbt", false, "", KeybindSettings.GUI, """
 		Make the inventory verifier enforce exact item NBT matches.
 		§7Also adds the NBT to the lore!""");
 	public static final ConfigBooleanHotkeyed REPLACE_ITEM_PREDICATES_WITH_PLACEHOLDERS = new ConfigBooleanHotkeyed("replaceItemPredicatesWithPlaceholders", false, "", """
 		When loading a schematic, replaces each Item Predicate with its stored placeholder, if present.""");
+	public static final ConfigBooleanHotkeyed FORCE_SCHEMATIC_ITEM_OVERLAY = newConfigBooleanHotkeyed("forceSchematicItemOverlay", false, "", KeybindSettings.GUI, """
+		Overwrite each slot in the opened container to show the schematic item instead of the real one.""");
 	public static final ConfigInteger SERVER_NBT_REQUEST_RATE = new ConfigInteger("serverNbtRequestRate", 5, """
 		Limit request rate for server entity data syncer""");
 	public static final ConfigDouble ENTITY_DATA_SYNC_CACHE_TIMEOUT= new ConfigDouble("entityDataSyncCacheTimeout", 0.75, 0.25, 30.0, """
@@ -64,8 +68,13 @@ public class LitematicConfigs extends Configs.BaseConfigs {
 			EASY_PLACE_FULL_BLOCKS,
 			VERIFY_ITEM_NBT,
 			REPLACE_ITEM_PREDICATES_WITH_PLACEHOLDERS,
+			FORCE_SCHEMATIC_ITEM_OVERLAY,
 			SERVER_NBT_REQUEST_RATE,
 			ENTITY_DATA_SYNC_CACHE_TIMEOUT
 		));
+	}
+
+	private static ConfigBooleanHotkeyed newConfigBooleanHotkeyed(String name, boolean defaultValue, String defaultHotkey, KeybindSettings settings, String comment) {
+		return new ConfigBooleanHotkeyed(name, defaultValue, defaultHotkey, settings, comment, StringUtils.splitCamelCase(name));
 	}
 }
