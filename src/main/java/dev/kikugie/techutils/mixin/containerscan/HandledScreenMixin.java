@@ -3,7 +3,8 @@ package dev.kikugie.techutils.mixin.containerscan;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.Share;
-import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
+import com.llamalad7.mixinextras.sugar.ref.LocalRef;
+import dev.kikugie.techutils.config.LitematicConfigs;
 import dev.kikugie.techutils.feature.containerscan.verifier.InventoryOverlay;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
@@ -38,18 +39,26 @@ public class HandledScreenMixin {
 	}
 
 	@ModifyExpressionValue(method = "drawMouseoverTooltip", at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/slot/Slot;hasStack()Z"))
-	private boolean tryDrawTooltipOfMissingItem(boolean hasStack, @Share("didSetItem") LocalBooleanRef didSetItem) {
-		if (!hasStack && InventoryOverlay.setSlotToSchematicItem(focusedSlot)) {
-			didSetItem.set(true);
-			return true;
+	private boolean tryDrawTooltipOfSchematicItem(boolean hasStack, @Share("prevItem") LocalRef<ItemStack> prevItemRef) {
+		var prevItem = focusedSlot.getStack();
+		if ((!hasStack || LitematicConfigs.FORCE_SCHEMATIC_ITEM_OVERLAY.getBooleanValue())
+			&& InventoryOverlay.setSlotToSchematicItem(focusedSlot)
+		) {
+			hasStack = focusedSlot.hasStack();
+			if (hasStack) {
+				prevItemRef.set(prevItem);
+			} else {
+				focusedSlot.setStack(prevItem);
+			}
 		}
 		return hasStack;
 	}
 
 	@Inject(method = "drawMouseoverTooltip", at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/slot/Slot;getStack()Lnet/minecraft/item/ItemStack;", shift = At.Shift.AFTER))
-	private void trySetFocusedSlotBackToEmpty(CallbackInfo ci, @Share("didSetItem") LocalBooleanRef didSetItem) {
-		if (didSetItem.get()) {
-			focusedSlot.setStack(ItemStack.EMPTY);
+	private void trySetFocusedSlotBackToPrev(CallbackInfo ci, @Share("prevItem") LocalRef<ItemStack> prevItemRef) {
+		var prevItem = prevItemRef.get();
+		if (prevItem != null) {
+			focusedSlot.setStack(prevItem);
 		}
 	}
 }
