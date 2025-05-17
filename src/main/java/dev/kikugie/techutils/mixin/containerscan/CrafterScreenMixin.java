@@ -2,6 +2,7 @@ package dev.kikugie.techutils.mixin.containerscan;
 
 import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
+import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import dev.kikugie.techutils.feature.containerscan.verifier.InventoryOverlay;
 import net.minecraft.client.gui.screen.ingame.CrafterScreen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
@@ -21,7 +22,8 @@ public abstract class CrafterScreenMixin extends HandledScreen<CrafterScreenHand
 	}
 
 	/**
-	 * This is duplicated from {@link HandledScreenMixin#tryDrawTooltipOfMissingItem(boolean, LocalBooleanRef)} because otherwise the "Click to disable slot" tooltip will clash with the forced schematic item tooltip
+	 * This method complements {@link HandledScreenMixin#tryDrawTooltipOfSchematicItem(boolean, LocalRef)}
+	 * because without it the "Click to disable slot" tooltip will clash with the forced schematic item tooltip.
 	 */
 	@Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/ingame/CrafterScreen;drawMouseoverTooltip(Lnet/minecraft/client/gui/DrawContext;II)V"))
 	private void tryDrawTooltipOfMissingItem(CallbackInfo ci, @Share("didSetItem") LocalBooleanRef didSetItem) {
