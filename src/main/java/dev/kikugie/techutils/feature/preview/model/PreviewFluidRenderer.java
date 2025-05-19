@@ -6,14 +6,11 @@ import org.joml.Matrix4f;
 
 public class PreviewFluidRenderer extends FluidRenderer {
 
-	private Matrix4f matrix;
+	private final Matrix4f matrix;
 
-	public PreviewFluidRenderer() {
-		onResourceReload();
-	}
-
-	public void setMatrix(Matrix4f matrix) {
+	public PreviewFluidRenderer(Matrix4f matrix) {
 		this.matrix = matrix;
+		onResourceReload();
 	}
 
 	@Override

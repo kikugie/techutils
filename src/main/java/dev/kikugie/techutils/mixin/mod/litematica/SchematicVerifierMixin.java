@@ -6,6 +6,7 @@ import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
+import com.plusls.MasaGadget.util.PcaSyncProtocol;
 import dev.kikugie.techutils.config.LitematicConfigs;
 import dev.kikugie.techutils.feature.containerscan.verifier.BlockMismatchExtension;
 import dev.kikugie.techutils.feature.containerscan.verifier.SchematicVerifierExtension;
@@ -133,6 +134,8 @@ public abstract class SchematicVerifierMixin<InventoryBE extends BlockEntity & I
 				minY = Math.min(bb.minY, minY);
 				maxY = Math.max(bb.maxY, maxY);
 			}
+
+			PcaSyncProtocol.cancelSyncBlockEntity();
 
 			eds.requestBackupBulkEntityData(pos, minY, maxY);
 
