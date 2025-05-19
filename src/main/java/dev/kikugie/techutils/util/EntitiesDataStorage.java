@@ -452,7 +452,7 @@ public class EntitiesDataStorage implements IClientTickHandler
 
 	public void requestBackupBulkEntityData(ChunkPos chunkPos, int minY, int maxY)
 	{
-		if (!this.getIfReceivedBackupPackets() || !this.hasPcaServer())
+		if (!this.getIfReceivedBackupPackets() && !this.hasPcaServer())
 		{
 			return;
 		}
@@ -504,7 +504,7 @@ public class EntitiesDataStorage implements IClientTickHandler
 
 	private boolean markBackupBlockEntityComplete(ChunkPos chunkPos, BlockPos pos)
 	{
-		if (!this.getIfReceivedBackupPackets())
+		if (!this.getIfReceivedBackupPackets() && !this.hasPcaServer())
 		{
 			return true;
 		}
