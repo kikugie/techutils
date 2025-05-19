@@ -398,7 +398,6 @@ public class LitematicMesh {
 			* (this.to.getZ() - this.from.getZ() + 1);
 
 
-		PreviewFluidRenderer fluidRenderer = new PreviewFluidRenderer();
 
 		for (var pos : BlockPos.iterate(this.from, this.to)) {
 			currentBlockIndex++;
@@ -427,7 +426,7 @@ public class LitematicMesh {
 				matrices.translate(-(pos.getX() & 15), -(pos.getY() & 15), -(pos.getZ() & 15));
 				matrices.translate(renderPos.getX(), renderPos.getY(), renderPos.getZ());
 
-				fluidRenderer.setMatrix(matrices.peek().getPositionMatrix());
+				PreviewFluidRenderer fluidRenderer = new PreviewFluidRenderer(matrices.peek().getPositionMatrix());
 				fluidRenderer.render(view, pos, getOrCreateBuilder(allocatorStorage, builderStorage,fluidLayer), state, fluidState);
 				matrices.pop();
 			}
