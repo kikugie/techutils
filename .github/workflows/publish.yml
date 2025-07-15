@@ -33,4 +33,4 @@ jobs:
         env:
           modrinth_key: ${{ secrets.MODRINTH_KEY }}
           changelog: ${{ github.event.release.body }}
-        run: ./gradlew publish publishUnified --stacktrace --no-daemon
+        run: ./gradlew publish publishMods --stacktrace --no-daemon

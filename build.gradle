@@ -1,6 +1,6 @@
 plugins {
 	id 'fabric-loom'
-	id 'me.shedaniel.unified-publishing' version '0.1.+'
+	id 'me.modmuss50.mod-publish-plugin' version '0.8.+'
 	id 'maven-publish'
 }
 
@@ -167,35 +167,28 @@ publishing {
 	}
 }
 
-unifiedPublishing {
-	project {
-		displayName.set "Technical Utilities $project.version"
-		releaseType.set "release"
-		gameVersions.set([*project.release_versions.split(" ")])
-		gameLoaders.set(["fabric"])
+publishMods {
+	file = remapJar.archiveFile
+	additionalFiles.from(remapSourcesJar.archiveFile)
+	version = "$project.version"
+	displayName = "Technical Utilities $project.version"
+	type = STABLE
+	modLoaders = ["fabric"]
 
-		relations {
-			depends {
-				modrinth = "litematica"
-			}
-			depends {
-				modrinth = "malilib"
-			}
-		}
+	System.getenv("changelog")?.with { String changelogg ->
+		changelog = changelogg
+	}
 
-		System.getenv("changelog")?.with { String changelogg ->
-			changelog.set changelogg
-		}
-
-		mainPublication tasks.remapJar
-		secondaryPublication tasks.remapSourcesJar.getArchiveFile()
-
-		System.getenv("modrinth_key")?.with { String key ->
-			modrinth {
-				token.set key
-				id.set project.modrinth_id
-				version = "$project.version"
-			}
+	System.getenv("modrinth_key")?.with { String key ->
+		modrinth {
+			accessToken = key
+			projectId = project.modrinth_id
+			minecraftVersions = [*project.release_versions.split(" ")]
+			requires("litematica")
+			requires("malilib")
 		}
 	}
+
+	// When dry run is enabled the release assets will be saved to the build directory for testing.
+//	dryRun = true
 }
