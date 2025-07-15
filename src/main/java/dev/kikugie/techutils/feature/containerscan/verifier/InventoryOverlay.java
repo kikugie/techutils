@@ -4,17 +4,17 @@ import dev.kikugie.techutils.config.LitematicConfigs;
 import dev.kikugie.techutils.feature.containerscan.LinkedStorageEntry;
 import dev.kikugie.techutils.feature.containerscan.PlacementContainerAccess;
 import dev.kikugie.techutils.feature.containerscan.handlers.InteractionHandler;
-import dev.kikugie.techutils.render.TransparencyBuffer;
 import dev.kikugie.techutils.util.ContainerUtils;
 import dev.kikugie.techutils.util.ItemPredicateUtils;
 import fi.dy.masa.litematica.config.Configs;
 import fi.dy.masa.malilib.util.WorldUtils;
+import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.render.state.ItemGuiElementRenderState;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.ScreenHandlerProvider;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.CraftingResultInventory;
 import net.minecraft.inventory.Inventory;
@@ -29,13 +29,17 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 public class InventoryOverlay {
+	public static final float MISSING_ITEM_ALPHA = 0.5F;
 	@Nullable
 	public static InventoryOverlay infoOverlayInstance = null;
 	@Nullable
 	public static ItemStack hoveredStackToRender;
 	public static boolean delayRenderingHoveredStack = false;
+	public static boolean isRenderingTransparentItem = false;
+	public static Set<ItemGuiElementRenderState> transparentItemStates = new ReferenceOpenHashSet<>();
 	@Nullable
 	private static InventoryOverlay instance = null;
 	private final int MISSING_COLOR = Configs.Colors.SCHEMATIC_OVERLAY_COLOR_MISSING.getIntegerValue();
@@ -43,7 +47,6 @@ public class InventoryOverlay {
 	private final int MISMATCHED_COLOR = Configs.Colors.SCHEMATIC_OVERLAY_COLOR_WRONG_STATE.getIntegerValue();
 	private final int EXTRA_COLOR = Configs.Colors.SCHEMATIC_OVERLAY_COLOR_EXTRA.getIntegerValue();
 	private final LinkedStorageEntry entry;
-	private boolean renderCurrentItemTransparent = false;
 
 	public InventoryOverlay(LinkedStorageEntry entry) {
 		this.entry = entry;
@@ -98,9 +101,9 @@ public class InventoryOverlay {
 		return instance == null ? stack : instance.drawStackInternal(context, slot, stack);
 	}
 
-	public static void drawTransparencyBuffer(DrawContext context, int x, int y) {
+	public static void finalizeDrawStack() {
 		if (instance != null)
-			instance.drawTransparencyBufferInternal(context, x, y);
+			instance.finalizeDrawStackInternal();
 	}
 
 	public static boolean setSlotToSchematicItem(Slot slot) {
@@ -134,20 +137,21 @@ public class InventoryOverlay {
 		}
 
 		int color = 0;
+		boolean shouldRenderItemAsTransparent = false;
 		if (ItemPredicateUtils.getPredicate(schematicStack) instanceof ItemPredicate predicate) {
 			if (stack.isEmpty()) {
 				color = this.MISSING_COLOR;
 				stack = ItemPredicateUtils.getPlaceholder(schematicStack) instanceof ItemStack placeholder
 					? placeholder
 					: schematicStack;
-				this.renderCurrentItemTransparent = true;
+				shouldRenderItemAsTransparent = true;
 			} else if (!predicate.test(stack)) {
 				color = this.WRONG_COLOR;
 			}
 		} else if (stack.isEmpty() && !schematicStack.isEmpty()) {
 			color = this.MISSING_COLOR;
 			stack = schematicStack;
-			this.renderCurrentItemTransparent = true;
+			shouldRenderItemAsTransparent = true;
 		} else if (!stack.isEmpty() && schematicStack.isEmpty()) {
 			color = this.EXTRA_COLOR;
 		} else if (!stack.getItem().equals(schematicStack.getItem())) {
@@ -162,9 +166,7 @@ public class InventoryOverlay {
 		if (color != 0)
 			drawBackground(context, slot, color);
 
-		if (this.renderCurrentItemTransparent)
-			TransparencyBuffer.prepareExtraFramebuffer();
-
+		isRenderingTransparentItem = shouldRenderItemAsTransparent;
 
 		return stack;
 	}
@@ -173,24 +175,11 @@ public class InventoryOverlay {
 		int x = slot.x;
 		int y = slot.y;
 		context.fill(x, y, x + 16, y + 16, color);
-		context.draw();
 	}
 
-	public void drawTransparencyBufferInternal(DrawContext context, int x, int y) {
-		if (LitematicConfigs.INVENTORY_SCREEN_OVERLAY.getBooleanValue() && this.renderCurrentItemTransparent) {
-			this.renderCurrentItemTransparent = false;
-			MatrixStack matrices = context.getMatrices();
-			TransparencyBuffer.preInject(context);
-
-			// Align the matrix stack
-			matrices.push();
-			matrices.translate(-x, -y, 0);
-
-			// Draw the framebuffer texture
-			TransparencyBuffer.drawExtraFramebuffer(context);
-			matrices.pop();
-
-			TransparencyBuffer.postInject();
+	public void finalizeDrawStackInternal() {
+		if (LitematicConfigs.INVENTORY_SCREEN_OVERLAY.getBooleanValue() && isRenderingTransparentItem) {
+			isRenderingTransparentItem = false;
 		}
 	}
 }

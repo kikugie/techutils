@@ -23,7 +23,7 @@ public class RenderUtilsMixin {
 		),
 		at = @At(
 			value = "INVOKE",
-			target = "Lfi/dy/masa/litematica/render/RenderUtils;renderInventoryOverlay(Lfi/dy/masa/litematica/util/BlockInfoAlignment;Lfi/dy/masa/malilib/gui/LeftRight;ILnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/client/MinecraftClient;Lnet/minecraft/client/gui/DrawContext;)I",
+			target = "Lfi/dy/masa/litematica/render/RenderUtils;renderInventoryOverlay(Lnet/minecraft/client/gui/DrawContext;Lfi/dy/masa/litematica/util/BlockInfoAlignment;Lfi/dy/masa/malilib/gui/LeftRight;ILnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/client/MinecraftClient;)I",
 			ordinal = 0
 		)
 	)

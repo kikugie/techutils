@@ -48,8 +48,8 @@ public abstract class WidgetSchematicVerificationResultMixin<InventoryBE extends
 	@Unique
 	private dev.kikugie.techutils.feature.containerscan.verifier.InventoryOverlay infoOverlay;
 
-	@WrapWithCondition(method = "postRenderHovered", at = @At(value = "INVOKE", target = "Lfi/dy/masa/litematica/gui/widgets/WidgetSchematicVerificationResult$BlockMismatchInfo;render(IILnet/minecraft/client/MinecraftClient;Lnet/minecraft/client/gui/DrawContext;)V", remap = true))
-	private boolean renderInventoryOverlayIfNecessary(WidgetSchematicVerificationResult.BlockMismatchInfo instance, int x, int y, MinecraftClient mc, DrawContext drawContext, int mouseX, int mouseY, boolean selected) {
+	@WrapWithCondition(method = "postRenderHovered", at = @At(value = "INVOKE", target = "Lfi/dy/masa/litematica/gui/widgets/WidgetSchematicVerificationResult$BlockMismatchInfo;render(Lnet/minecraft/client/gui/DrawContext;IILnet/minecraft/client/MinecraftClient;)V", remap = true))
+	private boolean renderInventoryOverlayIfNecessary(WidgetSchematicVerificationResult.BlockMismatchInfo instance, DrawContext drawContext, int x, int y, MinecraftClient mc, DrawContext unused, int mouseX, int mouseY, boolean selected) {
 		//noinspection unchecked
 		var inventories = mismatchEntry.blockMismatch == null ? null : ((BlockMismatchExtension<InventoryBE>) mismatchEntry.blockMismatch).getInventories$techutils();
 		if (inventories == null) {
@@ -82,7 +82,7 @@ public abstract class WidgetSchematicVerificationResultMixin<InventoryBE extends
 		delayRenderingHoveredStack = false;
 
 		if (hoveredStackToRender != null) {
-			InventoryOverlay.renderStackToolTipStyled(mouseX, mouseY, hoveredStackToRender, mc, drawContext);
+			InventoryOverlay.renderStackToolTipStyled(drawContext, mouseX, mouseY, hoveredStackToRender, mc);
 			hoveredStackToRender = null;
 		}
 
@@ -90,7 +90,7 @@ public abstract class WidgetSchematicVerificationResultMixin<InventoryBE extends
 	}
 
 	/**
-	 * Basically a clone of {@link RenderUtils#renderInventoryOverlay(BlockInfoAlignment, LeftRight, int, World, BlockPos, MinecraftClient, DrawContext)}
+	 * Basically a clone of {@link RenderUtils#renderInventoryOverlay(DrawContext, BlockInfoAlignment, LeftRight, int, World, BlockPos, MinecraftClient)}
 	 */
 	@Unique
 	private int renderInventoryOverlay(BlockInfoAlignment align, LeftRight side, int offY,
@@ -120,11 +120,11 @@ public abstract class WidgetSchematicVerificationResultMixin<InventoryBE extends
 					disabledSlots = BlockUtils.getDisabledSlots(cbe);
 				}
 
-				return renderInventoryOverlay(align, side, offY, ctx.inv(), ctx.type(), props, disabledSlots, mc, drawContext, mouseX, mouseY);
+				return renderInventoryOverlay(drawContext, side, offY, ctx.inv(), ctx.type(), props, disabledSlots, mc, align, mouseX, mouseY);
 			}
 			else
 			{
-				return renderInventoryOverlay(align, side, offY, ctx.inv(), ctx.type(), props, Set.of(), mc, drawContext, mouseX, mouseY);
+				return renderInventoryOverlay(drawContext, side, offY, ctx.inv(), ctx.type(), props, Set.of(), mc, align, mouseX, mouseY);
 			}
 		}
 
@@ -132,12 +132,11 @@ public abstract class WidgetSchematicVerificationResultMixin<InventoryBE extends
 	}
 
 	/**
-	 * Basically a clone of {@link RenderUtils#renderInventoryOverlay(BlockInfoAlignment, LeftRight, int, Inventory, InventoryOverlay.InventoryRenderType, InventoryOverlay.InventoryProperties, Set, MinecraftClient, DrawContext)}
+	 * Basically a clone of {@link RenderUtils#renderInventoryOverlay(DrawContext, BlockInfoAlignment, LeftRight, int, Inventory, InventoryOverlay.InventoryRenderType, InventoryOverlay.InventoryProperties, Set, MinecraftClient)}
 	 */
 	@Unique
-	private static int renderInventoryOverlay(BlockInfoAlignment align, LeftRight side, int offY,
-											  Inventory inv, InventoryOverlay.InventoryRenderType type, InventoryOverlay.InventoryProperties props, Set<Integer> disabledSlots,
-											  MinecraftClient mc, DrawContext drawContext, double mouseX, double mouseY)
+	private static int renderInventoryOverlay(DrawContext drawContext, LeftRight side, int offY, Inventory inv, InventoryOverlay.InventoryRenderType type, InventoryOverlay.InventoryProperties props, Set<Integer> disabledSlots, MinecraftClient mc, BlockInfoAlignment align,
+											  double mouseX, double mouseY)
 	{
 		int xInv = 0;
 		int yInv = 0;
@@ -158,10 +157,10 @@ public abstract class WidgetSchematicVerificationResultMixin<InventoryBE extends
 		if      (side == LeftRight.LEFT)  { xInv -= (props.width / 2 + 4); }
 		else if (side == LeftRight.RIGHT) { xInv += (props.width / 2 + 4); }
 
-		fi.dy.masa.malilib.render.RenderUtils.color(1f, 1f, 1f, 1f);
+//		fi.dy.masa.malilib.render.RenderUtils.color(1f, 1f, 1f, 1f);
 
-		InventoryOverlay.renderInventoryBackground(type, xInv, yInv, props.slotsPerRow, props.totalSlots, mc, drawContext);
-		InventoryOverlay.renderInventoryStacks(type, inv, xInv + props.slotOffsetX, yInv + props.slotOffsetY, props.slotsPerRow, 0, inv.size(), disabledSlots, mc, drawContext, mouseX, mouseY);
+		InventoryOverlay.renderInventoryBackground(drawContext, type, xInv, yInv, props.slotsPerRow, props.totalSlots, mc);
+		InventoryOverlay.renderInventoryStacks(drawContext, type, inv, xInv + props.slotOffsetX, yInv + props.slotOffsetY, props.slotsPerRow, 0, inv.size(), disabledSlots, mc, mouseX, mouseY);
 
         return props.height + compatShift;
 	}

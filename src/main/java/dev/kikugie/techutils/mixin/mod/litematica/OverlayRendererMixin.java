@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 
 @Mixin(OverlayRenderer.class)
 public class OverlayRendererMixin {
-	@ModifyArg(method = "renderVerifierOverlay", at = @At(value = "INVOKE", target = "Lfi/dy/masa/litematica/render/RenderUtils;renderInventoryOverlays(Lfi/dy/masa/litematica/util/BlockInfoAlignment;ILnet/minecraft/world/World;Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/client/MinecraftClient;Lnet/minecraft/client/gui/DrawContext;)I"), index = 3)
+	@ModifyArg(method = "renderVerifierOverlay", at = @At(value = "INVOKE", target = "Lfi/dy/masa/litematica/render/RenderUtils;renderInventoryOverlays(Lnet/minecraft/client/gui/DrawContext;Lfi/dy/masa/litematica/util/BlockInfoAlignment;ILnet/minecraft/world/World;Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/client/MinecraftClient;)I"), index = 3)
 	private World provideBestWorld(World world, @Local(argsOnly = true) MinecraftClient mc) {
 		return WorldUtils.getBestWorld(mc);
 	}

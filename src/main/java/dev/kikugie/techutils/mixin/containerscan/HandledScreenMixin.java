@@ -29,13 +29,13 @@ public class HandledScreenMixin {
 	@Shadow @Nullable protected Slot focusedSlot;
 
 	@ModifyExpressionValue(method = "drawSlot", at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/slot/Slot;getStack()Lnet/minecraft/item/ItemStack;", ordinal = 0))
-	private ItemStack setTransparency(ItemStack stack, @Local(argsOnly = true) DrawContext context, @Local(argsOnly = true) Slot slot) {
+	private ItemStack injectTransparency(ItemStack stack, @Local(argsOnly = true) DrawContext context, @Local(argsOnly = true) Slot slot) {
 		return InventoryOverlay.drawStack(context, slot, stack);
 	}
 
 	@Inject(method = "drawSlot", at = @At("RETURN"))
-	private void restoreTransparency(DrawContext context, Slot slot, CallbackInfo ci) {
-		InventoryOverlay.drawTransparencyBuffer(context, this.x, this.y);
+	private void finalizeDraw(CallbackInfo ci) {
+		InventoryOverlay.finalizeDrawStack();
 	}
 
 	@ModifyExpressionValue(method = "drawMouseoverTooltip", at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/slot/Slot;hasStack()Z"))

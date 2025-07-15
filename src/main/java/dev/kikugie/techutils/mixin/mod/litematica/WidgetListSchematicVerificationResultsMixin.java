@@ -50,7 +50,7 @@ public abstract class WidgetListSchematicVerificationResultsMixin extends Widget
 				&& bme.blockMismatch != null && bme.blockMismatch.mismatchType == WRONG_INVENTORIES
 			)
 			.max(Comparator.comparingInt(w -> selectedInventoryMismatches.indexOf(w.getEntry().blockMismatch)))
-			.ifPresent(w -> w.postRenderHovered(mouseX, mouseY, true, drawContext));
+			.ifPresent(w -> w.postRenderHovered(drawContext, mouseX, mouseY, true));
 	}
 
 	@Unique

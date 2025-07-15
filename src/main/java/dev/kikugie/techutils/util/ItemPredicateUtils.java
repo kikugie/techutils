@@ -20,7 +20,9 @@ import net.minecraft.predicate.item.ItemPredicate;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.RegistryOps;
 import net.minecraft.registry.RegistryWrapper;
+import net.minecraft.storage.NbtWriteView;
 import net.minecraft.text.Text;
+import net.minecraft.util.ErrorReporter;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Util;
 import org.jetbrains.annotations.Nullable;
@@ -42,11 +44,11 @@ public final class ItemPredicateUtils {
 	private ItemPredicateUtils() {}
 
 	public static ItemStack createPredicateStack(String rawPredicate, ItemStack placeholder) {
-		var nbt = new NbtCompound();
+		NbtWriteView writeView = NbtWriteView.create(ErrorReporter.EMPTY);
 		ItemStack stack = Items.COMMAND_BLOCK.getDefaultStack();
 
-		nbt.putString("Command", rawPredicate);
-		BlockItem.setBlockEntityData(stack, BlockEntityType.COMMAND_BLOCK, nbt);
+		writeView.putString("Command", rawPredicate);
+		BlockItem.setBlockEntityData(stack, BlockEntityType.COMMAND_BLOCK, writeView);
 
 		setPlaceholder(stack, placeholder);
 
@@ -240,6 +242,6 @@ public final class ItemPredicateUtils {
 	}
 
 	private static NbtElement toNbtAllowEmpty(ItemStack stack, RegistryWrapper.WrapperLookup registries) {
-		return stack.isEmpty() ? new NbtCompound() : stack.toNbt(registries, new NbtCompound());
+		return stack.isEmpty() ? new NbtCompound() : ItemStack.CODEC.encode(stack, registries.getOps(NbtOps.INSTANCE), new NbtCompound()).getOrThrow();
 	}
 }

@@ -56,7 +56,7 @@ public class WorldEditSync {
 		if (!WorldEditConfigs.DISABLE_UPDATES.getBooleanValue())
 			return;
 		ResponseMuffler.scheduleMute("Side effect \"Neighbors\".+");
-		Objects.requireNonNull(this.client.getNetworkHandler()).sendCommand("/perf neighbors off");
+		Objects.requireNonNull(this.client.getNetworkHandler()).sendChatCommand("/perf neighbors off");
 		TechUtilsMod.LOGGER.debug("Turning off WorldEdit neighbor updates");
 	}
 
@@ -90,12 +90,12 @@ public class WorldEditSync {
 
 	private void updateRegion(ValidBox box) {
 		ResponseMuffler.scheduleMute("(\\w+ position set to \\(.+\\).)|(Position already set.)");
-		this.client.getNetworkHandler().sendCommand(String.format("/pos1 %d,%d,%d",
+		this.client.getNetworkHandler().sendChatCommand(String.format("/pos1 %d,%d,%d",
 			box.getPos1().getX(),
 			box.getPos1().getY(),
 			box.getPos1().getZ()));
 		ResponseMuffler.scheduleMute("(\\w+ position set to \\(.+\\).)|(Position already set.)");
-		this.client.getNetworkHandler().sendCommand(String.format("/pos2 %d,%d,%d",
+		this.client.getNetworkHandler().sendChatCommand(String.format("/pos2 %d,%d,%d",
 			box.getPos2().getX(),
 			box.getPos2().getY(),
 			box.getPos2().getZ()));

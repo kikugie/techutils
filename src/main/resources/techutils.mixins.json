@@ -9,6 +9,8 @@
         "compactscoreboard.InGameHudMixin",
         "containerscan.ClientPlayerInteractionManagerMixin",
         "containerscan.CrafterScreenMixin",
+        "containerscan.DrawContextMixin",
+        "containerscan.GuiRendererMixin",
         "containerscan.HandledScreenMixin",
         "containerscan.MinecraftClientAccessor",
         "containerscan.MinecraftClientMixin",
@@ -31,7 +33,7 @@
         "mod.litematica.WidgetSchematicVerificationResultMixin",
         "preview.BlockEntityAccessor",
         "worldeditsync.ClientPlayNetworkHandlerMixin",
-        "worldeditsync.WECUIPacketHandlerMixin"
+        "worldeditsync.FabricCUIPacketHandler"
     ],
     "injectors": {
         "defaultRequire": 1,

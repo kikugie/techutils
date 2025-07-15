@@ -22,32 +22,32 @@ import static dev.kikugie.techutils.feature.containerscan.verifier.InventoryOver
 
 @Mixin(value = fi.dy.masa.malilib.render.InventoryOverlay.class)
 public class InventoryOverlayMixin {
-	@WrapOperation(method = "renderInventoryStacks(Lfi/dy/masa/malilib/render/InventoryOverlay$InventoryRenderType;Lnet/minecraft/inventory/Inventory;IIIIILjava/util/Set;Lnet/minecraft/client/MinecraftClient;Lnet/minecraft/client/gui/DrawContext;DD)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/inventory/Inventory;getStack(I)Lnet/minecraft/item/ItemStack;"))
+	@WrapOperation(method = "renderInventoryStacks(Lnet/minecraft/client/gui/DrawContext;Lfi/dy/masa/malilib/render/InventoryOverlay$InventoryRenderType;Lnet/minecraft/inventory/Inventory;IIIIILjava/util/Set;Lnet/minecraft/client/MinecraftClient;DD)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/inventory/Inventory;getStack(I)Lnet/minecraft/item/ItemStack;"))
 	private static ItemStack shareSlotIndex(Inventory instance, int i, Operation<ItemStack> original, @Share("slotIndex") LocalIntRef slotIndex) {
 		slotIndex.set(i);
 		return original.call(instance, i);
 	}
 
-	@WrapOperation(method = "renderInventoryStacks(Lfi/dy/masa/malilib/render/InventoryOverlay$InventoryRenderType;Lnet/minecraft/inventory/Inventory;IIIIILjava/util/Set;Lnet/minecraft/client/MinecraftClient;Lnet/minecraft/client/gui/DrawContext;DD)V", at = @At(value = "INVOKE", target = "Lfi/dy/masa/malilib/render/InventoryOverlay;renderStackAt(Lnet/minecraft/item/ItemStack;FFFLnet/minecraft/client/MinecraftClient;Lnet/minecraft/client/gui/DrawContext;DD)V"))
-	private static void drawOverlay(ItemStack stack, float x, float y, float scale, MinecraftClient mc, DrawContext drawContext, double mouseX, double mouseY, Operation<Void> original, @Share("slotIndex") LocalIntRef slotIndex) {
+	@WrapOperation(method = "renderInventoryStacks(Lnet/minecraft/client/gui/DrawContext;Lfi/dy/masa/malilib/render/InventoryOverlay$InventoryRenderType;Lnet/minecraft/inventory/Inventory;IIIIILjava/util/Set;Lnet/minecraft/client/MinecraftClient;DD)V", at = @At(value = "INVOKE", target = "Lfi/dy/masa/malilib/render/InventoryOverlay;renderStackAt(Lnet/minecraft/client/gui/DrawContext;Lnet/minecraft/item/ItemStack;FFFLnet/minecraft/client/MinecraftClient;DD)V"))
+	private static void drawOverlay(DrawContext drawContext, ItemStack stack, float x, float y, float scale, MinecraftClient mc, double mouseX, double mouseY, Operation<Void> original, @Share("slotIndex") LocalIntRef slotIndex) {
 		if (infoOverlayInstance != null) {
 			stack = infoOverlayInstance.drawStackInternal(drawContext, new Slot(null, slotIndex.get(), (int) x, (int) y), stack);
 
-			original.call(stack, x, y, scale, mc, drawContext, mouseX, mouseY);
+			original.call(drawContext, stack, x, y, scale, mc, mouseX, mouseY);
 
-			infoOverlayInstance.drawTransparencyBufferInternal(drawContext, 0, 0);
+			infoOverlayInstance.finalizeDrawStackInternal();
 		} else {
-			original.call(stack, x, y, scale, mc, drawContext, mouseX, mouseY);
+			original.call(drawContext, stack, x, y, scale, mc, mouseX, mouseY);
 		}
 	}
 
-	@Redirect(method = "renderInventoryStacks(Lfi/dy/masa/malilib/render/InventoryOverlay$InventoryRenderType;Lnet/minecraft/inventory/Inventory;IIIIILjava/util/Set;Lnet/minecraft/client/MinecraftClient;Lnet/minecraft/client/gui/DrawContext;DD)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;isEmpty()Z"))
+	@Redirect(method = "renderInventoryStacks(Lnet/minecraft/client/gui/DrawContext;Lfi/dy/masa/malilib/render/InventoryOverlay$InventoryRenderType;Lnet/minecraft/inventory/Inventory;IIIIILjava/util/Set;Lnet/minecraft/client/MinecraftClient;DD)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;isEmpty()Z"))
 	private static boolean allowDrawingEmptySlots(ItemStack instance) {
 		return false;
 	}
 
-	@WrapWithCondition(method = "renderInventoryStacks(Lfi/dy/masa/malilib/render/InventoryOverlay$InventoryRenderType;Lnet/minecraft/inventory/Inventory;IIIIILjava/util/Set;Lnet/minecraft/client/MinecraftClient;Lnet/minecraft/client/gui/DrawContext;DD)V", at = @At(value = "INVOKE", target = "Lfi/dy/masa/malilib/render/InventoryOverlay;renderStackToolTipStyled(IILnet/minecraft/item/ItemStack;Lnet/minecraft/client/MinecraftClient;Lnet/minecraft/client/gui/DrawContext;)V"))
-	private static boolean delayRenderingHoveredStack(int x, int y, ItemStack stack, MinecraftClient mc, DrawContext drawContext) {
+	@WrapWithCondition(method = "renderInventoryStacks(Lnet/minecraft/client/gui/DrawContext;Lfi/dy/masa/malilib/render/InventoryOverlay$InventoryRenderType;Lnet/minecraft/inventory/Inventory;IIIIILjava/util/Set;Lnet/minecraft/client/MinecraftClient;DD)V", at = @At(value = "INVOKE", target = "Lfi/dy/masa/malilib/render/InventoryOverlay;renderStackToolTipStyled(Lnet/minecraft/client/gui/DrawContext;IILnet/minecraft/item/ItemStack;Lnet/minecraft/client/MinecraftClient;)V"))
+	private static boolean delayRenderingHoveredStack(DrawContext drawContext, int x, int y, ItemStack stack, MinecraftClient mc) {
 		if (delayRenderingHoveredStack) {
 			hoveredStackToRender = stack;
 			return false;
@@ -55,7 +55,7 @@ public class InventoryOverlayMixin {
 		return true;
 	}
 
-	@Inject(method = "renderInventoryStacks(Lfi/dy/masa/malilib/render/InventoryOverlay$InventoryRenderType;Lnet/minecraft/inventory/Inventory;IIIIILjava/util/Set;Lnet/minecraft/client/MinecraftClient;Lnet/minecraft/client/gui/DrawContext;DD)V", at = @At("RETURN"))
+	@Inject(method = "renderInventoryStacks(Lnet/minecraft/client/gui/DrawContext;Lfi/dy/masa/malilib/render/InventoryOverlay$InventoryRenderType;Lnet/minecraft/inventory/Inventory;IIIIILjava/util/Set;Lnet/minecraft/client/MinecraftClient;DD)V", at = @At("RETURN"))
 	private static void cleanUp(CallbackInfo ci) {
 		infoOverlayInstance = null;
 	}
