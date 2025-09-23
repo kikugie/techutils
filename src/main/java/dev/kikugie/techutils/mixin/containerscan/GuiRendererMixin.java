@@ -5,7 +5,6 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
 import dev.kikugie.techutils.feature.containerscan.verifier.InventoryOverlay;
-import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
 import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.ScreenRect;
 import net.minecraft.client.gui.render.GuiRenderer;
@@ -27,9 +26,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
  */
 @Mixin(GuiRenderer.class)
 public class GuiRendererMixin {
-	@Inject(method = "prepare", at = @At("RETURN"))
+	@Inject(method = "render(Lcom/mojang/blaze3d/buffers/GpuBufferSlice;)V", at = @At("RETURN"))
 	private void clearTransparentItemStates(CallbackInfo ci) {
-		InventoryOverlay.transparentItemStates = new ReferenceOpenHashSet<>();
+		InventoryOverlay.transparentItemStates.clear();
 	}
 
 	@WrapOperation(method = "prepareItem", at = @At(value = "NEW", target = "Lnet/minecraft/client/gui/render/state/TexturedQuadGuiElementRenderState;"))
