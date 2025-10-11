@@ -15,7 +15,7 @@ public class ClientPlayNetworkAddonMixin {
 	/**
 	 * Prevents packet receiver collision with other WorldEdit addons, such as WorldEditCUI.
 	 */
-	@Inject(method = "lambda$receive$0", at = @At(value = "INVOKE", target = "Lnet/fabricmc/fabric/api/client/networking/v1/ClientPlayNetworking$PlayPayloadHandler;receive(Lnet/minecraft/network/packet/CustomPayload;Lnet/fabricmc/fabric/api/client/networking/v1/ClientPlayNetworking$Context;)V"))
+	@Inject(method = "receive(Lnet/fabricmc/fabric/api/client/networking/v1/ClientPlayNetworking$PlayPayloadHandler;Lnet/minecraft/network/packet/CustomPayload;)V", at = @At(value = "INVOKE", target = "Lnet/fabricmc/fabric/api/client/networking/v1/ClientPlayNetworking$PlayPayloadHandler;receive(Lnet/minecraft/network/packet/CustomPayload;Lnet/fabricmc/fabric/api/client/networking/v1/ClientPlayNetworking$Context;)V"))
 	private void yoinkWorldEditPacket(ClientPlayNetworking.PlayPayloadHandler<?> handler, CustomPayload payload, CallbackInfo ci) {
 		if (payload.getId().id().equals(WorldEditNetworkHandler.CHANNEL))
 			WorldEditNetworkHandler.getInstance().ifPresent(handlerInstance -> handlerInstance.onYoinkedPacket(payload));

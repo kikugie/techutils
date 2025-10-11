@@ -7,6 +7,7 @@ import net.minecraft.component.ComponentType;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.ContainerComponent;
 import net.minecraft.component.type.NbtComponent;
+import net.minecraft.entity.TypedEntityData;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -68,12 +69,12 @@ public final class ItemPredicateUtils {
 	public static boolean isPredicate(ItemStack stack) {
 		return stack.getItem() == Items.COMMAND_BLOCK
 			&& stack.get(DataComponentTypes.CUSTOM_DATA) instanceof NbtComponent nbtComponent
-			&& nbtComponent.getNbt().contains(PREDICATE_ID);
+			&& nbtComponent.copyNbt().contains(PREDICATE_ID);
 	}
 
 	public static String getRawPredicate(ItemStack stack) {
-		return stack.get(DataComponentTypes.BLOCK_ENTITY_DATA) instanceof NbtComponent nbtComponent
-			? nbtComponent.getNbt().getString("Command").orElse("")
+		return stack.get(DataComponentTypes.BLOCK_ENTITY_DATA) instanceof TypedEntityData<BlockEntityType<?>> data
+			? data.copyNbtWithoutId().getString("Command").orElse("")
 			: "";
 	}
 
@@ -153,8 +154,8 @@ public final class ItemPredicateUtils {
 		}
 
 		if (!count.test(stack.getCount())) {
-			var min = count.min();
-			var max = count.max();
+			var min = count.bounds().min();
+			var max = count.bounds().max();
 			var msg = Text.literal("Incorrect count. Expected: ")
 				.styled(style -> style.withColor(Formatting.RED).withItalic(false));
 			if (min.isPresent() && max.isPresent() && min.get().equals(max.get())) {
