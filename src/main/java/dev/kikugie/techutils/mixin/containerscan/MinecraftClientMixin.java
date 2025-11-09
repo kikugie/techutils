@@ -25,6 +25,7 @@ public class MinecraftClientMixin {
 		if (!(screen instanceof ScreenHandlerProvider<?>))
 			return;
 
+		InventoryOverlay.onScreenPostContainerClick();
 		if (!InteractionHandler.onScreen(screen))
 			ci.cancel();
 	}

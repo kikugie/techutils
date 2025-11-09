@@ -42,6 +42,8 @@ public class InventoryOverlay {
 	public static Set<ItemGuiElementRenderState> transparentItemStates = new ReferenceOpenHashSet<>();
 	@Nullable
 	private static InventoryOverlay instance = null;
+	@Nullable
+	private static BlockPos lastClickedPos = null;
 	private final int MISSING_COLOR = Configs.Colors.SCHEMATIC_OVERLAY_COLOR_MISSING.getIntegerValue();
 	private final int WRONG_COLOR = Configs.Colors.SCHEMATIC_OVERLAY_COLOR_WRONG_BLOCK.getIntegerValue();
 	private final int MISMATCHED_COLOR = Configs.Colors.SCHEMATIC_OVERLAY_COLOR_WRONG_STATE.getIntegerValue();
@@ -54,10 +56,17 @@ public class InventoryOverlay {
 
 	public static void clearOverlay() {
 		instance = null;
+		lastClickedPos = null;
 	}
 
 	public static void onContainerClick(BlockHitResult hitResult) {
-		BlockPos pos = hitResult.getBlockPos();
+		lastClickedPos = hitResult.getBlockPos().toImmutable();
+	}
+
+	public static void onScreenPostContainerClick() {
+		if (lastClickedPos == null)
+			return;
+		BlockPos pos = lastClickedPos;
 		World world = WorldUtils.getBestWorld(MinecraftClient.getInstance());
 		if (!(ContainerUtils.validateContainer(world, pos, world.getBlockState(pos)).orElse(null) instanceof ScreenHandlerFactory))
 			return;
